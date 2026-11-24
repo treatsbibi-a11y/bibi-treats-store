@@ -2,6 +2,8 @@ export const runtime = 'edge';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
+import { createD1Order, getD1Orders, CloudflareD1Binding } from '@/lib/d1';
+import { getRequestContext } from '@cloudflare/next-on-pages';
 
 export const dynamic = 'force-dynamic';
 
@@ -78,7 +80,32 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Execute atomic transaction
+    // Check Cloudflare D1 binding on Edge Runtime
+    let d1Binding: CloudflareD1Binding | undefined;
+    try {
+      d1Binding = (getRequestContext()?.env as any)?.DB;
+    } catch {}
+
+    if (d1Binding) {
+      const createdOrder = await createD1Order({
+        customer: {
+          name: customerData.name.trim(),
+          phone: customerData.phone.trim(),
+          instagram: customerData.instagram?.trim() || null,
+          address: customerData.address.trim(),
+        },
+        items: requestedItems as { productId: string; quantity: number }[],
+        paymentMethod: body.paymentMethod === 'COD' ? 'COD' : 'TRANSFER',
+        shippingFee: body.shippingFee !== undefined ? Number(body.shippingFee) : undefined,
+        note: body.note?.trim() || null,
+        slipUrl: body.slipUrl ? String(body.slipUrl).trim() : null,
+        d1Binding,
+      });
+
+      return NextResponse.json(createdOrder, { status: 201 });
+    }
+
+    // Execute atomic transaction via Prisma (Node.js fallback)
     const createdOrder = await prisma.$transaction(async (tx) => {
       // 1. Verify store status
       const settings = await tx.storeSettings.findUnique({
@@ -241,6 +268,29 @@ export async function GET(req: NextRequest) {
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
     const format = searchParams.get('format'); // 'array' or 'object'
+
+    // Check Cloudflare D1 binding on Edge Runtime
+    let d1Binding: CloudflareD1Binding | undefined;
+    try {
+      d1Binding = (getRequestContext()?.env as any)?.DB;
+    } catch {}
+
+    if (d1Binding) {
+      const orders = await getD1Orders({
+        status: status || undefined,
+        search: search || undefined,
+        d1Binding,
+      });
+
+      if (format === 'object') {
+        return NextResponse.json({
+          orders,
+          total: orders.length,
+        });
+      }
+
+      return NextResponse.json(orders);
+    }
 
     const where: Prisma.OrderWhereInput = {};
 

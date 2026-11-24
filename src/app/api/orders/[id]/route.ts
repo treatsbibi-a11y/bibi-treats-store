@@ -1,6 +1,8 @@
 export const runtime = 'edge';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getD1OrderDetail, CloudflareD1Binding } from '@/lib/d1';
+import { getRequestContext } from '@cloudflare/next-on-pages';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,6 +30,23 @@ export async function GET(
 ) {
   try {
     const { id } = params;
+
+    // Check Cloudflare D1 binding on Edge Runtime
+    let d1Binding: CloudflareD1Binding | undefined;
+    try {
+      d1Binding = (getRequestContext()?.env as any)?.DB;
+    } catch {}
+
+    if (d1Binding) {
+      const order = await getD1OrderDetail(id, d1Binding);
+      if (!order) {
+        return NextResponse.json(
+          { error: 'ไม่พบข้อมูลคำสั่งซื้อ' },
+          { status: 404 }
+        );
+      }
+      return NextResponse.json(order);
+    }
 
     const order = await prisma.order.findFirst({
       where: {
@@ -98,6 +117,131 @@ async function handleUpdateOrder(req: NextRequest, id: string) {
         { error: 'สถานะคำสั่งซื้อไม่ถูกต้อง' },
         { status: 400 }
       );
+    }
+
+    // Check Cloudflare D1 binding on Edge Runtime
+    let d1Binding: CloudflareD1Binding | undefined;
+    try {
+      d1Binding = (getRequestContext()?.env as any)?.DB;
+    } catch {}
+
+    if (d1Binding) {
+      // Find the target order
+      const existingOrder = (await d1Binding
+        .prepare(`
+          SELECT id, orderNumber, customerId, status
+          FROM [Order]
+          WHERE id = ? OR orderNumber = ?
+          LIMIT 1
+        `)
+        .bind(id, id)
+        .first()) as any;
+
+      if (!existingOrder) {
+        return NextResponse.json(
+          { error: 'ไม่พบคำสั่งซื้อที่ต้องการอัปเดต' },
+          { status: 404 }
+        );
+      }
+
+      const oldStatus = existingOrder.status;
+
+      // 1. If transitioning to CANCELLED from an active status: RESTOCK
+      if (newStatus === 'CANCELLED' && oldStatus !== 'CANCELLED') {
+        const { results: items } = await d1Binding
+          .prepare(`SELECT productId, quantity FROM OrderItem WHERE orderId = ?`)
+          .bind(existingOrder.id)
+          .all();
+
+        for (const item of (items || [])) {
+          if ((item as any).productId) {
+            await d1Binding
+              .prepare(`UPDATE Product SET stock = stock + ?, sold = sold - ? WHERE id = ?`)
+              .bind((item as any).quantity, (item as any).quantity, (item as any).productId)
+              .run();
+          }
+        }
+      }
+
+      // 2. If un-cancelling (from CANCELLED to an active status): VERIFY & RE-DEDUCT
+      if (oldStatus === 'CANCELLED' && newStatus && newStatus !== 'CANCELLED') {
+        const { results: items } = await d1Binding
+          .prepare(`SELECT productId, productName, quantity FROM OrderItem WHERE orderId = ?`)
+          .bind(existingOrder.id)
+          .all();
+
+        for (const item of (items || [])) {
+          if ((item as any).productId) {
+            const product = (await d1Binding
+              .prepare(`SELECT stock, name FROM Product WHERE id = ? LIMIT 1`)
+              .bind((item as any).productId)
+              .first()) as any;
+            if (!product || Number(product.stock) < (item as any).quantity) {
+              throw new Error(
+                `สินค้า "${(item as any).productName}" มีสต็อกไม่เพียงพอสำหรับการคืนสถานะออเดอร์`
+              );
+            }
+          }
+        }
+
+        for (const item of (items || [])) {
+          if ((item as any).productId) {
+            await d1Binding
+              .prepare(`UPDATE Product SET stock = stock - ?, sold = sold + ? WHERE id = ?`)
+              .bind((item as any).quantity, (item as any).quantity, (item as any).productId)
+              .run();
+          }
+        }
+      }
+
+      // 3. Update customer address if provided (allowed only while status is PENDING)
+      if (body.address !== undefined) {
+        if (existingOrder.status !== 'PENDING') {
+          throw new Error('ไม่สามารถแก้ไขที่อยู่จัดส่งได้ เนื่องจากร้านค้ายืนยันออเดอร์แล้ว');
+        }
+        await d1Binding
+          .prepare(`UPDATE Customer SET address = ? WHERE id = ?`)
+          .bind(String(body.address).trim(), existingOrder.customerId)
+          .run();
+      }
+
+      // 4. Update order record
+      const updates: string[] = [];
+      const updateParams: any[] = [];
+
+      if (newStatus) {
+        updates.push('status = ?');
+        updateParams.push(newStatus);
+      }
+      if (note !== undefined) {
+        if (existingOrder.status !== 'PENDING' && !newStatus) {
+          throw new Error('ไม่สามารถแก้ไขหมายเหตุได้ เนื่องจากร้านค้ายืนยันออเดอร์แล้ว');
+        }
+        updates.push('note = ?');
+        updateParams.push(note ? String(note).trim() : null);
+      }
+      if (slipUrl !== undefined) {
+        updates.push('slipUrl = ?');
+        updateParams.push(slipUrl ? String(slipUrl).trim() : null);
+      }
+      if (paymentMethod !== undefined && ['TRANSFER', 'COD'].includes(paymentMethod)) {
+        updates.push('paymentMethod = ?');
+        updateParams.push(paymentMethod);
+      }
+
+      if (updates.length > 0) {
+        updates.push('updatedAt = ?');
+        updateParams.push(new Date().toISOString());
+        updateParams.push(existingOrder.id);
+
+        await d1Binding
+          .prepare(`UPDATE [Order] SET ${updates.join(', ')} WHERE id = ?`)
+          .bind(...updateParams)
+          .run();
+      }
+
+      const updated = await getD1OrderDetail(existingOrder.id, d1Binding);
+      return NextResponse.json(updated);
     }
 
     // Find the target order
