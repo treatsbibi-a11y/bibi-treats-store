@@ -282,16 +282,7 @@ export default function ReviewsSection() {
               transition={{ type: 'spring', damping: 26, stiffness: 340 }}
               className="relative z-10 w-full max-w-lg bg-white rounded-[32px] border border-stone-200 shadow-2xl p-6 sm:p-8 overflow-hidden"
             >
-              {/* Close Button */}
-              <button
-                onClick={() => setSelectedReview(null)}
-                className="absolute top-5 right-5 w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 hover:text-stone-900 flex items-center justify-center transition-all active:scale-95 cursor-pointer"
-                aria-label="ปิดหน้าต่างรีวิว"
-              >
-                <FontAwesomeIcon icon={faXmark} className="w-4 h-4" />
-              </button>
-
-              {/* Product Image */}
+              {/* Product Image with Category Pill & Close Button */}
               <div className="relative w-full h-52 sm:h-60 rounded-2xl overflow-hidden mb-4 bg-stone-100 border border-stone-100">
                 <img
                   src={selectedReview.image}
@@ -301,6 +292,15 @@ export default function ReviewsSection() {
                 <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-white/95 backdrop-blur-xs text-stone-800 text-xs font-medium shadow-xs">
                   {selectedReview.category}
                 </div>
+
+                {/* Refined Integrated Close Button */}
+                <button
+                  onClick={() => setSelectedReview(null)}
+                  className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/40 hover:bg-black/65 backdrop-blur-md text-white flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-sm border border-white/25"
+                  aria-label="ปิดหน้าต่างรีวิว"
+                >
+                  <FontAwesomeIcon icon={faXmark} className="w-3.5 h-3.5" />
+                </button>
               </div>
 
               {/* Stars & Menu Title */}
