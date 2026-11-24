@@ -197,7 +197,7 @@ export default function ReviewsSection() {
         onTouchMove={handleTouchMove}
       >
         {/* Left-Aligned Editorial Header */}
-        <div className="absolute z-30 pointer-events-none top-6 sm:top-1/2 sm:-translate-y-1/2 left-5 sm:left-12 lg:left-24 max-w-[320px] sm:max-w-md text-left">
+        <div className="absolute z-30 pointer-events-none top-[74px] sm:top-1/2 sm:-translate-y-1/2 left-5 sm:left-12 lg:left-24 max-w-[320px] sm:max-w-md text-left">
           <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-amber-900/5 border border-amber-900/10 text-amber-900 text-[11px] sm:text-xs font-medium tracking-wide mb-2 sm:mb-3">
             <span>Verified Customer Stories</span>
           </div>
@@ -246,7 +246,7 @@ export default function ReviewsSection() {
               z,
               transformStyle: 'preserve-3d',
               left: isMobile ? '0px' : '220px',
-              top: isMobile ? '135px' : '0px',
+              top: isMobile ? '160px' : '0px',
             }}
           >
             {reviewsData.map((review, i) => (
