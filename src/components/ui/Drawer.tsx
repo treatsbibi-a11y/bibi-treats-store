@@ -61,7 +61,7 @@ export function Drawer({
 
           {/* Footer */}
           {footer && (
-            <div className="border-t border-slate-200 p-4 sm:p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom,0.75rem))] sm:pb-5 bg-slate-50/95 shrink-0 shadow-[0_-4px_12px_rgba(0,0,0,0.03)]">
+            <div className="border-t border-slate-200 p-4 sm:p-5 pb-[calc(5rem+env(safe-area-inset-bottom,1rem))] sm:pb-5 bg-slate-50/95 shrink-0 shadow-[0_-4px_12px_rgba(0,0,0,0.03)]">
               {footer}
             </div>
           )}

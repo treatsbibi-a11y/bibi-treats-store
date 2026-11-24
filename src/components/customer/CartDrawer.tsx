@@ -42,8 +42,8 @@ export function CartDrawer() {
       title={`ตะกร้าสินค้าของคุณ (${totalItems})`}
       footer={
         items.length > 0 ? (
-          <div className="space-y-3 sm:space-y-4">
-            <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
+          <div className="space-y-2.5 sm:space-y-4">
+            <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm">
               <div className="flex justify-between text-slate-600">
                 <span>ยอดรวมสินค้า</span>
                 <span className="font-medium text-slate-900">฿{subtotal.toLocaleString()}</span>
@@ -73,7 +73,7 @@ export function CartDrawer() {
               <span>ดำเนินการสั่งซื้อ</span>
             </Button>
 
-            <div className="flex items-center justify-center gap-1.5 text-[11px] sm:text-xs text-slate-500 text-center">
+            <div className="flex items-center justify-center gap-1.5 text-[10px] sm:text-xs text-slate-500 text-center">
               <FontAwesomeIcon icon={faShieldHalved} className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
               <span>รับประกันความสดใหม่ ตรวจสอบความถูกต้องก่อนส่ง</span>
             </div>
