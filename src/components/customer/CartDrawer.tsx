@@ -42,8 +42,8 @@ export function CartDrawer() {
       title={`ตะกร้าสินค้าของคุณ (${totalItems})`}
       footer={
         items.length > 0 ? (
-          <div className="space-y-4">
-            <div className="space-y-2 text-sm">
+          <div className="space-y-3 sm:space-y-4">
+            <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
               <div className="flex justify-between text-slate-600">
                 <span>ยอดรวมสินค้า</span>
                 <span className="font-medium text-slate-900">฿{subtotal.toLocaleString()}</span>
@@ -58,7 +58,7 @@ export function CartDrawer() {
                   )}
                 </span>
               </div>
-              <div className="flex justify-between text-base font-bold text-slate-900 pt-2 border-t border-slate-200">
+              <div className="flex justify-between text-sm sm:text-base font-bold text-slate-900 pt-1.5 sm:pt-2 border-t border-slate-200">
                 <span>ยอดรวมสุทธิ</span>
                 <span className="text-brand-600">฿{total.toLocaleString()}</span>
               </div>
@@ -67,14 +67,14 @@ export function CartDrawer() {
             <Button
               variant="primary"
               size="lg"
-              className="w-full h-12 text-sm sm:text-base font-bold flex items-center justify-center gap-2 shadow-sm active:scale-[0.99] transition-all"
+              className="w-full h-11 sm:h-12 text-sm sm:text-base font-bold flex items-center justify-center gap-2 shadow-sm active:scale-[0.99] transition-all"
               onClick={handleCheckout}
             >
               <span>ดำเนินการสั่งซื้อ</span>
             </Button>
 
-            <div className="flex items-center justify-center gap-1.5 text-xs text-slate-500 text-center">
-              <FontAwesomeIcon icon={faShieldHalved} className="w-3.5 h-3.5 text-emerald-600" />
+            <div className="flex items-center justify-center gap-1.5 text-[11px] sm:text-xs text-slate-500 text-center">
+              <FontAwesomeIcon icon={faShieldHalved} className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
               <span>รับประกันความสดใหม่ ตรวจสอบความถูกต้องก่อนส่ง</span>
             </div>
           </div>

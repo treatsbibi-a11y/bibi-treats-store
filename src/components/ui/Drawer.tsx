@@ -43,9 +43,9 @@ export function Drawer({
       />
 
       <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10 w-full sm:w-auto">
-        <div className="w-full sm:w-screen sm:max-w-md bg-white shadow-2xl flex flex-col animate-in slide-in-from-right duration-250">
+        <div className="w-full sm:w-screen sm:max-w-md bg-white shadow-2xl flex flex-col h-[100dvh] max-h-[100dvh] animate-in slide-in-from-right duration-250">
           {/* Header */}
-          <div className="px-4 sm:px-5 py-3.5 sm:py-4 border-b border-slate-200 flex items-center justify-between">
+          <div className="px-4 sm:px-5 py-3.5 sm:py-4 border-b border-slate-200 flex items-center justify-between shrink-0">
             <h2 className="text-base font-bold text-slate-900">{title || 'Cart'}</h2>
             <button
               onClick={onClose}
@@ -57,11 +57,11 @@ export function Drawer({
           </div>
 
           {/* Body */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-5">{children}</div>
+          <div className="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-5">{children}</div>
 
           {/* Footer */}
           {footer && (
-            <div className="border-t border-slate-200 p-4 sm:p-5 pb-safe bg-slate-50/90">
+            <div className="border-t border-slate-200 p-4 sm:p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom,0.75rem))] sm:pb-5 bg-slate-50/95 shrink-0 shadow-[0_-4px_12px_rgba(0,0,0,0.03)]">
               {footer}
             </div>
           )}
