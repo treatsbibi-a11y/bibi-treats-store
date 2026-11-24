@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 import { NextResponse } from 'next/server';
 import { r2Client } from '@/lib/r2';
 import { HeadBucketCommand } from '@aws-sdk/client-s3';
