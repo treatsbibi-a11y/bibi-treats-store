@@ -1,17 +1,17 @@
 'use client';
 
-import React, { useRef, useState, useEffect } from 'react';
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useSpring,
-  useMotionValue,
-  MotionValue,
-  AnimatePresence,
-} from 'framer-motion';
+import React, { useRef, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar, faCheckCircle, faQuoteLeft, faXmark, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import {
+  faStar,
+  faCheckCircle,
+  faQuoteLeft,
+  faXmark,
+  faArrowRight,
+  faChevronLeft,
+  faChevronRight,
+} from '@fortawesome/free-solid-svg-icons';
 
 export interface ReviewItem {
   id: string;
@@ -115,160 +115,167 @@ const reviewsData: ReviewItem[] = [
 ];
 
 export default function ReviewsSection() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [selectedReview, setSelectedReview] = useState<ReviewItem | null>(null);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // Scroll parameters: Smooth runway through reviews
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end end'],
-  });
-
-  const smoothProgress = useSpring(scrollYProgress, {
-    mass: 0.12,
-    stiffness: 75,
-    damping: 24,
-  });
-
-  // Vector translation steps (refined for subtle depth and high legibility)
-  const stepX = isMobile ? 220 : 310;
-  const stepY = isMobile ? -30 : -42;
-  const stepZ = isMobile ? -140 : -180;
-
-  const totalCards = reviewsData.length;
-  const maxShift = totalCards - 1;
-
-  const x = useTransform(smoothProgress, [0, 1], [0, -maxShift * stepX]);
-  const y = useTransform(smoothProgress, [0, 1], [0, -maxShift * stepY]);
-  const z = useTransform(smoothProgress, [0, 1], [0, -maxShift * stepZ]);
-
-  // Mouse / Touch position for Magnetic Hover
-  const mouseX = useMotionValue(-10000);
-  const mouseY = useMotionValue(-10000);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    mouseX.set(e.clientX);
-    mouseY.set(e.clientY);
-  };
-
-  const handleMouseLeave = () => {
-    mouseX.set(-10000);
-    mouseY.set(-10000);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (e.touches[0]) {
-      mouseX.set(e.touches[0].clientX);
-      mouseY.set(e.touches[0].clientY);
-    }
+  const handleScroll = (direction: 'left' | 'right') => {
+    if (!scrollContainerRef.current) return;
+    const scrollAmount = direction === 'left' ? -320 : 320;
+    scrollContainerRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
   };
 
   return (
     <section
-      ref={containerRef}
       id="reviews"
-      className="relative bg-gradient-to-b from-[#FAF7F2] via-[#FDFBF7] to-[#F5EFEB] border-t border-[#EAE3D6]"
-      style={{ height: isMobile ? '230vh' : '270vh' }}
+      className="relative py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-[#FAF7F2] via-[#FDFBF7] to-[#F5EFEB] border-t border-[#EAE3D6] overflow-hidden"
     >
       {/* Subtle luxury ambient texture overlay */}
-      <div 
+      <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{
           backgroundImage: 'radial-gradient(#292524 1px, transparent 1px)',
-          backgroundSize: '24px 24px'
+          backgroundSize: '24px 24px',
         }}
       />
 
-      {/* Sticky Fullscreen Viewport during Scroll Runway */}
-      <div
-        className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center select-none"
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        onTouchMove={handleTouchMove}
-      >
-        {/* Left-Aligned Editorial Header */}
-        <div className="absolute z-30 pointer-events-none top-[68px] sm:top-1/2 sm:-translate-y-1/2 left-5 sm:left-12 lg:left-24 max-w-[320px] sm:max-w-md text-left">
-          <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-amber-900/5 border border-amber-900/10 text-amber-900 text-[11px] sm:text-xs font-medium tracking-wide mb-1.5 sm:mb-3">
-            <span>Verified Customer Stories</span>
-          </div>
-
-          <h2 className="text-2xl sm:text-5xl lg:text-6xl font-bold text-stone-900 tracking-tight font-prompt leading-tight sm:leading-[1.15]">
-            รีวิวจากลูกค้า
-          </h2>
-          <p className="text-xs sm:text-base text-stone-600 font-normal mt-1 sm:mt-3 mb-2.5 sm:mb-5 leading-relaxed">
-            ความประทับใจจากลูกค้าตัวจริงที่หลงรักรสชาติขนมอบสดใหม่ของ Bibi&apos;s Treats
-          </p>
-
-          {/* Clean Editorial Rating Box with Enhanced Glassmorphism */}
-          <div className="inline-flex items-center gap-2.5 sm:gap-3 px-3.5 py-1.5 sm:px-4 sm:py-2.5 rounded-2xl bg-white/95 backdrop-blur-md border border-stone-200/80 shadow-[0_8px_24px_-6px_rgba(180,83,9,0.12)] pointer-events-auto">
-            <div className="flex items-center gap-1 text-amber-500">
-              {[...Array(5)].map((_, i) => (
-                <FontAwesomeIcon key={i} icon={faStar} className="w-3 sm:w-3.5 h-3 sm:h-3.5 fill-current" />
-              ))}
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Editorial Section Header */}
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8 sm:mb-10">
+          <div>
+            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-amber-900/5 border border-amber-900/10 text-amber-900 text-[11px] sm:text-xs font-medium tracking-wide mb-2 sm:mb-2.5">
+              <span>Verified Customer Stories</span>
             </div>
-            <div className="h-3.5 sm:h-4 w-px bg-stone-200" />
-            <span className="font-bold text-stone-900 text-sm sm:text-lg font-prompt">4.98</span>
-            <span className="text-stone-300">/</span>
-            <span className="text-[11px] sm:text-sm text-stone-600 font-medium">500+ รีวิว</span>
+
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-stone-900 tracking-tight font-prompt leading-tight">
+              รีวิวจากลูกค้า
+            </h2>
+            <p className="text-xs sm:text-base text-stone-600 font-normal mt-1 sm:mt-2 max-w-xl leading-relaxed">
+              ความประทับใจจากลูกค้าตัวจริงที่หลงรักรสชาติขนมอบสดใหม่ของ Bibi&apos;s Treats
+            </p>
           </div>
 
-          {/* Minimal Scroll Hint on Mobile */}
-          <div className="flex items-center gap-2 text-[10px] text-amber-950/70 font-light mt-2 sm:hidden">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-600 animate-ping" />
-            <span>เลื่อนลงเพื่อชมรีวิวทั้งหมด</span>
+          {/* Right Header Side: Rating Box & Desktop Slider Arrows */}
+          <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+            {/* Clean Editorial Rating Box */}
+            <div className="inline-flex items-center gap-2.5 sm:gap-3 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl bg-white/95 backdrop-blur-md border border-stone-200/80 shadow-[0_8px_24px_-6px_rgba(180,83,9,0.08)]">
+              <div className="flex items-center gap-1 text-amber-500">
+                {[...Array(5)].map((_, i) => (
+                  <FontAwesomeIcon
+                    key={i}
+                    icon={faStar}
+                    className="w-3 sm:w-3.5 h-3 sm:h-3.5 fill-current"
+                  />
+                ))}
+              </div>
+              <div className="h-3.5 sm:h-4 w-px bg-stone-200" />
+              <span className="font-bold text-stone-900 text-sm sm:text-base font-prompt">4.98</span>
+              <span className="text-stone-300">/</span>
+              <span className="text-[11px] sm:text-xs text-stone-600 font-medium">500+ รีวิว</span>
+            </div>
+
+            {/* Slider Navigation Buttons (Desktop/Tablet) */}
+            <div className="hidden sm:flex items-center gap-2">
+              <button
+                onClick={() => handleScroll('left')}
+                aria-label="เลื่อนรีวิวก่อนหน้า"
+                className="w-10 h-10 rounded-full bg-white hover:bg-stone-50 border border-stone-200/80 text-stone-700 hover:text-stone-900 flex items-center justify-center shadow-xs hover:shadow-sm transition-all active:scale-95 cursor-pointer"
+              >
+                <FontAwesomeIcon icon={faChevronLeft} className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => handleScroll('right')}
+                aria-label="เลื่อนรีวิวถัดไป"
+                className="w-10 h-10 rounded-full bg-white hover:bg-stone-50 border border-stone-200/80 text-stone-700 hover:text-stone-900 flex items-center justify-center shadow-xs hover:shadow-sm transition-all active:scale-95 cursor-pointer"
+              >
+                <FontAwesomeIcon icon={faChevronRight} className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* 3D Scene Container */}
+        {/* Static Horizontal Swipe / Scroll Carousel */}
         <div
-          className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none"
-          style={{
-            perspective: isMobile ? '1400px' : '2400px',
-            perspectiveOrigin: isMobile ? '50% 50%' : '56% 45%',
-          }}
+          ref={scrollContainerRef}
+          className="flex gap-4 sm:gap-5 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory scroll-smooth no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0"
+          style={{ WebkitOverflowScrolling: 'touch' }}
         >
-          {/* Animated 3D Track */}
-          <motion.div
-            className="relative w-0 h-0 pointer-events-auto"
-            style={{
-              x,
-              y,
-              z,
-              transformStyle: 'preserve-3d',
-              left: isMobile ? '-130px' : '220px',
-              top: isMobile ? '-175px' : '0px',
-            }}
-          >
-            {reviewsData.map((review, i) => (
-              <ReviewCard
-                key={review.id}
-                review={review}
-                i={i}
-                stepX={stepX}
-                stepY={stepY}
-                stepZ={stepZ}
-                mouseX={mouseX}
-                mouseY={mouseY}
-                scrollSpring={smoothProgress}
-                isMobile={isMobile}
-                onSelect={(selected) => setSelectedReview(selected)}
-              />
-            ))}
-          </motion.div>
+          {reviewsData.map((review) => (
+            <div
+              key={review.id}
+              onClick={() => setSelectedReview(review)}
+              className="snap-start shrink-0 w-[270px] sm:w-[310px] bg-white rounded-[24px] border border-[#EBE3D5] shadow-[0_8px_24px_-8px_rgba(40,25,15,0.06)] hover:shadow-[0_16px_36px_-8px_rgba(40,25,15,0.12)] p-4 sm:p-5 flex flex-col justify-between transition-all duration-200 cursor-pointer hover:-translate-y-1 active:scale-[0.99] group"
+            >
+              <div>
+                {/* Product Image Preview with Category Badge */}
+                <div className="relative w-full h-36 sm:h-40 rounded-2xl overflow-hidden mb-3 bg-stone-100 border border-stone-100">
+                  <img
+                    src={review.image}
+                    alt={review.menuItem}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                    loading="lazy"
+                  />
+                  <div className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-white/95 backdrop-blur-xs text-stone-700 text-[11px] font-medium shadow-2xs border border-stone-200/40">
+                    {review.category}
+                  </div>
+                </div>
+
+                {/* Rating Stars & Date */}
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-1 text-amber-500">
+                    {[...Array(review.rating)].map((_, starIdx) => (
+                      <FontAwesomeIcon
+                        key={starIdx}
+                        icon={faStar}
+                        className="w-3.5 h-3.5 fill-current"
+                      />
+                    ))}
+                  </div>
+                  <span className="text-[11px] text-stone-400 font-light">{review.date}</span>
+                </div>
+
+                {/* Menu Item Name */}
+                <h3 className="text-base sm:text-lg font-bold text-stone-900 tracking-tight font-prompt truncate mb-1.5">
+                  {review.menuItem}
+                </h3>
+
+                {/* Customer Review Quote */}
+                <p className="text-stone-700 text-xs sm:text-[13px] leading-relaxed font-normal line-clamp-3">
+                  &ldquo;{review.comment}&rdquo;
+                </p>
+              </div>
+
+              {/* Card Footer: Verified Customer Identity */}
+              <div className="flex items-center justify-between pt-3 mt-3 border-t border-stone-100">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-8 h-8 rounded-full bg-amber-900/8 text-amber-950 border border-amber-900/12 flex items-center justify-center font-bold text-xs shrink-0">
+                    {review.initials}
+                  </div>
+                  <div className="truncate min-w-0">
+                    <div className="font-semibold text-stone-900 text-xs sm:text-sm truncate">
+                      {review.name}
+                    </div>
+                    <div className="text-[10px] sm:text-[11px] flex items-center gap-1 font-medium text-emerald-700">
+                      <FontAwesomeIcon icon={faCheckCircle} className="w-2.5 h-2.5" />
+                      <span>สั่งซื้อจริง</span>
+                    </div>
+                  </div>
+                </div>
+
+                <span className="text-xs font-semibold text-amber-900/80 group-hover:text-amber-900 transition-colors">
+                  อ่านรีวิว →
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Minimal Swipe Hint on Mobile */}
+        <div className="flex items-center justify-center gap-1.5 text-[11px] text-stone-500 font-light mt-3 sm:hidden">
+          <span>ปัดซ้าย-ขวาเพื่อดูรีวิวเพิ่มเติม</span>
         </div>
       </div>
 
-      {/* Luxury Review Reader Modal Popup */}
+      {/* Review Reader Modal Popup */}
       <AnimatePresence>
         {selectedReview && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
@@ -281,7 +288,7 @@ export default function ReviewsSection() {
               className="absolute inset-0 bg-stone-900/60 backdrop-blur-md cursor-pointer"
             />
 
-            {/* Modal Content Card - Luxury Ivory & Warm Stone */}
+            {/* Modal Content Card */}
             <motion.div
               initial={{ opacity: 0, scale: 0.94, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -300,7 +307,6 @@ export default function ReviewsSection() {
                   {selectedReview.category}
                 </div>
 
-                {/* Refined Integrated Close Button */}
                 <button
                   onClick={() => setSelectedReview(null)}
                   className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/40 hover:bg-black/65 backdrop-blur-md text-white flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-sm border border-white/25"
@@ -373,128 +379,5 @@ export default function ReviewsSection() {
         )}
       </AnimatePresence>
     </section>
-  );
-}
-
-function ReviewCard({
-  review,
-  i,
-  stepX,
-  stepY,
-  stepZ,
-  mouseX,
-  mouseY,
-  scrollSpring,
-  isMobile,
-  onSelect,
-}: {
-  review: ReviewItem;
-  i: number;
-  stepX: number;
-  stepY: number;
-  stepZ: number;
-  mouseX: MotionValue<number>;
-  mouseY: MotionValue<number>;
-  scrollSpring: MotionValue<number>;
-  isMobile: boolean;
-  onSelect: (review: ReviewItem) => void;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  // Distance from mouse to center of card
-  const distance = useTransform([mouseX, mouseY, scrollSpring], ([mx = -10000, my = -10000]: number[]) => {
-    if (!ref.current) return 400;
-    const rect = ref.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    return Math.sqrt(Math.pow(mx - centerX, 2) + Math.pow(my - centerY, 2));
-  });
-
-  // Magnetic Scale: Subtle, high-end response
-  const targetScale = useTransform(distance, [0, 300], [isMobile ? 1.08 : 1.15, 1]);
-  const springScale = useSpring(targetScale, {
-    mass: 0.35,
-    stiffness: 260,
-    damping: 24,
-  });
-
-  // Natural 3D Perspective (-14deg instead of steep -34deg for crisp legibility)
-  const transform = useTransform(springScale, (s) => {
-    const baseX = i * stepX;
-    const baseY = i * stepY;
-    const baseZ = i * stepZ;
-    return `translate3d(${baseX}px, ${baseY}px, ${baseZ}px) rotateY(-14deg) scale(${s})`;
-  });
-
-  return (
-    <motion.div
-      ref={ref}
-      onClick={() => onSelect(review)}
-      className={`absolute ${
-        isMobile ? 'w-[260px] h-[360px]' : 'w-[325px] h-[435px]'
-      } bg-white rounded-[28px] border border-[#EBE3D5] shadow-[0_12px_32px_-12px_rgba(40,25,15,0.08)] hover:shadow-[0_24px_48px_-12px_rgba(40,25,15,0.16)] overflow-hidden flex flex-col justify-between p-4 sm:p-5 transition-all duration-300 group cursor-pointer active:scale-98`}
-      style={{
-        transform,
-        transformStyle: 'preserve-3d',
-        backfaceVisibility: 'hidden',
-      }}
-    >
-      <div>
-        {/* Product Image Preview with Category Badge */}
-        <div className={`relative w-full ${isMobile ? 'h-32' : 'h-44'} rounded-2xl overflow-hidden mb-3 bg-stone-100 border border-stone-100`}>
-          <img
-            src={review.image}
-            alt={review.menuItem}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-            loading="lazy"
-          />
-          <div className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-white/95 backdrop-blur-xs text-stone-700 text-[11px] font-medium shadow-2xs border border-stone-200/40">
-            {review.category}
-          </div>
-        </div>
-
-        {/* Rating Stars & Date */}
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-1 text-amber-500">
-            {[...Array(review.rating)].map((_, starIdx) => (
-              <FontAwesomeIcon key={starIdx} icon={faStar} className="w-3.5 h-3.5 fill-current" />
-            ))}
-          </div>
-          <span className="text-[11px] text-stone-400 font-light">{review.date}</span>
-        </div>
-
-        {/* Menu Item Name */}
-        <h3 className="text-base sm:text-lg font-bold text-stone-900 tracking-tight font-prompt truncate mb-2">
-          {review.menuItem}
-        </h3>
-
-        {/* Customer Review Quote */}
-        <p className="text-stone-700 text-xs sm:text-[13px] leading-relaxed font-normal line-clamp-3">
-          &ldquo;{review.comment}&rdquo;
-        </p>
-      </div>
-
-      {/* Card Footer: Verified Customer Identity */}
-      <div className="flex items-center justify-between pt-3 border-t border-stone-100">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-8 h-8 rounded-full bg-amber-900/8 text-amber-950 border border-amber-900/12 flex items-center justify-center font-bold text-xs shrink-0">
-            {review.initials}
-          </div>
-          <div className="truncate min-w-0">
-            <div className="font-semibold text-stone-900 text-xs sm:text-sm truncate">
-              {review.name}
-            </div>
-            <div className="text-[10px] sm:text-[11px] flex items-center gap-1 font-medium text-emerald-700">
-              <FontAwesomeIcon icon={faCheckCircle} className="w-2.5 h-2.5" />
-              <span>สั่งซื้อจริง</span>
-            </div>
-          </div>
-        </div>
-
-        <span className="text-xs font-semibold text-amber-900/80 group-hover:text-amber-900 transition-colors">
-          อ่านรีวิว →
-        </span>
-      </div>
-    </motion.div>
   );
 }
