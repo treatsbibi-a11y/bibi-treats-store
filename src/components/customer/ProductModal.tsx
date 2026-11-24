@@ -135,12 +135,6 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                 <p className="text-sm text-[#6B6155] leading-relaxed mb-6 font-light">
                   {product.description}
                 </p>
-
-                {/* Artisanal Quality Note */}
-                <div className="bg-[#F5EFE6]/90 rounded-xl px-3.5 py-2.5 border border-[#E8DEC8]/70 text-xs text-[#7A6D5D] leading-relaxed mb-6 flex items-center gap-2.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#B89F80] flex-shrink-0" />
-                  <span>เนยสดแท้ 100% · แนะนำแช่เย็นและรับประทานภายใน 3–5 วัน</span>
-                </div>
               </div>
 
               {/* Order Controls */}
