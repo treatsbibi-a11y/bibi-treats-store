@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "node --no-node-snapshot ./node_modules/next/dist/bin/next dev",
     "build": "prisma generate && node --no-node-snapshot ./node_modules/next/dist/bin/next build",
+    "pages:build": "npx @cloudflare/next-on-pages",
     "start": "node --no-node-snapshot ./node_modules/next/dist/bin/next start",
     "postinstall": "prisma generate",
     "lint": "next lint",
