@@ -197,20 +197,20 @@ export default function ReviewsSection() {
         onTouchMove={handleTouchMove}
       >
         {/* Left-Aligned Editorial Header */}
-        <div className="absolute z-30 pointer-events-none top-[74px] sm:top-1/2 sm:-translate-y-1/2 left-5 sm:left-12 lg:left-24 max-w-[320px] sm:max-w-md text-left">
-          <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-amber-900/5 border border-amber-900/10 text-amber-900 text-[11px] sm:text-xs font-medium tracking-wide mb-2 sm:mb-3">
+        <div className="absolute z-30 pointer-events-none top-[68px] sm:top-1/2 sm:-translate-y-1/2 left-5 sm:left-12 lg:left-24 max-w-[320px] sm:max-w-md text-left">
+          <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-amber-900/5 border border-amber-900/10 text-amber-900 text-[11px] sm:text-xs font-medium tracking-wide mb-1.5 sm:mb-3">
             <span>Verified Customer Stories</span>
           </div>
 
           <h2 className="text-2xl sm:text-5xl lg:text-6xl font-bold text-stone-900 tracking-tight font-prompt leading-tight sm:leading-[1.15]">
             รีวิวจากลูกค้า
           </h2>
-          <p className="text-xs sm:text-base text-stone-600 font-normal mt-1.5 sm:mt-3 mb-3 sm:mb-5 leading-relaxed">
+          <p className="text-xs sm:text-base text-stone-600 font-normal mt-1 sm:mt-3 mb-2.5 sm:mb-5 leading-relaxed">
             ความประทับใจจากลูกค้าตัวจริงที่หลงรักรสชาติขนมอบสดใหม่ของ Bibi&apos;s Treats
           </p>
 
           {/* Clean Editorial Rating Box with Enhanced Glassmorphism */}
-          <div className="inline-flex items-center gap-2.5 sm:gap-3 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl bg-white/95 backdrop-blur-md border border-stone-200/80 shadow-[0_8px_24px_-6px_rgba(180,83,9,0.12)] pointer-events-auto">
+          <div className="inline-flex items-center gap-2.5 sm:gap-3 px-3.5 py-1.5 sm:px-4 sm:py-2.5 rounded-2xl bg-white/95 backdrop-blur-md border border-stone-200/80 shadow-[0_8px_24px_-6px_rgba(180,83,9,0.12)] pointer-events-auto">
             <div className="flex items-center gap-1 text-amber-500">
               {[...Array(5)].map((_, i) => (
                 <FontAwesomeIcon key={i} icon={faStar} className="w-3 sm:w-3.5 h-3 sm:h-3.5 fill-current" />
@@ -223,7 +223,7 @@ export default function ReviewsSection() {
           </div>
 
           {/* Minimal Scroll Hint on Mobile */}
-          <div className="flex items-center gap-2 text-[11px] text-amber-950/70 font-light mt-2.5 sm:hidden">
+          <div className="flex items-center gap-2 text-[10px] text-amber-950/70 font-light mt-2 sm:hidden">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-600 animate-ping" />
             <span>เลื่อนลงเพื่อชมรีวิวทั้งหมด</span>
           </div>
@@ -233,8 +233,8 @@ export default function ReviewsSection() {
         <div
           className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none"
           style={{
-            perspective: isMobile ? '1600px' : '2400px',
-            perspectiveOrigin: isMobile ? '50% 68%' : '56% 45%',
+            perspective: isMobile ? '1400px' : '2400px',
+            perspectiveOrigin: isMobile ? '50% 50%' : '56% 45%',
           }}
         >
           {/* Animated 3D Track */}
@@ -245,8 +245,8 @@ export default function ReviewsSection() {
               y,
               z,
               transformStyle: 'preserve-3d',
-              left: isMobile ? '0px' : '220px',
-              top: isMobile ? '160px' : '0px',
+              left: isMobile ? '-130px' : '220px',
+              top: isMobile ? '-175px' : '0px',
             }}
           >
             {reviewsData.map((review, i) => (
@@ -431,7 +431,7 @@ function ReviewCard({
       ref={ref}
       onClick={() => onSelect(review)}
       className={`absolute ${
-        isMobile ? 'w-[260px] h-[375px]' : 'w-[325px] h-[435px]'
+        isMobile ? 'w-[260px] h-[360px]' : 'w-[325px] h-[435px]'
       } bg-white rounded-[28px] border border-[#EBE3D5] shadow-[0_12px_32px_-12px_rgba(40,25,15,0.08)] hover:shadow-[0_24px_48px_-12px_rgba(40,25,15,0.16)] overflow-hidden flex flex-col justify-between p-4 sm:p-5 transition-all duration-300 group cursor-pointer active:scale-98`}
       style={{
         transform,
@@ -441,7 +441,7 @@ function ReviewCard({
     >
       <div>
         {/* Product Image Preview with Category Badge */}
-        <div className="relative w-full h-36 sm:h-44 rounded-2xl overflow-hidden mb-3.5 bg-stone-100 border border-stone-100">
+        <div className={`relative w-full ${isMobile ? 'h-32' : 'h-44'} rounded-2xl overflow-hidden mb-3 bg-stone-100 border border-stone-100`}>
           <img
             src={review.image}
             alt={review.menuItem}
