@@ -1,0 +1,12 @@
+name = "bibi-store"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "bibi-treats-db"
+database_id = "4ac8e95b-0102-404f-8555-341bd7e3ea97"
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "bibi-treats-assets"

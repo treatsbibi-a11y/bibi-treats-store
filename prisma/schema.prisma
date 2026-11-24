@@ -1,0 +1,101 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Product {
+  id          String         @id @default(cuid())
+  name        String
+  description String
+  price       Float
+  stock       Int            @default(0)
+  initialStock Int           @default(0)
+  sold        Int            @default(0)
+  category    String         @default("Bakery")
+  status      String         @default("ACTIVE") // ACTIVE, INACTIVE
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  images      ProductImage[]
+  orderItems  OrderItem[]
+}
+
+model ProductImage {
+  id           String   @id @default(cuid())
+  productId    String
+  imageUrl     String
+  isPrimary    Boolean  @default(false)
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String
+  instagram String?
+  address   String
+  createdAt DateTime @default(now())
+  orders    Order[]
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  orderNumber   String      @unique // e.g. BT-0001
+  customerId    String
+  subtotal      Float
+  shippingFee   Float       @default(0)
+  total         Float
+  status        String      @default("PENDING") // PENDING, CONFIRMED, PREPARING, SHIPPING, COMPLETED, CANCELLED
+  paymentMethod String      @default("TRANSFER") // TRANSFER (โอนเงิน/QR), COD (เก็บเงินปลายทาง)
+  slipUrl       String?
+  note          String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  customer Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  items    OrderItem[]
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+  orderId     String
+  productId   String?
+  productName String
+  quantity    Int
+  price       Float
+  subtotal    Float
+
+  order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  role         String   @default("OWNER")
+  createdAt    DateTime @default(now())
+}
+
+model StoreSettings {
+  id                 String   @id @default("default")
+  shopName           String   @default("Bibi's Treats")
+  tagline            String   @default("Sweet treats, happy hearts")
+  logoUrl            String?
+  qrImageUrl         String?  @default("/images/thai-qr-payment.jpg")
+  promptpayNumber    String   @default("086-296-5765")
+  promptpayName      String   @default("น.ส. ฮาบีบี บุตรแหล่")
+  bankName           String   @default("ธนาคารกสิกรไทย (Kasikorn Bank)")
+  bankAccountNo      String   @default("142-1-52907-4")
+  bankAccountName    String   @default("น.ส. ฮาบีบี บุตรแหล่")
+  defaultShippingFee Float    @default(40.0)
+  isStoreOpen        Boolean  @default(true)
+  announcement       String?  @default("อบสดใหม่ทุกวัน ส่งตรงถึงบ้านคุณด้วยความพิถีพิถัน")
+  updatedAt          DateTime @updatedAt
+}

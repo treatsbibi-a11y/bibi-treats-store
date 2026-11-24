@@ -1,0 +1,171 @@
+{
+  "timestamp": "2026-11-23T12:47:02.287Z",
+  "url": "http://localhost:3002/",
+  "viewports": {
+    "desktop": {
+      "bodyScrollWidth": 1280,
+      "winWidth": 1280,
+      "hasHorizontalOverflow": false,
+      "carousel": {
+        "exists": true,
+        "width": 1024,
+        "height": 620,
+        "cardCount": 6,
+        "sampleCardWidth": 255,
+        "sampleCardHeight": 326,
+        "cardImages": [
+          {
+            "alt": "Dark Chocolate Fudge Layer Cake",
+            "src": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=1000&auto=format&fit=crop",
+            "naturalWidth": 1000,
+            "naturalHeight": 735
+          },
+          {
+            "alt": "Pastel Macaron Box",
+            "src": "https://images.unsplash.com/photo-1587314168485-3236d6710814?q=80&w=1000&auto=format&fit=crop",
+            "naturalWidth": 1000,
+            "naturalHeight": 746
+          },
+          {
+            "alt": "Strawberry Shortcake Cup",
+            "src": "https://images.unsplash.com/photo-1565958011703-44f9829ba187?q=80&w=1000&auto=format&fit=crop",
+            "naturalWidth": 1000,
+            "naturalHeight": 1250
+          },
+          {
+            "alt": "Artisanal French Butter Croissant",
+            "src": "https://images.unsplash.com/photo-1555507036-ab1f4038808a?q=80&w=1000&auto=format&fit=crop",
+            "naturalWidth": 1000,
+            "naturalHeight": 800
+          },
+          {
+            "alt": "Signature Dark Chocolate Brownie",
+            "src": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?q=80&w=1000&auto=format&fit=crop",
+            "naturalWidth": 1000,
+            "naturalHeight": 1500
+          },
+          {
+            "alt": "Matcha Kyoto Cream Choux Bun",
+            "src": "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?q=80&w=1000&auto=format&fit=crop",
+            "naturalWidth": 1000,
+            "naturalHeight": 667
+          }
+        ]
+      },
+      "typography": {
+        "line1": {
+          "text": "ขนมอบสดใหม่สไตล์โฮมเมด",
+          "fontWeight": "300",
+          "fontSize": "52px",
+          "letterSpacing": "2.6px",
+          "color": "rgb(30, 41, 59)",
+          "fontFamily": "__Rubik_d52529, __Rubik_Fallback_d52529, __Prompt_401515, __Prompt_Fallback_401515, Rubik, Prompt, sans-serif"
+        },
+        "line2": {
+          "text": "คุณภาพทุกขั้นตอน",
+          "fontWeight": "700",
+          "fontSize": "52px",
+          "color": "rgb(2, 106, 199)"
+        }
+      },
+      "brushStroke": {
+        "exists": true,
+        "viewBox": "0 0 360 26",
+        "width": 446,
+        "height": 24,
+        "pathsCount": 4,
+        "gradientsCount": 2,
+        "hasMainPath": true,
+        "hasBottomPath": true,
+        "hasTopPath": true,
+        "hasFlourish": true
+      }
+    },
+    "tablet": {
+      "bodyScrollWidth": 768,
+      "winWidth": 768,
+      "hasHorizontalOverflow": false,
+      "carousel": {
+        "width": 720,
+        "height": 560,
+        "sampleCardWidth": 243,
+        "sampleCardHeight": 309
+      },
+      "typography": {
+        "line1Size": "48px",
+        "line1Weight": "300",
+        "line2Size": "48px"
+      },
+      "brushStroke": {
+        "exists": true,
+        "width": 411,
+        "height": 24
+      }
+    },
+    "mobile390": {
+      "bodyScrollWidth": 390,
+      "winWidth": 390,
+      "hasHorizontalOverflow": false,
+      "carousel": {
+        "width": 358,
+        "height": 340,
+        "sampleCardWidth": 153,
+        "sampleCardHeight": 198
+      },
+      "typography": {
+        "line1Size": "24px",
+        "line1Weight": "300",
+        "line2Size": "24px"
+      },
+      "brushStroke": {
+        "exists": true,
+        "width": 200,
+        "height": 16
+      }
+    },
+    "mobile375": {
+      "bodyScrollWidth": 375,
+      "winWidth": 375,
+      "hasHorizontalOverflow": false,
+      "carousel": {
+        "width": 343,
+        "height": 340,
+        "sampleCardWidth": 155,
+        "sampleCardHeight": 200
+      },
+      "brushStroke": {
+        "exists": true,
+        "width": 200,
+        "height": 16
+      }
+    }
+  },
+  "domVerification": {},
+  "screenshots": [
+    {
+      "filename": "hero-01-desktop-1280.png",
+      "filePath": "D:\\dev-project\\bibi-store\\screenshots\\hero-01-desktop-1280.png",
+      "sizeKb": "2047.1"
+    },
+    {
+      "filename": "hero-02-desktop-headline-brush-closeup.png",
+      "filePath": "D:\\dev-project\\bibi-store\\screenshots\\hero-02-desktop-headline-brush-closeup.png",
+      "sizeKb": "112.8"
+    },
+    {
+      "filename": "hero-03-tablet-768.png",
+      "filePath": "D:\\dev-project\\bibi-store\\screenshots\\hero-03-tablet-768.png",
+      "sizeKb": "1715.8"
+    },
+    {
+      "filename": "hero-04-mobile-390.png",
+      "filePath": "D:\\dev-project\\bibi-store\\screenshots\\hero-04-mobile-390.png",
+      "sizeKb": "905.6"
+    },
+    {
+      "filename": "hero-05-mobile-375.png",
+      "filePath": "D:\\dev-project\\bibi-store\\screenshots\\hero-05-mobile-375.png",
+      "sizeKb": "834.2"
+    }
+  ]
+}
