@@ -5,7 +5,7 @@ import { CartItem, ProductWithImages } from '@/types';
 
 interface CartContextType {
   items: CartItem[];
-  addToCart: (product: ProductWithImages, qty?: number) => boolean;
+  addToCart: (product: ProductWithImages, qty?: number, openDrawer?: boolean) => boolean;
   updateQuantity: (productId: string, qty: number) => void;
   removeFromCart: (productId: string) => void;
   clearCart: () => void;
@@ -68,7 +68,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [items, isLoaded]);
 
-  const addToCart = (product: ProductWithImages, qty = 1): boolean => {
+  const addToCart = (product: ProductWithImages, qty = 1, openDrawer = false): boolean => {
     if (product.stock <= 0) return false;
 
     setItems((prev) => {
@@ -83,7 +83,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         return [...prev, { product, quantity: initialQty }];
       }
     });
-    setIsDrawerOpen(true);
+
+    if (openDrawer) {
+      setIsDrawerOpen(true);
+    }
     return true;
   };
 

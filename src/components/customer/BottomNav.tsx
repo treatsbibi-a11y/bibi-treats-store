@@ -10,6 +10,18 @@ export default function BottomNav() {
   const router = useRouter();
   const { totalItems, isDrawerOpen, openDrawer, closeDrawer } = useCart();
   const [activeTab, setActiveTab] = useState<'home' | 'menu' | 'cart' | 'tracking'>('home');
+  const [isCartBouncing, setIsCartBouncing] = useState(false);
+  const prevTotalItemsRef = React.useRef(totalItems);
+
+  useEffect(() => {
+    if (totalItems > prevTotalItemsRef.current) {
+      setIsCartBouncing(true);
+      const timer = setTimeout(() => setIsCartBouncing(false), 800);
+      prevTotalItemsRef.current = totalItems;
+      return () => clearTimeout(timer);
+    }
+    prevTotalItemsRef.current = totalItems;
+  }, [totalItems]);
 
   // Hide on admin routes
   if (pathname.startsWith('/admin')) {
@@ -175,7 +187,7 @@ export default function BottomNav() {
           }`}
           aria-label="เปิดตะกร้าสินค้า"
         >
-          <div className="relative">
+          <div className={`relative transition-transform duration-300 ${isCartBouncing ? 'scale-125' : ''}`}>
             {activeTab === 'cart' ? (
               /* Solid Filled Luxury Shopping Bag */
               <svg
@@ -207,7 +219,9 @@ export default function BottomNav() {
 
             {/* Red Circular Cart Badge (Pure borderless solid red) */}
             {totalItems > 0 && (
-              <span className="absolute -top-1.5 -right-2 bg-red-600 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-xs pointer-events-none">
+              <span className={`absolute -top-1.5 -right-2 bg-red-600 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-xs pointer-events-none transition-all duration-300 ${
+                isCartBouncing ? 'scale-125 bg-emerald-600' : ''
+              }`}>
                 {totalItems}
               </span>
             )}

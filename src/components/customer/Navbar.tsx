@@ -27,6 +27,18 @@ export default function Navbar() {
   const [shopName, setShopName] = useState<string>("Bibi's Treats");
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('home');
+  const [isCartBouncing, setIsCartBouncing] = useState(false);
+  const prevTotalItemsRef = React.useRef(totalItems);
+
+  useEffect(() => {
+    if (totalItems > prevTotalItemsRef.current) {
+      setIsCartBouncing(true);
+      const timer = setTimeout(() => setIsCartBouncing(false), 800);
+      prevTotalItemsRef.current = totalItems;
+      return () => clearTimeout(timer);
+    }
+    prevTotalItemsRef.current = totalItems;
+  }, [totalItems]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -203,11 +215,22 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           <button
             onClick={openDrawer}
-            className="relative w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200/80 border border-slate-200/90 text-slate-800 transition-all flex items-center justify-center shadow-xs hover:shadow active:scale-95"
+            className={`relative w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200/80 border border-slate-200/90 text-slate-800 transition-all flex items-center justify-center shadow-xs hover:shadow active:scale-95 ${
+              isCartBouncing ? 'scale-110 ring-2 ring-emerald-500/40 bg-emerald-50' : ''
+            }`}
             aria-label="เปิดตะกร้าสินค้า"
           >
-            <FontAwesomeIcon icon={faBagShopping} className="w-4 h-4 text-slate-800" />
-            <span className="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[10px] font-mono min-w-[19px] h-[19px] px-1 rounded-full flex items-center justify-center font-bold shadow-sm">
+            <FontAwesomeIcon
+              icon={faBagShopping}
+              className={`w-4 h-4 transition-transform duration-300 ${
+                isCartBouncing ? 'text-emerald-600 scale-110' : 'text-slate-800'
+              }`}
+            />
+            <span
+              className={`absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[10px] font-mono min-w-[19px] h-[19px] px-1 rounded-full flex items-center justify-center font-bold shadow-sm transition-all duration-300 ${
+                isCartBouncing ? 'scale-125 bg-emerald-600' : ''
+              }`}
+            >
               {totalItems}
             </span>
           </button>
