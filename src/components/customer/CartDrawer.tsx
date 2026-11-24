@@ -50,7 +50,13 @@ export function CartDrawer() {
               </div>
               <div className="flex justify-between text-slate-600">
                 <span>ค่าจัดส่งโดยประมาณ</span>
-                <span className="font-medium text-slate-900">฿{shippingFee}</span>
+                <span className="font-medium text-slate-900">
+                  {shippingFee === 0 ? (
+                    <span className="font-semibold text-emerald-600">จัดส่งฟรี</span>
+                  ) : (
+                    `฿${shippingFee.toLocaleString()}`
+                  )}
+                </span>
               </div>
               <div className="flex justify-between text-base font-bold text-slate-900 pt-2 border-t border-slate-200">
                 <span>ยอดรวมสุทธิ</span>

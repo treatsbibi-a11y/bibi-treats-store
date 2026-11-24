@@ -362,7 +362,13 @@ export default function OrderSuccessPage() {
                   </div>
                   <div className="flex justify-between text-slate-600">
                     <span>ค่าจัดส่งพัสดุ (Shipping)</span>
-                    <span className="font-mono font-medium">฿{formatPrice(order.shippingFee)}</span>
+                    <span className="font-mono font-medium">
+                      {order.shippingFee === 0 ? (
+                        <span className="font-sans font-semibold text-emerald-600">จัดส่งฟรี</span>
+                      ) : (
+                        `฿${formatPrice(order.shippingFee)}`
+                      )}
+                    </span>
                   </div>
                   <div className="flex justify-between text-slate-600 text-[11px]">
                     <span>วิธีชำระเงิน (Payment)</span>

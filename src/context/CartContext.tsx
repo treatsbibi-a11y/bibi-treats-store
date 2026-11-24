@@ -26,9 +26,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [shippingFee] = useState(40); // Standard bakery shipping fee
+  const [shippingFee, setShippingFee] = useState<number>(40); // Synced with StoreSettings
 
-  // Load from localStorage on mount
+  // Load from localStorage on mount & sync store settings
   useEffect(() => {
     try {
       const saved = localStorage.getItem('bibi_cart');
@@ -39,6 +39,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       console.error('Failed to load cart from storage', e);
     }
     setIsLoaded(true);
+
+    // Fetch real-time shipping fee from admin store settings
+    const fetchSettings = async () => {
+      try {
+        const res = await fetch('/api/settings');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && typeof data.defaultShippingFee === 'number') {
+            setShippingFee(data.defaultShippingFee);
+          }
+        }
+      } catch (err) {
+        console.warn('Could not sync store settings for shipping fee', err);
+      }
+    };
+    fetchSettings();
   }, []);
 
   // Save to localStorage on change

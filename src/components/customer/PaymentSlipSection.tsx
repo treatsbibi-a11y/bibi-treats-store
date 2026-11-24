@@ -242,7 +242,9 @@ export default function PaymentSlipSection({
                 ฿{formatPrice(order.total)}
               </span>
               <span className="text-[11px] text-slate-500 block mt-1">
-                (รวมค่าจัดส่ง ฿{formatPrice(order.shippingFee)} แล้ว)
+                {order.shippingFee === 0
+                  ? '(จัดส่งฟรี)'
+                  : `(รวมค่าจัดส่ง ฿${formatPrice(order.shippingFee)} แล้ว)`}
               </span>
             </div>
           </div>

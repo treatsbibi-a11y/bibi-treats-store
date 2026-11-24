@@ -204,7 +204,11 @@ export default function CartPage() {
                   <div className="flex justify-between text-slate-600">
                     <span>ค่าจัดส่งโดยประมาณ</span>
                     <span className="font-mono font-medium text-slate-900">
-                      ฿{formatPrice(shippingFee)}
+                      {shippingFee === 0 ? (
+                        <span className="font-sans font-semibold text-emerald-600">จัดส่งฟรี</span>
+                      ) : (
+                        `฿${formatPrice(shippingFee)}`
+                      )}
                     </span>
                   </div>
                   <div className="flex justify-between text-base font-bold text-slate-900 pt-2 border-t border-slate-200">

@@ -406,7 +406,11 @@ export default function CheckoutPage() {
                     <div className="flex justify-between text-slate-600">
                       <span>ค่าจัดส่ง</span>
                       <span className="font-mono font-medium text-slate-900">
-                        ฿{shippingFee}
+                        {shippingFee === 0 ? (
+                          <span className="font-sans font-semibold text-emerald-600">จัดส่งฟรี</span>
+                        ) : (
+                          `฿${shippingFee.toLocaleString()}`
+                        )}
                       </span>
                     </div>
                     <div className="flex justify-between text-slate-600">

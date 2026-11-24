@@ -315,7 +315,13 @@ export default function TrackingPage() {
                   </div>
                   <div className="flex justify-between text-slate-500">
                     <span>ค่าจัดส่งพัสดุ</span>
-                    <span className="font-mono">฿{formatPrice(order.shippingFee)}</span>
+                    <span className="font-mono">
+                      {order.shippingFee === 0 ? (
+                        <span className="font-sans font-semibold text-emerald-600">จัดส่งฟรี</span>
+                      ) : (
+                        `฿${formatPrice(order.shippingFee)}`
+                      )}
+                    </span>
                   </div>
                   <div className="flex justify-between text-slate-500">
                     <span>วิธีการชำระเงิน</span>
