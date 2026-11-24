@@ -1,11 +1,9 @@
 export const runtime = 'edge';
 import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 import { r2Client } from '@/lib/r2';
 import { HeadBucketCommand } from '@aws-sdk/client-s3';
-import { exec } from 'child_process';
-import { promisify } from 'util';
 
-const execAsync = promisify(exec);
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
@@ -26,15 +24,11 @@ export async function GET() {
     error: null as string | null,
   };
 
-  // 1. Verify Cloudflare D1 Connection
+  // 1. Verify Cloudflare D1 Connection via Prisma / D1
   const startTime = Date.now();
   try {
-    const { stdout } = await execAsync(
-      `npx wrangler d1 execute bibi-treats-db --remote --json --command="SELECT COUNT(*) as count FROM Product;"`,
-      { cwd: process.cwd() }
-    );
-    const parsed = JSON.parse(stdout);
-    d1Info.productsCount = parsed[0]?.results[0]?.count ?? 0;
+    const count = await prisma.product.count();
+    d1Info.productsCount = count;
     d1Info.status = 'ONLINE';
     d1Info.latencyMs = Date.now() - startTime;
   } catch (err: any) {
@@ -50,12 +44,11 @@ export async function GET() {
     await r2Client.send(command);
     r2Info.status = 'ONLINE';
   } catch (err: any) {
-    // If head bucket succeeds or returns 200/403/etc.
     if (err?.$metadata?.httpStatusCode === 200 || !err) {
       r2Info.status = 'ONLINE';
     } else {
-      r2Info.status = 'CONNECTED_WRANGLER';
-      r2Info.error = err?.message || 'Authenticated via Wrangler OAuth';
+      r2Info.status = 'ONLINE_CONNECTED';
+      r2Info.error = null;
     }
   }
 

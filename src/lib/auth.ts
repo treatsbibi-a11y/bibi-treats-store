@@ -1,8 +1,9 @@
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'bibi-treats-super-cute-secret-key-2026';
+const secretKey = new TextEncoder().encode(JWT_SECRET);
 const COOKIE_NAME = 'bibi_admin_token';
 
 export async function hashPassword(password: string): Promise<string> {
@@ -13,21 +14,25 @@ export async function comparePassword(password: string, hash: string): Promise<b
   return bcrypt.compare(password, hash);
 }
 
-export function signAdminToken(payload: { id: string; username: string; role: string }): string {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+export async function signAdminToken(payload: { id: string; username: string; role: string }): Promise<string> {
+  return await new SignJWT(payload)
+    .setProtectedHeader({ alg: 'HS256' })
+    .setExpirationTime('7d')
+    .sign(secretKey);
 }
 
-export function verifyAdminToken(token: string): { id: string; username: string; role: string } | null {
+export async function verifyAdminToken(token: string): Promise<{ id: string; username: string; role: string } | null> {
   try {
-    return jwt.verify(token, JWT_SECRET) as { id: string; username: string; role: string };
+    const { payload } = await jwtVerify(token, secretKey);
+    return payload as unknown as { id: string; username: string; role: string };
   } catch {
     return null;
   }
 }
 
-export function getAdminSession() {
+export async function getAdminSession() {
   const cookieStore = cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;
   if (!token) return null;
-  return verifyAdminToken(token);
+  return await verifyAdminToken(token);
 }

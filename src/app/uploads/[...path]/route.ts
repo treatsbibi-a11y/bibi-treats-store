@@ -1,9 +1,11 @@
 export const runtime = 'edge';
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { GetObjectCommand } from '@aws-sdk/client-s3';
+import { r2Client } from '@/lib/r2';
 
 export const dynamic = 'force-dynamic';
+
+const bucketName = process.env.CLOUDFLARE_R2_BUCKET_NAME || 'bibi-treats-assets';
 
 export async function GET(
   req: NextRequest,
@@ -15,36 +17,21 @@ export async function GET(
       return new NextResponse('File not found', { status: 404 });
     }
 
-    // First check bibi-store public/uploads
-    let filePath = path.join(process.cwd(), 'public', 'uploads', filename);
+    const cleanKey = filename.startsWith('uploads/') ? filename : `uploads/${filename}`;
+    const command = new GetObjectCommand({
+      Bucket: bucketName,
+      Key: cleanKey,
+    });
 
-    // If not found, check admin-bibi-store public/uploads
-    if (!fs.existsSync(filePath)) {
-      const adminPath = path.resolve(process.cwd(), '..', 'admin-bibi-store', 'public', 'uploads', filename);
-      if (fs.existsSync(adminPath)) {
-        filePath = adminPath;
-      }
-    }
-
-    if (!fs.existsSync(filePath)) {
+    const data = await r2Client.send(command);
+    if (!data.Body) {
       return new NextResponse('File not found', { status: 404 });
     }
 
-    const fileBuffer = fs.readFileSync(filePath);
-    const ext = path.extname(filePath).toLowerCase();
+    const bytes = await data.Body.transformToByteArray();
+    const contentType = data.ContentType || 'image/jpeg';
 
-    const contentTypeMap: Record<string, string> = {
-      '.png': 'image/png',
-      '.jpg': 'image/jpeg',
-      '.jpeg': 'image/jpeg',
-      '.webp': 'image/webp',
-      '.gif': 'image/gif',
-      '.svg': 'image/svg+xml',
-    };
-
-    const contentType = contentTypeMap[ext] || 'application/octet-stream';
-
-    return new NextResponse(fileBuffer, {
+    return new Response(bytes as any, {
       status: 200,
       headers: {
         'Content-Type': contentType,
@@ -52,7 +39,6 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error('Error serving upload file:', error);
-    return new NextResponse('Internal Server Error', { status: 500 });
+    return new NextResponse('File not found', { status: 404 });
   }
 }
