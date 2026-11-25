@@ -79,9 +79,14 @@ export default function Footer() {
                     <span>@bibi.streats</span>
                   </a>
                 </li>
-                <li className="flex items-center gap-2">
-                  <FontAwesomeIcon icon={faPhone} className="w-3.5 h-3.5 text-slate-400" />
-                  <span>086-296-5765</span>
+                <li>
+                  <a
+                    href="tel:0862965765"
+                    className="inline-flex items-center gap-2 hover:text-white transition-colors"
+                  >
+                    <FontAwesomeIcon icon={faPhone} className="w-3.5 h-3.5 text-slate-400" />
+                    <span>086-296-5765</span>
+                  </a>
                 </li>
                 <li className="flex items-center gap-2">
                   <FontAwesomeIcon icon={faClock} className="w-3.5 h-3.5 text-slate-400" />

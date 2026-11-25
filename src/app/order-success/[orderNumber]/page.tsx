@@ -289,7 +289,12 @@ export default function OrderSuccessPage() {
                       IG: @bibi.streats
                     </a>
                     <span>•</span>
-                    <span>โทร: 086-296-5765</span>
+                    <a
+                      href="tel:0862965765"
+                      className="hover:text-slate-600 transition-colors"
+                    >
+                      โทร: 086-296-5765
+                    </a>
                   </div>
                 </div>
 
