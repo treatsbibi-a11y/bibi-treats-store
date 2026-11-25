@@ -202,49 +202,50 @@ export default function PaymentSlipSection({
     }
   };
 
-  // Case 1: COD (Cash on Delivery)
+  // Case 1: COD (Cash on Delivery) - Luxury Minimalist
   if (order.paymentMethod === 'COD') {
     return (
-      <Card className="border-amber-200 bg-white overflow-hidden shadow-sm">
-        <CardHeader className="bg-amber-50/70 border-b border-amber-200/70 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 px-4 sm:px-6 py-3.5 sm:py-4">
-          <div className="flex items-center gap-2 min-w-0">
-            <FontAwesomeIcon icon={faTruck} className="w-4 h-4 text-amber-700 shrink-0" />
-            <h2 className="text-xs font-bold text-slate-900 tracking-wide font-mono">
-              วิธีการชำระเงิน: เก็บเงินปลายทาง (COD)
+      <Card className="border-slate-200/80 bg-white overflow-hidden shadow-subtle rounded-2xl">
+        <CardHeader className="bg-white border-b border-slate-100 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 px-5 sm:px-7 py-4">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-7 h-7 rounded-lg bg-slate-50 border border-slate-200/70 flex items-center justify-center text-slate-700 shrink-0">
+              <FontAwesomeIcon icon={faTruck} className="w-3.5 h-3.5" />
+            </div>
+            <h2 className="text-xs sm:text-sm font-semibold text-slate-900 tracking-tight">
+              เก็บเงินปลายทาง (Cash on Delivery)
             </h2>
           </div>
-          <Badge variant="warning" size="sm" className="whitespace-nowrap shrink-0">
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 text-slate-700 whitespace-nowrap shrink-0">
             ชำระเมื่อรับสินค้า
-          </Badge>
+          </span>
         </CardHeader>
-        <CardBody className="p-6">
+        <CardBody className="p-5 sm:p-7">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-            <div className="space-y-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-900 font-semibold text-xs">
-                <FontAwesomeIcon icon={faMoneyBillWave} className="w-3.5 h-3.5 text-amber-600" />
-                <span>เตรียมเงินสดสำหรับชำระกับเจ้าหน้าที่จัดส่ง</span>
-              </div>
-              <h3 className="text-lg font-bold text-slate-900">
-                ยอดเงินสดที่ต้องเตรียมชำระ:
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-medium uppercase tracking-wider text-slate-400 block">
+                คำแนะนำการจัดส่ง
+              </span>
+              <h3 className="text-base sm:text-lg font-semibold text-slate-900 tracking-tight">
+                เตรียมเงินสดให้พอดีเมื่อรับสินค้า
               </h3>
-              <p className="text-xs text-slate-600 leading-relaxed max-w-md">
-                เจ้าหน้าที่จัดส่งพัสดุจะโทรแจ้งที่เบอร์{' '}
-                <strong className="text-slate-900 font-mono">{order.customer?.phone}</strong>{' '}
-                ก่อนเดินทางนำส่งกล่องขนมถึงบ้านคุณ โปรดเตรียมเงินสดจำนวนพอดีเพื่อความรวดเร็วในการรับสินค้า
+              <p className="text-xs sm:text-sm text-slate-500 leading-relaxed max-w-md">
+                เจ้าหน้าที่จัดส่งจะโทรแจ้งล่วงหน้าที่เบอร์{' '}
+                <strong className="text-slate-900 font-mono font-semibold">{order.customer?.phone}</strong>{' '}
+                ก่อนนำส่งกล่องขนมถึงมือคุณ
               </p>
             </div>
 
-            <div className="w-full sm:w-auto p-4 bg-slate-50 rounded-2xl border border-slate-200 text-center sm:text-right flex-shrink-0">
-              <span className="text-[10px] uppercase font-mono text-slate-400 tracking-wider block">
-                ยอดเก็บเงินปลายทาง
+            <div className="w-full sm:w-auto px-6 py-4 bg-slate-50/80 rounded-2xl border border-slate-200/70 text-center sm:text-right flex-shrink-0 min-w-[180px]">
+              <span className="text-[11px] font-medium text-slate-500 block">
+                ยอดชำระปลายทาง
               </span>
-              <span className="text-2xl font-black text-brand-600 font-mono block mt-0.5">
+              <span className="text-2xl sm:text-3xl font-bold text-slate-900 font-mono tracking-tight block mt-0.5">
                 ฿{formatPrice(order.total)}
               </span>
-              <span className="text-[11px] text-slate-500 block mt-1">
+              <span className={`text-xs block mt-1 font-medium ${order.shippingFee === 0 ? 'text-brand-600' : 'text-slate-500'}`}>
                 {order.shippingFee === 0
-                  ? '(จัดส่งฟรี)'
-                  : `(รวมค่าจัดส่ง ฿${formatPrice(order.shippingFee)} แล้ว)`}
+                  ? 'จัดส่งฟรี'
+                  : `รวมค่าจัดส่ง ฿${formatPrice(order.shippingFee)}`}
               </span>
             </div>
           </div>
