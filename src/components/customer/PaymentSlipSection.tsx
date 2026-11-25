@@ -312,7 +312,7 @@ export default function PaymentSlipSection({
               </a>
 
               <a
-                href="https://instagram.com/bibis.treats.bkk"
+                href="https://www.instagram.com/bibi.streats?fqnt=MXNtZmVvaDhjbmZrOA%3D%3D"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200 font-medium transition-colors"

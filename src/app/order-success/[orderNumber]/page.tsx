@@ -280,7 +280,14 @@ export default function OrderSuccessPage() {
                     {settings?.tagline || "ขนมโฮมเมด สดใหม่จากเตา อบด้วยใจทุกชิ้น"}
                   </p>
                   <div className="text-[11px] text-slate-400 pt-0.5 flex items-center justify-center gap-2">
-                    <span>IG: @bibis.treats.bkk</span>
+                    <a
+                      href="https://www.instagram.com/bibi.streats?fqnt=MXNtZmVvaDhjbmZrOA%3D%3D"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-slate-600 transition-colors"
+                    >
+                      IG: @bibi.streats
+                    </a>
                     <span>•</span>
                     <span>โทร: 086-296-5765</span>
                   </div>

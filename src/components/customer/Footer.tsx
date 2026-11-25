@@ -68,9 +68,16 @@ export default function Footer() {
                 ติดต่อเรา &amp; เวลาทำการ
               </h3>
               <ul className="space-y-2.5 text-slate-400">
-                <li className="flex items-center gap-2">
-                  <FontAwesomeIcon icon={faInstagram} className="w-4 h-4 text-slate-400" />
-                  <span>@bibis.treats.bkk</span>
+                <li>
+                  <a
+                    href="https://www.instagram.com/bibi.streats?fqnt=MXNtZmVvaDhjbmZrOA%3D%3D"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 hover:text-white transition-colors"
+                  >
+                    <FontAwesomeIcon icon={faInstagram} className="w-4 h-4 text-slate-400" />
+                    <span>@bibi.streats</span>
+                  </a>
                 </li>
                 <li className="flex items-center gap-2">
                   <FontAwesomeIcon icon={faPhone} className="w-3.5 h-3.5 text-slate-400" />
