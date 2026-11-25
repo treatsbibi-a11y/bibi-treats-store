@@ -343,162 +343,30 @@ export default function ReviewsSection() {
               <FontAwesomeIcon icon={faPenToSquare} className="w-3.5 h-3.5" />
               <span>เขียนรีวิว</span>
             </button>
-          </div>
-        </div>
 
-        {/* 2. Rating Breakdown Card (5★ -> 1★ Auto-calculated Percentages) */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-subtle p-5 sm:p-6">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-            {/* Left Big Score */}
-            <div className="md:col-span-4 flex items-center md:flex-col md:items-start justify-between md:justify-center gap-4 pb-4 md:pb-0 border-b md:border-b-0 md:border-r border-slate-100 md:pr-6">
-              <div>
-                <div className="text-4xl sm:text-5xl font-bold text-slate-900 font-mono tracking-tight">
-                  {stats.totalCount > 0 ? stats.averageRating.toFixed(2) : '0.00'}
-                </div>
-                <div className="flex items-center gap-1 text-amber-400 mt-1.5">
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <FontAwesomeIcon key={s} icon={faStar} className="w-4 h-4" />
-                  ))}
-                </div>
-              </div>
-              <div className="text-right md:text-left">
-                <p className="text-xs sm:text-sm font-semibold text-slate-800">
-                  คะแนนเฉลี่ยจากผู้ซื้อจริง
-                </p>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  ทั้งหมด {stats.totalCount.toLocaleString()} รีวิว
-                </p>
-              </div>
-            </div>
-
-            {/* Right 5-1 Star Percentage Bars */}
-            <div className="md:col-span-8 space-y-2">
-              {stats.breakdown.map((row) => {
-                const isActive = filterStar === row.star;
-                return (
-                  <button
-                    key={row.star}
-                    type="button"
-                    onClick={() =>
-                      setFilterStar((prev) => (prev === row.star ? 'all' : row.star))
-                    }
-                    className={`w-full flex items-center gap-3 px-2 py-1 rounded-lg transition-colors cursor-pointer ${
-                      isActive ? 'bg-brand-50/80' : 'hover:bg-slate-50'
-                    }`}
-                  >
-                    <div className="flex items-center gap-1 w-24 shrink-0 text-amber-400 text-xs">
-                      {Array.from({ length: row.star }).map((_, idx) => (
-                        <FontAwesomeIcon key={idx} icon={faStar} className="w-3 h-3" />
-                      ))}
-                    </div>
-                    <div className="flex-1 h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-brand-500 rounded-full transition-all duration-500"
-                        style={{ width: `${row.percentage}%` }}
-                      />
-                    </div>
-                    <div className="w-12 text-right text-xs font-mono font-semibold text-slate-700 shrink-0">
-                      {row.percentage}%
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* 3. Filter Pills + Sort + Carousel Navigation */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          {/* Filter Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
-            <button
-              type="button"
-              onClick={() => {
-                setFilterStar('all');
-                setOnlyWithImages(false);
-              }}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
-                filterStar === 'all' && !onlyWithImages
-                  ? 'bg-brand-600 text-white shadow-xs'
-                  : 'bg-white text-slate-600 border border-slate-200/90 hover:border-brand-300'
-              }`}
-            >
-              ทั้งหมด
-            </button>
-            {([5, 4, 3, 2, 1] as const).map((star) => (
-              <button
-                key={star}
-                type="button"
-                onClick={() =>
-                  setFilterStar((prev) => (prev === star ? 'all' : star))
-                }
-                className={`inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
-                  filterStar === star
-                    ? 'bg-brand-600 text-white shadow-xs'
-                    : 'bg-white text-slate-600 border border-slate-200/90 hover:border-brand-300'
-                }`}
-              >
-                <FontAwesomeIcon
-                  icon={faStar}
-                  className={`w-3 h-3 ${
-                    filterStar === star ? 'text-amber-300' : 'text-amber-400'
-                  }`}
-                />
-                <span>{star} ดาว</span>
-              </button>
-            ))}
-            <button
-              type="button"
-              onClick={() => setOnlyWithImages((prev) => !prev)}
-              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
-                onlyWithImages
-                  ? 'bg-brand-600 text-white shadow-xs'
-                  : 'bg-white text-slate-600 border border-slate-200/90 hover:border-brand-300'
-              }`}
-            >
-              <FontAwesomeIcon icon={faCamera} className="w-3 h-3" />
-              <span>มีรูปภาพ</span>
-            </button>
-          </div>
-
-          {/* Sort & Carousel Prev/Next Controls */}
-          <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0">
-            <div className="inline-flex items-center gap-2 bg-white border border-slate-200/90 rounded-xl px-3 py-1.5 text-xs">
-              <FontAwesomeIcon icon={faArrowUpWideShort} className="w-3.5 h-3.5 text-slate-400" />
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as SortOption)}
-                aria-label="เรียงลำดับรีวิว"
-                className="bg-transparent text-slate-700 font-medium focus:outline-none cursor-pointer"
-              >
-                <option value="latest">รีวิวล่าสุด</option>
-                <option value="highest">คะแนนสูงสุด</option>
-                <option value="lowest">คะแนนต่ำสุด</option>
-              </select>
-            </div>
-
-            <div className="flex items-center gap-2">
+            {/* Clean Circular Carousel Arrows */}
+            <div className="hidden sm:flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => handleScroll('left')}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-brand-50 border border-slate-200/90 hover:border-brand-200 text-slate-700 hover:text-brand-700 text-xs font-medium transition-all active:scale-95 cursor-pointer"
+                aria-label="รีวิวก่อนหน้า"
+                className="w-10 h-10 rounded-full bg-white hover:bg-brand-50 border border-slate-200/90 hover:border-brand-200 text-slate-700 hover:text-brand-700 flex items-center justify-center shadow-subtle transition-all active:scale-95 cursor-pointer"
               >
-                <FontAwesomeIcon icon={faChevronLeft} className="w-3 h-3" />
-                <span className="hidden sm:inline">รีวิวก่อนหน้า</span>
+                <FontAwesomeIcon icon={faChevronLeft} className="w-3.5 h-3.5" />
               </button>
               <button
                 type="button"
                 onClick={() => handleScroll('right')}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-brand-50 border border-slate-200/90 hover:border-brand-200 text-slate-700 hover:text-brand-700 text-xs font-medium transition-all active:scale-95 cursor-pointer"
+                aria-label="รีวิวถัดไป"
+                className="w-10 h-10 rounded-full bg-white hover:bg-brand-50 border border-slate-200/90 hover:border-brand-200 text-slate-700 hover:text-brand-700 flex items-center justify-center shadow-subtle transition-all active:scale-95 cursor-pointer"
               >
-                <span className="hidden sm:inline">รีวิวถัดไป</span>
-                <FontAwesomeIcon icon={faChevronRight} className="w-3 h-3" />
+                <FontAwesomeIcon icon={faChevronRight} className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
         </div>
 
-        {/* 4. Review Carousel Cards */}
+        {/* Review Carousel Cards */}
         {isLoading ? (
           <div className="flex gap-4 overflow-hidden">
             {[1, 2, 3].map((i) => (
