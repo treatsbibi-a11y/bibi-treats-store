@@ -122,13 +122,15 @@ export default function ProductCard({ product, onOpenModal }: ProductCardProps) 
               variant="primary"
               size="md"
               className={`w-full transition-all duration-200 text-xs font-medium ${
-                isAdded ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-slate-900 hover:bg-slate-800 text-white shadow-sm'
+                isAdded
+                  ? 'bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 shadow-none'
+                  : 'bg-slate-900 hover:bg-slate-800 text-white shadow-sm'
               }`}
               onClick={handleQuickAdd}
             >
               {isAdded ? (
                 <>
-                  <FontAwesomeIcon icon={faCheck} className="w-3.5 h-3.5 mr-1.5" />
+                  <FontAwesomeIcon icon={faCheck} className="w-3.5 h-3.5 mr-1.5 text-brand-600" />
                   <span>เพิ่มลงตะกร้าแล้ว</span>
                 </>
               ) : (

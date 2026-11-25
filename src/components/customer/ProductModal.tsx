@@ -173,13 +173,13 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                     isOutOfStock
                       ? 'bg-[#E5DFD5] text-[#9E9488] cursor-not-allowed'
                       : isAdded
-                      ? 'bg-emerald-700 text-white shadow-md'
+                      ? 'bg-brand-50 text-brand-700 border border-brand-200 shadow-none'
                       : 'bg-[#201B17] hover:bg-[#342D26] active:scale-[0.99] text-white shadow-md hover:shadow-lg'
                   }`}
                 >
                   {isAdded ? (
                     <>
-                      <FontAwesomeIcon icon={faCheck} className="w-4 h-4 text-emerald-300" />
+                      <FontAwesomeIcon icon={faCheck} className="w-4 h-4 text-brand-600" />
                       <span>เพิ่มลงตะกร้าแล้ว</span>
                     </>
                   ) : isOutOfStock ? (
