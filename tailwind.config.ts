@@ -48,12 +48,14 @@ const config: Config = {
         }
       },
       fontFamily: {
-        sans: ['var(--font-rubik)', 'var(--font-prompt)', "'Rubik'", "'Prompt'", 'sans-serif'],
-        display: ['var(--font-rubik)', 'var(--font-prompt)', "'Rubik'", "'Prompt'", 'sans-serif'],
-        rubik: ['var(--font-rubik)', "'Rubik'", 'sans-serif'],
-        signature: ["'Great Vibes'", 'var(--font-signature)', 'cursive'],
-        hairline: ["'Great Vibes'", 'var(--font-signature)', 'cursive'],
-        handwriting: ["'Great Vibes'", 'var(--font-signature)', 'cursive'],
+        sans: ["'Rubik'", "'Noto Sans Thai'", 'sans-serif'],
+        display: ["'Rubik'", "'Noto Sans Thai'", 'sans-serif'],
+        rubik: ["'Rubik'", "'Noto Sans Thai'", 'sans-serif'],
+        thai: ["'Noto Sans Thai'", 'sans-serif'],
+        prompt: ["'Rubik'", "'Noto Sans Thai'", 'sans-serif'],
+        signature: ["'Great Vibes'", 'cursive'],
+        hairline: ["'Great Vibes'", 'cursive'],
+        handwriting: ["'Great Vibes'", 'cursive'],
       },
       boxShadow: {
         'subtle': '0 1px 2px 0 rgba(15, 23, 42, 0.05)',

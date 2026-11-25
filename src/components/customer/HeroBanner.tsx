@@ -464,10 +464,10 @@ export function ImageCarouselHero({
               </HeadlineTextRepel>
             </span>
 
-            {/* Line 3: 'Bibi's [Treats / Snacks / Sweets...]' Flipping Word Swap in Google Font: Just Another Hand */}
+            {/* Line 3: 'Bibi's [Treats / Snacks / Sweets...]' Flipping Word Swap in Google Font: Great Vibes */}
             <span
-              className="block mt-4 sm:mt-10 md:mt-14 mb-1 sm:mb-2 text-3xl sm:text-4xl md:text-[2.65rem] font-normal tracking-wide text-slate-900 select-none py-1"
-              style={{ fontFamily: "var(--font-just-another-hand), 'Just Another Hand', cursive" }}
+              className="block mt-4 sm:mt-10 md:mt-14 mb-1 sm:mb-2 text-4xl sm:text-5xl md:text-[3.25rem] font-normal tracking-normal text-slate-900 select-none py-1 font-signature"
+              style={{ fontFamily: "'Great Vibes', cursive" }}
             >
               <MultiWordFlip
                 prefix="Bibi's "

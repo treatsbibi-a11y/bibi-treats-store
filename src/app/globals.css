@@ -1,18 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Alex+Brush&family=Prompt:wght@300;400;500;600;700&family=Rubik:wght@300;400;500&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --font-sans: var(--font-rubik), var(--font-prompt), 'Rubik', 'Prompt', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-rubik-custom: var(--font-rubik), 'Rubik', sans-serif;
-  --font-signature: 'Great Vibes', var(--font-signature), 'Allura', 'Alex Brush', cursive;
-  --font-hairline: 'Great Vibes', var(--font-signature), 'Allura', cursive;
+  --font-sans: 'Rubik', 'Noto Sans Thai', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-rubik-custom: 'Rubik', sans-serif;
+  --font-thai: 'Noto Sans Thai', sans-serif;
+  --font-signature: 'Great Vibes', cursive;
+  --font-hairline: 'Great Vibes', cursive;
 }
 
 body {
-  font-family: var(--font-rubik), var(--font-prompt), 'Rubik', 'Prompt', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Rubik', 'Noto Sans Thai', -apple-system, BlinkMacSystemFont, sans-serif;
   letter-spacing: 0.012em;
   background-color: #FAFCFE;
   color: #0F172A;
