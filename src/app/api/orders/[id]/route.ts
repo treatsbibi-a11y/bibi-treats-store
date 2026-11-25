@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getD1OrderDetail, CloudflareD1Binding } from '@/lib/d1';
 import { getRequestContext } from '@cloudflare/next-on-pages';
+import { notifySlipUploadedToLine } from '@/lib/line';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,10 +32,12 @@ export async function GET(
   try {
     const { id } = params;
 
-    // Check Cloudflare D1 binding on Edge Runtime
+    // Check Cloudflare D1 binding & runtime env on Edge Runtime
     let d1Binding: CloudflareD1Binding | undefined;
+    let runtimeEnv: any;
     try {
-      d1Binding = (getRequestContext()?.env as any)?.DB;
+      runtimeEnv = getRequestContext()?.env;
+      d1Binding = runtimeEnv?.DB;
     } catch {}
 
     if (d1Binding) {
@@ -119,10 +122,12 @@ async function handleUpdateOrder(req: NextRequest, id: string) {
       );
     }
 
-    // Check Cloudflare D1 binding on Edge Runtime
+    // Check Cloudflare D1 binding & runtime env on Edge Runtime
     let d1Binding: CloudflareD1Binding | undefined;
+    let runtimeEnv: any;
     try {
-      d1Binding = (getRequestContext()?.env as any)?.DB;
+      runtimeEnv = getRequestContext()?.env;
+      d1Binding = runtimeEnv?.DB;
     } catch {}
 
     if (d1Binding) {
@@ -241,6 +246,9 @@ async function handleUpdateOrder(req: NextRequest, id: string) {
       }
 
       const updated = await getD1OrderDetail(existingOrder.id, d1Binding);
+      if (updated && slipUrl) {
+        await notifySlipUploadedToLine(updated, runtimeEnv);
+      }
       return NextResponse.json(updated);
     }
 
@@ -367,6 +375,9 @@ async function handleUpdateOrder(req: NextRequest, id: string) {
       });
     });
 
+    if (updatedOrder && slipUrl) {
+      await notifySlipUploadedToLine(updatedOrder, runtimeEnv);
+    }
     return NextResponse.json(updatedOrder);
   } catch (error: unknown) {
     console.error('Error updating order:', error);

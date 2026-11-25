@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
 import { createD1Order, getD1Orders, CloudflareD1Binding } from '@/lib/d1';
 import { getRequestContext } from '@cloudflare/next-on-pages';
+import { notifyNewOrderToLine } from '@/lib/line';
 
 export const dynamic = 'force-dynamic';
 
@@ -80,10 +81,12 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Check Cloudflare D1 binding on Edge Runtime
+    // Check Cloudflare D1 binding & runtime env on Edge Runtime
     let d1Binding: CloudflareD1Binding | undefined;
+    let runtimeEnv: any;
     try {
-      d1Binding = (getRequestContext()?.env as any)?.DB;
+      runtimeEnv = getRequestContext()?.env;
+      d1Binding = runtimeEnv?.DB;
     } catch {}
 
     if (d1Binding) {
@@ -102,6 +105,7 @@ export async function POST(req: NextRequest) {
         d1Binding,
       });
 
+      await notifyNewOrderToLine(createdOrder, runtimeEnv);
       return NextResponse.json(createdOrder, { status: 201 });
     }
 
@@ -251,6 +255,7 @@ export async function POST(req: NextRequest) {
       return order;
     });
 
+    await notifyNewOrderToLine(createdOrder, runtimeEnv);
     return NextResponse.json(createdOrder, { status: 201 });
   } catch (error: unknown) {
     console.error('Checkout error:', error);
