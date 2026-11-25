@@ -53,9 +53,9 @@ const config: Config = {
         rubik: ["'Rubik'", "'Noto Sans Thai'", 'sans-serif'],
         thai: ["'Noto Sans Thai'", 'sans-serif'],
         prompt: ["'Rubik'", "'Noto Sans Thai'", 'sans-serif'],
-        signature: ["'Great Vibes'", 'cursive'],
-        hairline: ["'Great Vibes'", 'cursive'],
-        handwriting: ["'Great Vibes'", 'cursive'],
+        signature: ["'Caveat'", 'cursive'],
+        hairline: ["'Caveat'", 'cursive'],
+        handwriting: ["'Caveat'", 'cursive'],
       },
       boxShadow: {
         'subtle': '0 1px 2px 0 rgba(15, 23, 42, 0.05)',
