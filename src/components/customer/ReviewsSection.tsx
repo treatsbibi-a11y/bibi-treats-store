@@ -303,17 +303,11 @@ export default function ReviewsSection() {
     >
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-7 sm:space-y-9">
         {/* 1. Top Header + Live Rating Pill + Write Review Button + Carousel Arrows */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-5">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 border border-brand-200/80 text-brand-700 text-xs font-medium">
-              <span>Verified Customer Reviews</span>
-            </div>
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+          <div>
             <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 tracking-tight">
               รีวิวจากลูกค้า
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500 max-w-xl leading-relaxed">
-              ความประทับใจจากลูกค้าตัวจริงที่หลงรักรสชาติขนมอบสดใหม่ของ Bibi&apos;s Treats
-            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
@@ -420,46 +414,30 @@ export default function ReviewsSection() {
               <div
                 key={review.id}
                 onClick={() => setSelectedReview(review)}
-                className="snap-start shrink-0 w-[285px] sm:w-[320px] bg-white rounded-2xl border border-slate-200/80 shadow-subtle hover:shadow-card p-5 flex flex-col justify-between transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
+                className="snap-start shrink-0 w-[290px] sm:w-[330px] bg-white rounded-2xl border border-slate-200/80 shadow-subtle hover:shadow-card p-4 sm:p-5 flex flex-col justify-between transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
               >
-                <div className="space-y-3">
-                  {/* Customer Header & Stars */}
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-9 h-9 rounded-full bg-brand-50 text-brand-700 border border-brand-200/70 flex items-center justify-center shrink-0">
-                        <FontAwesomeIcon icon={faUser} className="w-3.5 h-3.5" />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="font-semibold text-slate-900 text-sm truncate">
-                          {review.customerName}
-                        </div>
-                        <div className="flex items-center gap-0.5 text-amber-400 mt-0.5">
-                          {Array.from({ length: 5 }).map((_, idx) => (
-                            <FontAwesomeIcon
-                              key={idx}
-                              icon={faStar}
-                              className={`w-3 h-3 ${
-                                idx < review.rating ? 'text-amber-400' : 'text-slate-200'
-                              }`}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Review Comment */}
-                  <p className="text-slate-700 text-xs sm:text-sm leading-relaxed line-clamp-4">
-                    “{review.comment}”
-                  </p>
-
-                  {/* Attached Images Grid */}
+                <div className="space-y-3.5">
+                  {/* Responsive Editorial Photo Grid (1 full-width, 2 half, 3+ grid) */}
                   {review.images && review.images.length > 0 && (
-                    <div className="grid grid-cols-3 gap-1.5 pt-1">
+                    <div
+                      className={`grid gap-1.5 ${
+                        review.images.length === 1
+                          ? 'grid-cols-1'
+                          : review.images.length === 2
+                          ? 'grid-cols-2'
+                          : 'grid-cols-3'
+                      }`}
+                    >
                       {review.images.slice(0, 3).map((imgUrl, idx) => (
                         <div
                           key={idx}
-                          className="relative aspect-square rounded-lg overflow-hidden bg-slate-100 border border-slate-200/60"
+                          className={`relative overflow-hidden rounded-xl bg-slate-100 border border-slate-100 ${
+                            review.images.length === 1
+                              ? 'aspect-[16/10]'
+                              : review.images.length === 2
+                              ? 'aspect-[4/3]'
+                              : 'aspect-square'
+                          }`}
                         >
                           <img
                             src={imgUrl}
@@ -476,12 +454,34 @@ export default function ReviewsSection() {
                       ))}
                     </div>
                   )}
+
+                  {/* Stars */}
+                  <div className="flex items-center gap-1 text-amber-400">
+                    {Array.from({ length: 5 }).map((_, idx) => (
+                      <FontAwesomeIcon
+                        key={idx}
+                        icon={faStar}
+                        className={`w-3.5 h-3.5 ${
+                          idx < review.rating ? 'text-amber-400' : 'text-slate-200'
+                        }`}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Review Comment */}
+                  <p className="text-slate-700 text-xs sm:text-sm leading-relaxed line-clamp-3">
+                    {review.comment}
+                  </p>
                 </div>
 
-                {/* Footer Date */}
-                <div className="pt-3 mt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
-                  <span>{formatThaiDate(review.createdAt)}</span>
-                  <span className="text-brand-600 font-medium">อ่านเพิ่มเติม →</span>
+                {/* Clean Footer: Customer Name & Date */}
+                <div className="pt-3.5 mt-4 border-t border-slate-100 flex items-center justify-between gap-2">
+                  <span className="font-semibold text-slate-900 text-xs sm:text-sm truncate">
+                    {review.customerName}
+                  </span>
+                  <span className="text-[11px] text-slate-400 shrink-0">
+                    {formatThaiDate(review.createdAt)}
+                  </span>
                 </div>
               </div>
             ))}
