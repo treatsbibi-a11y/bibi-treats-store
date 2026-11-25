@@ -187,7 +187,7 @@ export default function BottomNav() {
           }`}
           aria-label="เปิดตะกร้าสินค้า"
         >
-          <div className={`relative transition-transform duration-300 ${isCartBouncing ? 'scale-125' : ''}`}>
+          <div className={`relative transition-all duration-300 ${isCartBouncing ? 'scale-110 text-brand-600' : ''}`}>
             {activeTab === 'cart' ? (
               /* Solid Filled Luxury Shopping Bag */
               <svg
@@ -219,8 +219,8 @@ export default function BottomNav() {
 
             {/* Red Circular Cart Badge (Pure borderless solid red) */}
             {totalItems > 0 && (
-              <span className={`absolute -top-1.5 -right-2 bg-red-600 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-xs pointer-events-none transition-all duration-300 ${
-                isCartBouncing ? 'scale-125 bg-emerald-600' : ''
+              <span className={`absolute -top-1.5 -right-2 bg-red-600 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-xs pointer-events-none transition-transform duration-300 ${
+                isCartBouncing ? 'scale-110' : ''
               }`}>
                 {totalItems}
               </span>
