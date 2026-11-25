@@ -1,379 +1,907 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faStar,
-  faCheckCircle,
-  faQuoteLeft,
-  faXmark,
-  faArrowRight,
+  faPenToSquare,
+  faCamera,
   faChevronLeft,
   faChevronRight,
+  faXmark,
+  faTrashCan,
+  faSpinner,
+  faUser,
+  faCircleCheck,
+  faImage,
+  faArrowUpWideShort,
 } from '@fortawesome/free-solid-svg-icons';
+import { ReviewItem, ReviewStats } from '@/types';
 
-export interface ReviewItem {
-  id: string;
-  name: string;
-  initials: string;
-  rating: number;
-  date: string;
-  menuItem: string;
-  category: string;
-  comment: string;
-  highlight: string;
-  image: string;
-  tagColor?: string;
+type FilterStar = 'all' | 5 | 4 | 3 | 2 | 1;
+type SortOption = 'latest' | 'highest' | 'lowest';
+
+const EMPTY_STATS: ReviewStats = {
+  averageRating: 0,
+  totalCount: 0,
+  breakdown: [
+    { star: 5, count: 0, percentage: 0 },
+    { star: 4, count: 0, percentage: 0 },
+    { star: 3, count: 0, percentage: 0 },
+    { star: 2, count: 0, percentage: 0 },
+    { star: 1, count: 0, percentage: 0 },
+  ],
+};
+
+function formatThaiDate(iso: string): string {
+  try {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleDateString('th-TH', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
+  } catch {
+    return '';
+  }
 }
-
-const reviewsData: ReviewItem[] = [
-  {
-    id: 'rev-1',
-    name: 'คุณพิมพ์ชนก ว.',
-    initials: 'พว',
-    rating: 5,
-    date: 'เมื่อวานนี้',
-    menuItem: 'Vanilla Bean Custard Choux',
-    category: 'ชูครีม & พัฟ',
-    comment:
-      'แป้งชูส์กรอบเบา ไส้คัสตาร์ดหอมวานิลลาแท้จากมาดากัสการ์มาก หวานกำลังดีไม่เลี่ยนเลย ทานตอนแช่เย็นคือสดชื่นที่สุด สั่งซ้ำแน่นอนค่ะ',
-    highlight: 'คัสตาร์ดหอมวานิลลาแท้มาดากัสการ์ แป้งกรอบเบาสดชื่น ทานเย็นอร่อยมาก',
-    image:
-      'https://images.unsplash.com/photo-1612203985729-70726954388c?q=80&w=800&auto=format&fit=crop',
-  },
-  {
-    id: 'rev-2',
-    name: 'คุณธนกฤต ส.',
-    initials: 'ธส',
-    rating: 5,
-    date: '3 วันที่แล้ว',
-    menuItem: 'Basque Burnt Cheesecake',
-    category: 'เค้ก & ทาร์ต',
-    comment:
-      'ชีสเค้กหน้าไหม้เนื้อเนียน ละมุนลิ้นมาก หน้าไหม้หอมคาราเมลเป็นเอกลักษณ์ แพ็กเกจจิ้งมาอย่างดีไม่มีบุบสลาย ประทับใจมากครับ',
-    highlight: 'ชีสเค้กหน้าไหม้เนื้อเนียน ละมุนลิ้น คาราเมลหอมเป็นเอกลักษณ์',
-    image:
-      'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?q=80&w=800&auto=format&fit=crop',
-  },
-  {
-    id: 'rev-3',
-    name: 'คุณวรินทร ม.',
-    initials: 'วม',
-    rating: 5,
-    date: '5 วันที่แล้ว',
-    menuItem: 'Artisanal French Butter Croissant',
-    category: 'ครัวซองต์ & ขนมปัง',
-    comment:
-      'ครัวซองต์กรอบนอกนุ่มใน รังผึ้งด้านในสวยงามมาก กลิ่นเนยสดแท้จากฝรั่งเศสเตะจมูกตั้งแต่วินาทีที่เปิดกล่อง อบซ้ำในเตา 2 นาทีเหมือนทานที่ปารีสเลย',
-    highlight: 'เนยสดแท้จากฝรั่งเศส กรอบนอกนุ่มใน รังผึ้งด้านในสวยงาม',
-    image:
-      'https://images.unsplash.com/photo-1555507036-ab1f4038808a?q=80&w=800&auto=format&fit=crop',
-  },
-  {
-    id: 'rev-4',
-    name: 'คุณณิชานันท์ ร.',
-    initials: 'ณร',
-    rating: 5,
-    date: '1 สัปดาห์ที่แล้ว',
-    menuItem: 'Dark Chocolate Fudge Layer Cake',
-    category: 'เค้ก & ทาร์ต',
-    comment:
-      'ช็อกโกแลตฟัดจ์เข้มข้น ไม่หวานแสบคอ ใช้วัตถุดิบพรีเมียมอย่างเห็นได้ชัด สั่งเป็นเค้กวันเกิดให้เพื่อน ทุกคนชมหมดเลยค่ะ',
-    highlight: 'ดาร์กช็อกโกแลตเข้มข้น เนื้อเค้กแน่นนุ่ม หวานน้อยกลมกล่อม',
-    image:
-      'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=800&auto=format&fit=crop',
-  },
-  {
-    id: 'rev-5',
-    name: 'คุณอรอุมา ภ.',
-    initials: 'อภ',
-    rating: 5,
-    date: '1 สัปดาห์ที่แล้ว',
-    menuItem: 'Pastel Macaron Box (Set of 6)',
-    category: 'มาการอง & เซ็ตของขวัญ',
-    comment:
-      'มาการองหวานน้อยกำลังดี เปลือกกรอบฟูนุ่ม ไส้เอิร์ลเกรย์กับยูซุคือที่สุด แพ็กเกจหรูหรา ซื้อเป็นของขวัญผู้รับชอบมาก',
-    highlight: 'เปลือกกรอบฟู ไส้หอมละมุนไม่หวานบาดคอ แพ็กเกจของขวัญประทับใจ',
-    image:
-      'https://images.unsplash.com/photo-1569864358642-9d1684040f43?q=80&w=800&auto=format&fit=crop',
-  },
-  {
-    id: 'rev-6',
-    name: 'คุณกิตติศักดิ์ ล.',
-    initials: 'กล',
-    rating: 5,
-    date: '2 สัปดาห์ที่แล้ว',
-    menuItem: 'Signature Fudge Brownie',
-    category: 'คุกกี้ & บราวนี่',
-    comment:
-      'บราวนี่ฟัดจ์หน้าฟิล์ม เนื้อแน่นฉ่ำ ช็อกโกแลตเข้มเต็มคำ สั่งทานคู่กับกาแฟตอนเช้าคือลงตัวที่สุด สั่งรอบที่ 4 แล้วครับ',
-    highlight: 'หน้าฟิล์มกรอบ เนื้อฟัดจ์ฉ่ำ ช็อกโกแลตเข้มข้น หอมเนยแท้',
-    image:
-      'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?q=80&w=800&auto=format&fit=crop',
-  },
-];
 
 export default function ReviewsSection() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [selectedReview, setSelectedReview] = useState<ReviewItem | null>(null);
 
-  const handleScroll = (direction: 'left' | 'right') => {
-    if (!scrollContainerRef.current) return;
-    const scrollAmount = direction === 'left' ? -320 : 320;
-    scrollContainerRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  // Server state
+  const [reviews, setReviews] = useState<ReviewItem[]>([]);
+  const [stats, setStats] = useState<ReviewStats>(EMPTY_STATS);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Filter & Sort state
+  const [filterStar, setFilterStar] = useState<FilterStar>('all');
+  const [onlyWithImages, setOnlyWithImages] = useState(false);
+  const [sortBy, setSortBy] = useState<SortOption>('latest');
+
+  // Carousel pause state
+  const [isPaused, setIsPaused] = useState(false);
+
+  // Modals
+  const [selectedReview, setSelectedReview] = useState<ReviewItem | null>(null);
+  const [isWriteOpen, setIsWriteOpen] = useState(false);
+
+  // Write Review Form state
+  const [rating, setRating] = useState<number>(0);
+  const [hoverRating, setHoverRating] = useState<number>(0);
+  const [customerName, setCustomerName] = useState('');
+  const [comment, setComment] = useState('');
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  const loadReviews = useCallback(async () => {
+    try {
+      const res = await fetch('/api/reviews', { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        setReviews(Array.isArray(data.reviews) ? data.reviews : []);
+        setStats(data.stats || EMPTY_STATS);
+      }
+    } catch (err) {
+      console.error('Failed to load reviews:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadReviews();
+  }, [loadReviews]);
+
+  // Client-side instant filter + sort over fetched visible reviews
+  const displayedReviews = useMemo(() => {
+    let list = [...reviews];
+
+    if (filterStar !== 'all') {
+      list = list.filter((r) => r.rating === filterStar);
+    }
+    if (onlyWithImages) {
+      list = list.filter((r) => r.images && r.images.length > 0);
+    }
+
+    if (sortBy === 'highest') {
+      list.sort(
+        (a, b) =>
+          b.rating - a.rating ||
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+    } else if (sortBy === 'lowest') {
+      list.sort(
+        (a, b) =>
+          a.rating - b.rating ||
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+    } else {
+      list.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+    }
+
+    return list;
+  }, [reviews, filterStar, onlyWithImages, sortBy]);
+
+  const handleScroll = useCallback((direction: 'left' | 'right') => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const step = 336;
+    if (direction === 'right') {
+      if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 16) {
+        el.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        el.scrollBy({ left: step, behavior: 'smooth' });
+      }
+    } else {
+      if (el.scrollLeft <= 16) {
+        el.scrollTo({ left: el.scrollWidth, behavior: 'smooth' });
+      } else {
+        el.scrollBy({ left: -step, behavior: 'smooth' });
+      }
+    }
+  }, []);
+
+  // Auto-slide every 5 seconds unless paused or modal open
+  useEffect(() => {
+    if (isPaused || isWriteOpen || selectedReview || displayedReviews.length <= 1) {
+      return;
+    }
+    const timer = setInterval(() => {
+      handleScroll('right');
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [isPaused, isWriteOpen, selectedReview, displayedReviews.length, handleScroll]);
+
+  const resetWriteModal = () => {
+    setRating(0);
+    setHoverRating(0);
+    setCustomerName('');
+    setComment('');
+    setUploadedImages([]);
+    setFormError(null);
+    setSubmitSuccess(false);
+  };
+
+  const openWriteModal = () => {
+    resetWriteModal();
+    setIsWriteOpen(true);
+  };
+
+  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    e.target.value = '';
+    if (files.length === 0) return;
+
+    const remainingSlots = 5 - uploadedImages.length;
+    if (remainingSlots <= 0) {
+      setFormError('แนบรูปภาพได้สูงสุด 5 รูปเท่านั้น');
+      return;
+    }
+
+    const filesToUpload = files.slice(0, remainingSlots);
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    const maxBytes = 5 * 1024 * 1024;
+
+    for (const file of filesToUpload) {
+      if (!allowedTypes.includes(file.type.toLowerCase())) {
+        setFormError('รองรับเฉพาะไฟล์รูปภาพ JPG, JPEG, PNG และ WEBP เท่านั้น');
+        return;
+      }
+      if (file.size > maxBytes) {
+        setFormError('ขนาดรูปภาพต้องไม่เกิน 5MB ต่อรูป');
+        return;
+      }
+    }
+
+    setFormError(null);
+    setIsUploadingImage(true);
+
+    try {
+      const newUrls: string[] = [];
+      for (const file of filesToUpload) {
+        const formData = new FormData();
+        formData.append('file', file);
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+        const data = await res.json();
+        if (!res.ok || !data.url) {
+          throw new Error(data.error || 'อัปโหลดรูปภาพไม่สำเร็จ');
+        }
+        newUrls.push(data.url);
+      }
+      setUploadedImages((prev) => [...prev, ...newUrls].slice(0, 5));
+    } catch (err: any) {
+      setFormError(err.message || 'เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ');
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
+  const handleRemoveImage = (idx: number) => {
+    setUploadedImages((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const handleSubmitReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError(null);
+
+    if (rating < 1 || rating > 5) {
+      setFormError('กรุณาเลือกให้คะแนนดาว 1–5 ดาว');
+      return;
+    }
+    if (!customerName.trim()) {
+      setFormError('กรุณากรอกชื่อของคุณ');
+      return;
+    }
+    if (comment.trim().length < 3) {
+      setFormError('กรุณาเขียนความคิดเห็นอย่างน้อย 3 ตัวอักษร');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const res = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerName: customerName.trim(),
+          rating,
+          comment: comment.trim(),
+          images: uploadedImages,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'บันทึกรีวิวไม่สำเร็จ');
+      }
+
+      // Immediately update UI list & live calculated stats
+      if (data.review) {
+        setReviews((prev) => [data.review, ...prev]);
+      }
+      if (data.stats) {
+        setStats(data.stats);
+      }
+      setFilterStar('all');
+      setOnlyWithImages(false);
+      setSortBy('latest');
+      setSubmitSuccess(true);
+
+      setTimeout(() => {
+        setIsWriteOpen(false);
+        resetWriteModal();
+        if (scrollContainerRef.current) {
+          scrollContainerRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        }
+      }, 1500);
+    } catch (err: any) {
+      setFormError(err.message || 'เกิดข้อผิดพลาดในการส่งรีวิว');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <section
       id="reviews"
-      className="relative py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-[#FAF7F2] via-[#FDFBF7] to-[#F5EFEB] border-t border-[#EAE3D6] overflow-hidden"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={() => setIsPaused(true)}
+      onTouchEnd={() => setIsPaused(false)}
+      className="relative py-14 sm:py-20 bg-gradient-to-b from-[#F0F7FF] via-white to-[#FAFCFE] border-t border-slate-200/70 overflow-hidden"
     >
-      {/* Subtle luxury ambient texture overlay */}
-      <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
-        style={{
-          backgroundImage: 'radial-gradient(#292524 1px, transparent 1px)',
-          backgroundSize: '24px 24px',
-        }}
-      />
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Editorial Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8 sm:mb-10">
-          <div>
-            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-amber-900/5 border border-amber-900/10 text-amber-900 text-[11px] sm:text-xs font-medium tracking-wide mb-2 sm:mb-2.5">
-              <span>Verified Customer Stories</span>
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-7 sm:space-y-9">
+        {/* 1. Top Header + Live Rating Pill + Write Review Button + Carousel Arrows */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-5">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 border border-brand-200/80 text-brand-700 text-xs font-medium">
+              <span>Verified Customer Reviews</span>
             </div>
-
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-stone-900 tracking-tight font-prompt leading-tight">
+            <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 tracking-tight">
               รีวิวจากลูกค้า
             </h2>
-            <p className="text-xs sm:text-base text-stone-600 font-normal mt-1 sm:mt-2 max-w-xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-500 max-w-xl leading-relaxed">
               ความประทับใจจากลูกค้าตัวจริงที่หลงรักรสชาติขนมอบสดใหม่ของ Bibi&apos;s Treats
             </p>
           </div>
 
-          {/* Right Header Side: Rating Box & Desktop Slider Arrows */}
-          <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-            {/* Clean Editorial Rating Box */}
-            <div className="inline-flex items-center gap-2.5 sm:gap-3 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl bg-white/95 backdrop-blur-md border border-stone-200/80 shadow-[0_8px_24px_-6px_rgba(180,83,9,0.08)]">
-              <div className="flex items-center gap-1 text-amber-500">
-                {[...Array(5)].map((_, i) => (
-                  <FontAwesomeIcon
-                    key={i}
-                    icon={faStar}
-                    className="w-3 sm:w-3.5 h-3 sm:h-3.5 fill-current"
-                  />
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Live Rating Pill (matching reference design) */}
+            <div className="inline-flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white border border-slate-200/90 shadow-subtle">
+              <div className="flex items-center gap-1 text-amber-400">
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <FontAwesomeIcon key={s} icon={faStar} className="w-3.5 h-3.5" />
                 ))}
               </div>
-              <div className="h-3.5 sm:h-4 w-px bg-stone-200" />
-              <span className="font-bold text-stone-900 text-sm sm:text-base font-prompt">4.98</span>
-              <span className="text-stone-300">/</span>
-              <span className="text-[11px] sm:text-xs text-stone-600 font-medium">500+ รีวิว</span>
+              <div className="h-4 w-px bg-slate-200" />
+              <span className="font-bold text-slate-900 text-base font-mono">
+                {stats.totalCount > 0 ? stats.averageRating.toFixed(2) : '0.00'}
+              </span>
+              <span className="text-slate-300">/</span>
+              <span className="text-xs sm:text-sm text-slate-600 font-medium">
+                {stats.totalCount.toLocaleString()} รีวิว
+              </span>
             </div>
 
-            {/* Slider Navigation Buttons (Desktop/Tablet) */}
-            <div className="hidden sm:flex items-center gap-2">
+            {/* Write Review CTA */}
+            <button
+              type="button"
+              onClick={openWriteModal}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-semibold shadow-sm transition-all active:scale-95 cursor-pointer"
+            >
+              <FontAwesomeIcon icon={faPenToSquare} className="w-3.5 h-3.5" />
+              <span>เขียนรีวิว</span>
+            </button>
+          </div>
+        </div>
+
+        {/* 2. Rating Breakdown Card (5★ -> 1★ Auto-calculated Percentages) */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-subtle p-5 sm:p-6">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+            {/* Left Big Score */}
+            <div className="md:col-span-4 flex items-center md:flex-col md:items-start justify-between md:justify-center gap-4 pb-4 md:pb-0 border-b md:border-b-0 md:border-r border-slate-100 md:pr-6">
+              <div>
+                <div className="text-4xl sm:text-5xl font-bold text-slate-900 font-mono tracking-tight">
+                  {stats.totalCount > 0 ? stats.averageRating.toFixed(2) : '0.00'}
+                </div>
+                <div className="flex items-center gap-1 text-amber-400 mt-1.5">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <FontAwesomeIcon key={s} icon={faStar} className="w-4 h-4" />
+                  ))}
+                </div>
+              </div>
+              <div className="text-right md:text-left">
+                <p className="text-xs sm:text-sm font-semibold text-slate-800">
+                  คะแนนเฉลี่ยจากผู้ซื้อจริง
+                </p>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  ทั้งหมด {stats.totalCount.toLocaleString()} รีวิว
+                </p>
+              </div>
+            </div>
+
+            {/* Right 5-1 Star Percentage Bars */}
+            <div className="md:col-span-8 space-y-2">
+              {stats.breakdown.map((row) => {
+                const isActive = filterStar === row.star;
+                return (
+                  <button
+                    key={row.star}
+                    type="button"
+                    onClick={() =>
+                      setFilterStar((prev) => (prev === row.star ? 'all' : row.star))
+                    }
+                    className={`w-full flex items-center gap-3 px-2 py-1 rounded-lg transition-colors cursor-pointer ${
+                      isActive ? 'bg-brand-50/80' : 'hover:bg-slate-50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-1 w-24 shrink-0 text-amber-400 text-xs">
+                      {Array.from({ length: row.star }).map((_, idx) => (
+                        <FontAwesomeIcon key={idx} icon={faStar} className="w-3 h-3" />
+                      ))}
+                    </div>
+                    <div className="flex-1 h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-brand-500 rounded-full transition-all duration-500"
+                        style={{ width: `${row.percentage}%` }}
+                      />
+                    </div>
+                    <div className="w-12 text-right text-xs font-mono font-semibold text-slate-700 shrink-0">
+                      {row.percentage}%
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* 3. Filter Pills + Sort + Carousel Navigation */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          {/* Filter Pills */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+            <button
+              type="button"
+              onClick={() => {
+                setFilterStar('all');
+                setOnlyWithImages(false);
+              }}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
+                filterStar === 'all' && !onlyWithImages
+                  ? 'bg-brand-600 text-white shadow-xs'
+                  : 'bg-white text-slate-600 border border-slate-200/90 hover:border-brand-300'
+              }`}
+            >
+              ทั้งหมด
+            </button>
+            {([5, 4, 3, 2, 1] as const).map((star) => (
               <button
-                onClick={() => handleScroll('left')}
-                aria-label="เลื่อนรีวิวก่อนหน้า"
-                className="w-10 h-10 rounded-full bg-white hover:bg-stone-50 border border-stone-200/80 text-stone-700 hover:text-stone-900 flex items-center justify-center shadow-xs hover:shadow-sm transition-all active:scale-95 cursor-pointer"
+                key={star}
+                type="button"
+                onClick={() =>
+                  setFilterStar((prev) => (prev === star ? 'all' : star))
+                }
+                className={`inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
+                  filterStar === star
+                    ? 'bg-brand-600 text-white shadow-xs'
+                    : 'bg-white text-slate-600 border border-slate-200/90 hover:border-brand-300'
+                }`}
               >
-                <FontAwesomeIcon icon={faChevronLeft} className="w-3.5 h-3.5" />
+                <FontAwesomeIcon
+                  icon={faStar}
+                  className={`w-3 h-3 ${
+                    filterStar === star ? 'text-amber-300' : 'text-amber-400'
+                  }`}
+                />
+                <span>{star} ดาว</span>
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={() => setOnlyWithImages((prev) => !prev)}
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
+                onlyWithImages
+                  ? 'bg-brand-600 text-white shadow-xs'
+                  : 'bg-white text-slate-600 border border-slate-200/90 hover:border-brand-300'
+              }`}
+            >
+              <FontAwesomeIcon icon={faCamera} className="w-3 h-3" />
+              <span>มีรูปภาพ</span>
+            </button>
+          </div>
+
+          {/* Sort & Carousel Prev/Next Controls */}
+          <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0">
+            <div className="inline-flex items-center gap-2 bg-white border border-slate-200/90 rounded-xl px-3 py-1.5 text-xs">
+              <FontAwesomeIcon icon={faArrowUpWideShort} className="w-3.5 h-3.5 text-slate-400" />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as SortOption)}
+                aria-label="เรียงลำดับรีวิว"
+                className="bg-transparent text-slate-700 font-medium focus:outline-none cursor-pointer"
+              >
+                <option value="latest">รีวิวล่าสุด</option>
+                <option value="highest">คะแนนสูงสุด</option>
+                <option value="lowest">คะแนนต่ำสุด</option>
+              </select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => handleScroll('left')}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-brand-50 border border-slate-200/90 hover:border-brand-200 text-slate-700 hover:text-brand-700 text-xs font-medium transition-all active:scale-95 cursor-pointer"
+              >
+                <FontAwesomeIcon icon={faChevronLeft} className="w-3 h-3" />
+                <span className="hidden sm:inline">รีวิวก่อนหน้า</span>
               </button>
               <button
+                type="button"
                 onClick={() => handleScroll('right')}
-                aria-label="เลื่อนรีวิวถัดไป"
-                className="w-10 h-10 rounded-full bg-white hover:bg-stone-50 border border-stone-200/80 text-stone-700 hover:text-stone-900 flex items-center justify-center shadow-xs hover:shadow-sm transition-all active:scale-95 cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-brand-50 border border-slate-200/90 hover:border-brand-200 text-slate-700 hover:text-brand-700 text-xs font-medium transition-all active:scale-95 cursor-pointer"
               >
-                <FontAwesomeIcon icon={faChevronRight} className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">รีวิวถัดไป</span>
+                <FontAwesomeIcon icon={faChevronRight} className="w-3 h-3" />
               </button>
             </div>
           </div>
         </div>
 
-        {/* Static Horizontal Swipe / Scroll Carousel */}
-        <div
-          ref={scrollContainerRef}
-          className="flex gap-4 sm:gap-5 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory scroll-smooth no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0"
-          style={{ WebkitOverflowScrolling: 'touch' }}
-        >
-          {reviewsData.map((review) => (
-            <div
-              key={review.id}
-              onClick={() => setSelectedReview(review)}
-              className="snap-start shrink-0 w-[270px] sm:w-[310px] bg-white rounded-[24px] border border-[#EBE3D5] shadow-[0_8px_24px_-8px_rgba(40,25,15,0.06)] hover:shadow-[0_16px_36px_-8px_rgba(40,25,15,0.12)] p-4 sm:p-5 flex flex-col justify-between transition-all duration-200 cursor-pointer hover:-translate-y-1 active:scale-[0.99] group"
-            >
-              <div>
-                {/* Product Image Preview with Category Badge */}
-                <div className="relative w-full h-36 sm:h-40 rounded-2xl overflow-hidden mb-3 bg-stone-100 border border-stone-100">
-                  <img
-                    src={review.image}
-                    alt={review.menuItem}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                    loading="lazy"
-                  />
-                  <div className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-white/95 backdrop-blur-xs text-stone-700 text-[11px] font-medium shadow-2xs border border-stone-200/40">
-                    {review.category}
-                  </div>
-                </div>
-
-                {/* Rating Stars & Date */}
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-1 text-amber-500">
-                    {[...Array(review.rating)].map((_, starIdx) => (
-                      <FontAwesomeIcon
-                        key={starIdx}
-                        icon={faStar}
-                        className="w-3.5 h-3.5 fill-current"
-                      />
-                    ))}
-                  </div>
-                  <span className="text-[11px] text-stone-400 font-light">{review.date}</span>
-                </div>
-
-                {/* Menu Item Name */}
-                <h3 className="text-base sm:text-lg font-bold text-stone-900 tracking-tight font-prompt truncate mb-1.5">
-                  {review.menuItem}
-                </h3>
-
-                {/* Customer Review Quote */}
-                <p className="text-stone-700 text-xs sm:text-[13px] leading-relaxed font-normal line-clamp-3">
-                  &ldquo;{review.comment}&rdquo;
-                </p>
+        {/* 4. Review Carousel Cards */}
+        {isLoading ? (
+          <div className="flex gap-4 overflow-hidden">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="shrink-0 w-[285px] sm:w-[320px] h-64 bg-white rounded-2xl border border-slate-200/80 p-5 animate-pulse space-y-4"
+              >
+                <div className="h-4 bg-slate-100 rounded w-1/2" />
+                <div className="h-3 bg-slate-100 rounded w-1/3" />
+                <div className="h-16 bg-slate-100 rounded w-full" />
               </div>
-
-              {/* Card Footer: Verified Customer Identity */}
-              <div className="flex items-center justify-between pt-3 mt-3 border-t border-stone-100">
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="w-8 h-8 rounded-full bg-amber-900/8 text-amber-950 border border-amber-900/12 flex items-center justify-center font-bold text-xs shrink-0">
-                    {review.initials}
-                  </div>
-                  <div className="truncate min-w-0">
-                    <div className="font-semibold text-stone-900 text-xs sm:text-sm truncate">
-                      {review.name}
-                    </div>
-                    <div className="text-[10px] sm:text-[11px] flex items-center gap-1 font-medium text-emerald-700">
-                      <FontAwesomeIcon icon={faCheckCircle} className="w-2.5 h-2.5" />
-                      <span>สั่งซื้อจริง</span>
-                    </div>
-                  </div>
-                </div>
-
-                <span className="text-xs font-semibold text-amber-900/80 group-hover:text-amber-900 transition-colors">
-                  อ่านรีวิว →
-                </span>
-              </div>
+            ))}
+          </div>
+        ) : displayedReviews.length === 0 ? (
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-10 text-center space-y-2">
+            <p className="text-sm font-semibold text-slate-800">
+              ไม่พบรีวิวตามเงื่อนไขที่เลือก
+            </p>
+            <p className="text-xs text-slate-500">
+              ลองล้างตัวกรอง หรือเป็นคนแรกที่เขียนรีวิวความอร่อยได้เลยค่ะ
+            </p>
+            <div className="pt-2 flex justify-center gap-2">
+              {(filterStar !== 'all' || onlyWithImages) && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFilterStar('all');
+                    setOnlyWithImages(false);
+                  }}
+                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium cursor-pointer"
+                >
+                  ดูรีวิวทั้งหมด
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={openWriteModal}
+                className="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold cursor-pointer"
+              >
+                ✍️ เขียนรีวิว
+              </button>
             </div>
-          ))}
-        </div>
+          </div>
+        ) : (
+          <div
+            ref={scrollContainerRef}
+            className="flex gap-4 sm:gap-5 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory scroll-smooth no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0"
+            style={{ WebkitOverflowScrolling: 'touch' }}
+          >
+            {displayedReviews.map((review) => (
+              <div
+                key={review.id}
+                onClick={() => setSelectedReview(review)}
+                className="snap-start shrink-0 w-[285px] sm:w-[320px] bg-white rounded-2xl border border-slate-200/80 shadow-subtle hover:shadow-card p-5 flex flex-col justify-between transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
+              >
+                <div className="space-y-3">
+                  {/* Customer Header & Stars */}
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-9 h-9 rounded-full bg-brand-50 text-brand-700 border border-brand-200/70 flex items-center justify-center shrink-0">
+                        <FontAwesomeIcon icon={faUser} className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="font-semibold text-slate-900 text-sm truncate">
+                          {review.customerName}
+                        </div>
+                        <div className="flex items-center gap-0.5 text-amber-400 mt-0.5">
+                          {Array.from({ length: 5 }).map((_, idx) => (
+                            <FontAwesomeIcon
+                              key={idx}
+                              icon={faStar}
+                              className={`w-3 h-3 ${
+                                idx < review.rating ? 'text-amber-400' : 'text-slate-200'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
-        {/* Minimal Swipe Hint on Mobile */}
-        <div className="flex items-center justify-center gap-1.5 text-[11px] text-stone-500 font-light mt-3 sm:hidden">
-          <span>ปัดซ้าย-ขวาเพื่อดูรีวิวเพิ่มเติม</span>
-        </div>
+                  {/* Review Comment */}
+                  <p className="text-slate-700 text-xs sm:text-sm leading-relaxed line-clamp-4">
+                    “{review.comment}”
+                  </p>
+
+                  {/* Attached Images Grid */}
+                  {review.images && review.images.length > 0 && (
+                    <div className="grid grid-cols-3 gap-1.5 pt-1">
+                      {review.images.slice(0, 3).map((imgUrl, idx) => (
+                        <div
+                          key={idx}
+                          className="relative aspect-square rounded-lg overflow-hidden bg-slate-100 border border-slate-200/60"
+                        >
+                          <img
+                            src={imgUrl}
+                            alt={`รีวิวจาก ${review.customerName}`}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                          {idx === 2 && review.images.length > 3 && (
+                            <div className="absolute inset-0 bg-slate-900/55 text-white text-xs font-bold flex items-center justify-center">
+                              +{review.images.length - 3}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Footer Date */}
+                <div className="pt-3 mt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+                  <span>{formatThaiDate(review.createdAt)}</span>
+                  <span className="text-brand-600 font-medium">อ่านเพิ่มเติม →</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Review Reader Modal Popup */}
+      {/* Write Review Modal */}
+      <AnimatePresence>
+        {isWriteOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => !isSubmitting && setIsWriteOpen(false)}
+              className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm cursor-pointer"
+            />
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 16 }}
+              transition={{ type: 'spring', damping: 26, stiffness: 320 }}
+              className="relative z-10 w-full max-w-lg bg-white rounded-3xl border border-slate-200 shadow-2xl p-6 sm:p-7 max-h-[90vh] overflow-y-auto"
+            >
+              {submitSuccess ? (
+                <div className="py-10 text-center space-y-3">
+                  <div className="w-14 h-14 rounded-full bg-brand-50 text-brand-600 border border-brand-200 flex items-center justify-center mx-auto">
+                    <FontAwesomeIcon icon={faCircleCheck} className="w-7 h-7" />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900">
+                    ขอบคุณสำหรับรีวิว ❤️
+                  </h3>
+                  <p className="text-sm text-slate-500">
+                    ความคิดเห็นของคุณถูกบันทึกและแสดงบนหน้าเว็บไซต์เรียบร้อยแล้ว
+                  </p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmitReview} className="space-y-5">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900">
+                        เขียนรีวิวจากลูกค้า
+                      </h3>
+                      <p className="text-xs text-slate-500">
+                        แบ่งปันความประทับใจต่อขนม Bibi&apos;s Treats
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsWriteOpen(false)}
+                      className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center cursor-pointer"
+                      aria-label="ปิดหน้าต่าง"
+                    >
+                      <FontAwesomeIcon icon={faXmark} className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+
+                  {/* Interactive 1-5 Star Selector */}
+                  <div className="space-y-2 text-center py-2 bg-brand-50/50 rounded-2xl border border-brand-100">
+                    <label className="text-xs font-semibold text-slate-700 block">
+                      ให้คะแนนสินค้า
+                    </label>
+                    <div className="flex items-center justify-center gap-2.5">
+                      {[1, 2, 3, 4, 5].map((star) => {
+                        const active = star <= (hoverRating || rating);
+                        return (
+                          <motion.button
+                            key={star}
+                            type="button"
+                            whileTap={{ scale: 1.3 }}
+                            whileHover={{ scale: 1.15 }}
+                            onMouseEnter={() => setHoverRating(star)}
+                            onMouseLeave={() => setHoverRating(0)}
+                            onClick={() => setRating(star)}
+                            className="p-1 cursor-pointer focus:outline-none"
+                            aria-label={`ให้คะแนน ${star} ดาว`}
+                          >
+                            <FontAwesomeIcon
+                              icon={faStar}
+                              className={`w-8 h-8 transition-colors duration-150 ${
+                                active ? 'text-amber-400 drop-shadow-xs' : 'text-slate-300'
+                              }`}
+                            />
+                          </motion.button>
+                        );
+                      })}
+                    </div>
+                    <p className="text-[11px] text-slate-500">
+                      {rating > 0 ? `คุณเลือก ${rating} ดาว` : 'แตะที่ดาวเพื่อให้คะแนน 1–5 ดาว'}
+                    </p>
+                  </div>
+
+                  {/* Customer Name */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-700 block">
+                      ชื่อของคุณ <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      maxLength={60}
+                      placeholder="เช่น Aisyah หรือ คุณพิมพ์ชนก"
+                      className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15"
+                    />
+                  </div>
+
+                  {/* Comment */}
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between items-center">
+                      <label className="text-xs font-semibold text-slate-700">
+                        เขียนรีวิวของคุณ... <span className="text-rose-500">*</span>
+                      </label>
+                      <span className="text-[11px] text-slate-400 font-mono">
+                        {comment.length}/1000
+                      </span>
+                    </div>
+                    <textarea
+                      rows={4}
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      maxLength={1000}
+                      placeholder="ขนมอร่อยมากค่ะ แพ็กสินค้าดีมาก ประทับใจมาก ❤️"
+                      className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 resize-none"
+                    />
+                  </div>
+
+                  {/* Photo Upload (up to 5) */}
+                  <div className="space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-semibold text-slate-700">
+                        แนบรูปภาพ (สูงสุด 5 รูป)
+                      </label>
+                      <span className="text-[11px] text-slate-400">
+                        JPG, PNG, WEBP ไม่เกิน 5MB ({uploadedImages.length}/5)
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-5 gap-2">
+                      {uploadedImages.map((url, idx) => (
+                        <div
+                          key={idx}
+                          className="relative aspect-square rounded-xl overflow-hidden border border-slate-200 bg-slate-50 group"
+                        >
+                          <img
+                            src={url}
+                            alt={`Preview ${idx + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage(idx)}
+                            className="absolute top-1 right-1 w-5 h-5 rounded-full bg-slate-900/70 hover:bg-rose-600 text-white flex items-center justify-center text-[10px] cursor-pointer"
+                            aria-label="ลบรูปภาพ"
+                          >
+                            <FontAwesomeIcon icon={faTrashCan} className="w-2.5 h-2.5" />
+                          </button>
+                        </div>
+                      ))}
+
+                      {uploadedImages.length < 5 && (
+                        <label className="aspect-square rounded-xl border-2 border-dashed border-slate-200 hover:border-brand-400 bg-slate-50/70 hover:bg-brand-50/40 flex flex-col items-center justify-center gap-1 cursor-pointer transition-colors text-slate-400 hover:text-brand-600">
+                          {isUploadingImage ? (
+                            <FontAwesomeIcon icon={faSpinner} className="w-5 h-5 animate-spin text-brand-600" />
+                          ) : (
+                            <>
+                              <FontAwesomeIcon icon={faImage} className="w-4 h-4" />
+                              <span className="text-[10px] font-medium">เพิ่มรูป</span>
+                            </>
+                          )}
+                          <input
+                            type="file"
+                            accept="image/jpeg,image/jpg,image/png,image/webp"
+                            multiple
+                            disabled={isUploadingImage}
+                            onChange={handleImageSelect}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
+                    </div>
+                  </div>
+
+                  {formError && (
+                    <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium">
+                      {formError}
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting || isUploadingImage}
+                    className="w-full py-3 px-5 rounded-2xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.99] cursor-pointer"
+                  >
+                    {isSubmitting && <FontAwesomeIcon icon={faSpinner} className="w-4 h-4 animate-spin" />}
+                    <span>{isSubmitting ? 'กำลังบันทึกรีวิว...' : 'ส่งรีวิว'}</span>
+                  </button>
+                </form>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Review Reader & Photo Viewer Modal */}
       <AnimatePresence>
         {selectedReview && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-            {/* Backdrop with Blur */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedReview(null)}
-              className="absolute inset-0 bg-stone-900/60 backdrop-blur-md cursor-pointer"
+              className="absolute inset-0 bg-slate-900/55 backdrop-blur-sm cursor-pointer"
             />
 
-            {/* Modal Content Card */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.94, y: 20 }}
+              initial={{ opacity: 0, scale: 0.95, y: 16 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.94, y: 20 }}
-              transition={{ type: 'spring', damping: 26, stiffness: 340 }}
-              className="relative z-10 w-full max-w-lg bg-white rounded-[32px] border border-stone-200 shadow-2xl p-6 sm:p-8 overflow-hidden"
+              exit={{ opacity: 0, scale: 0.95, y: 16 }}
+              className="relative z-10 w-full max-w-lg bg-white rounded-3xl border border-slate-200 shadow-2xl p-6 sm:p-7 max-h-[90vh] overflow-y-auto space-y-4"
             >
-              {/* Product Image with Category Pill & Close Button */}
-              <div className="relative w-full h-52 sm:h-60 rounded-2xl overflow-hidden mb-4 bg-stone-100 border border-stone-100">
-                <img
-                  src={selectedReview.image}
-                  alt={selectedReview.menuItem}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-white/95 backdrop-blur-xs text-stone-800 text-xs font-medium shadow-xs">
-                  {selectedReview.category}
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-brand-50 text-brand-700 border border-brand-200/70 flex items-center justify-center">
+                    <FontAwesomeIcon icon={faUser} className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-slate-900 text-base">
+                      {selectedReview.customerName}
+                    </div>
+                    <div className="flex items-center gap-1 text-amber-400 mt-0.5">
+                      {Array.from({ length: 5 }).map((_, idx) => (
+                        <FontAwesomeIcon
+                          key={idx}
+                          icon={faStar}
+                          className={`w-3.5 h-3.5 ${
+                            idx < selectedReview.rating ? 'text-amber-400' : 'text-slate-200'
+                          }`}
+                        />
+                      ))}
+                      <span className="text-xs text-slate-400 ml-2">
+                        {formatThaiDate(selectedReview.createdAt)}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-
                 <button
+                  type="button"
                   onClick={() => setSelectedReview(null)}
-                  className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/40 hover:bg-black/65 backdrop-blur-md text-white flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-sm border border-white/25"
-                  aria-label="ปิดหน้าต่างรีวิว"
+                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center cursor-pointer"
+                  aria-label="ปิดหน้าต่าง"
                 >
                   <FontAwesomeIcon icon={faXmark} className="w-3.5 h-3.5" />
                 </button>
               </div>
 
-              {/* Stars & Menu Title */}
-              <div className="flex items-center gap-1.5 text-amber-500 mb-1.5">
-                {[...Array(selectedReview.rating)].map((_, i) => (
-                  <FontAwesomeIcon key={i} icon={faStar} className="w-4 h-4 fill-current" />
-                ))}
-              </div>
-
-              <h3 className="text-xl sm:text-2xl font-bold text-stone-900 font-prompt tracking-tight mb-3">
-                {selectedReview.menuItem}
-              </h3>
-
-              {/* Full Review Text */}
-              <div className="relative mb-5 bg-[#FAF7F2] rounded-2xl p-4 border border-stone-200/60">
-                <FontAwesomeIcon icon={faQuoteLeft} className="w-4 h-4 text-amber-900/20 mb-2 block" />
-                <p className="text-stone-800 text-sm sm:text-base leading-relaxed font-normal">
-                  {selectedReview.comment}
+              <div className="bg-slate-50/80 rounded-2xl p-4 border border-slate-100">
+                <p className="text-slate-800 text-sm sm:text-base leading-relaxed">
+                  “{selectedReview.comment}”
                 </p>
-                {selectedReview.highlight && (
-                  <div className="mt-3 text-xs font-semibold text-amber-900 pt-2.5 border-t border-stone-200/70 flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                    <span>{selectedReview.highlight}</span>
-                  </div>
-                )}
               </div>
 
-              {/* Customer Info Footer */}
-              <div className="flex items-center justify-between text-xs pt-1 pb-4 border-b border-stone-100">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-amber-900/10 text-amber-950 border border-amber-900/15 flex items-center justify-center font-bold text-xs">
-                    {selectedReview.initials}
-                  </div>
-                  <div>
-                    <div className="font-semibold text-stone-900 text-sm">
-                      {selectedReview.name}
-                    </div>
-                    <div className="text-[11px] flex items-center gap-1 font-medium text-emerald-700">
-                      <FontAwesomeIcon icon={faCheckCircle} className="w-3 h-3" />
-                      <span>ยืนยันการสั่งซื้อจริงกับร้าน</span>
-                    </div>
-                  </div>
+              {selectedReview.images && selectedReview.images.length > 0 && (
+                <div
+                  className={`grid gap-2 ${
+                    selectedReview.images.length === 1 ? 'grid-cols-1' : 'grid-cols-2'
+                  }`}
+                >
+                  {selectedReview.images.map((imgUrl, idx) => (
+                    <a
+                      key={idx}
+                      href={imgUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block rounded-2xl overflow-hidden border border-slate-200/80 bg-slate-100"
+                    >
+                      <img
+                        src={imgUrl}
+                        alt={`รูปรีวิว ${idx + 1}`}
+                        className="w-full h-48 sm:h-56 object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                    </a>
+                  ))}
                 </div>
-                <span className="text-stone-400 text-xs font-light">{selectedReview.date}</span>
-              </div>
-
-              {/* Order CTA Button */}
-              <button
-                onClick={() => {
-                  setSelectedReview(null);
-                  const menuEl = document.getElementById('menu');
-                  if (menuEl) {
-                    menuEl.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }}
-                className="w-full mt-4 py-3.5 px-5 rounded-2xl bg-stone-900 hover:bg-stone-800 text-white font-medium text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all active:scale-98 cursor-pointer"
-              >
-                <span>เลือกสั่งซื้อ {selectedReview.menuItem}</span>
-                <FontAwesomeIcon icon={faArrowRight} className="w-3 h-3 text-amber-300" />
-              </button>
+              )}
             </motion.div>
           </div>
         )}

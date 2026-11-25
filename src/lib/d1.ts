@@ -1,4 +1,4 @@
-import { ProductWithImages, OrderDetail, StoreSettingsData, OrderStatus, PaymentMethod } from '@/types';
+import { ProductWithImages, OrderDetail, StoreSettingsData, OrderStatus, PaymentMethod, ReviewItem, ReviewStats, ReviewStatus } from '@/types';
 import { prisma } from './prisma';
 
 /**
@@ -762,4 +762,175 @@ export async function getD1Orders(options?: {
         : null,
     })),
   }));
+}
+
+// ----------------------------------------------------------------------
+// 4. CUSTOMER REVIEWS (Front End: ReviewItem[], ReviewStats)
+// ----------------------------------------------------------------------
+
+function parseReviewImages(raw: unknown): string[] {
+  if (Array.isArray(raw)) {
+    return raw.filter((u): u is string => typeof u === 'string' && u.trim().length > 0);
+  }
+  if (typeof raw === 'string') {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        return parsed.filter((u): u is string => typeof u === 'string' && u.trim().length > 0);
+      }
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
+
+export function computeReviewStats(visibleReviews: ReviewItem[]): ReviewStats {
+  const totalCount = visibleReviews.length;
+  const counts: Record<number, number> = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+  let sum = 0;
+
+  for (const r of visibleReviews) {
+    const rating = Math.min(5, Math.max(1, Math.round(Number(r.rating) || 5)));
+    counts[rating] = (counts[rating] || 0) + 1;
+    sum += rating;
+  }
+
+  const averageRating = totalCount > 0 ? Math.round((sum / totalCount) * 100) / 100 : 0;
+  const stars: (5 | 4 | 3 | 2 | 1)[] = [5, 4, 3, 2, 1];
+  const breakdown = stars.map((star) => ({
+    star,
+    count: counts[star] || 0,
+    percentage: totalCount > 0 ? Math.round(((counts[star] || 0) / totalCount) * 100) : 0,
+  }));
+
+  return { averageRating, totalCount, breakdown };
+}
+
+export async function getD1Reviews(options?: {
+  rating?: number;
+  hasImages?: boolean;
+  sort?: 'latest' | 'highest' | 'lowest';
+  includeHidden?: boolean;
+  d1Binding?: CloudflareD1Binding;
+}): Promise<{ reviews: ReviewItem[]; stats: ReviewStats }> {
+  let allRows: ReviewItem[] = [];
+
+  if (options?.d1Binding) {
+    const sql = options.includeHidden
+      ? `SELECT id, customerName, rating, comment, images, status, createdAt, updatedAt FROM Review ORDER BY datetime(createdAt) DESC`
+      : `SELECT id, customerName, rating, comment, images, status, createdAt, updatedAt FROM Review WHERE status = 'VISIBLE' ORDER BY datetime(createdAt) DESC`;
+
+    const { results } = await options.d1Binding.prepare(sql).bind().all<any>();
+    allRows = (results || []).map((row: any) => ({
+      id: row.id,
+      customerName: row.customerName,
+      rating: Number(row.rating),
+      comment: row.comment,
+      images: parseReviewImages(row.images),
+      status: (row.status === 'HIDDEN' ? 'HIDDEN' : 'VISIBLE') as ReviewStatus,
+      createdAt: new Date(row.createdAt).toISOString(),
+      updatedAt: new Date(row.updatedAt).toISOString(),
+    }));
+  } else {
+    const rows = await prisma.review.findMany({
+      where: options?.includeHidden ? undefined : { status: 'VISIBLE' },
+      orderBy: { createdAt: 'desc' },
+    });
+    allRows = rows.map((row) => ({
+      id: row.id,
+      customerName: row.customerName,
+      rating: row.rating,
+      comment: row.comment,
+      images: parseReviewImages(row.images),
+      status: (row.status === 'HIDDEN' ? 'HIDDEN' : 'VISIBLE') as ReviewStatus,
+      createdAt: row.createdAt.toISOString(),
+      updatedAt: row.updatedAt.toISOString(),
+    }));
+  }
+
+  const visibleReviews = allRows.filter((r) => r.status === 'VISIBLE');
+  const stats = computeReviewStats(visibleReviews);
+
+  let filtered = [...allRows];
+  if (options?.rating && options.rating >= 1 && options.rating <= 5) {
+    filtered = filtered.filter((r) => r.rating === options.rating);
+  }
+  if (options?.hasImages) {
+    filtered = filtered.filter((r) => r.images.length > 0);
+  }
+
+  const sort = options?.sort || 'latest';
+  if (sort === 'highest') {
+    filtered.sort((a, b) => b.rating - a.rating || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  } else if (sort === 'lowest') {
+    filtered.sort((a, b) => a.rating - b.rating || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  } else {
+    filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  return { reviews: filtered, stats };
+}
+
+export async function createD1Review(input: {
+  customerName: string;
+  rating: number;
+  comment: string;
+  images: string[];
+  d1Binding?: CloudflareD1Binding;
+}): Promise<{ review: ReviewItem; stats: ReviewStats }> {
+  const id = crypto.randomUUID();
+  const now = new Date().toISOString();
+  const imagesJson = JSON.stringify(input.images.slice(0, 5));
+
+  if (input.d1Binding) {
+    await input.d1Binding
+      .prepare(
+        `INSERT INTO Review (id, customerName, rating, comment, images, status, createdAt, updatedAt)
+         VALUES (?, ?, ?, ?, ?, 'VISIBLE', ?, ?)`
+      )
+      .bind(id, input.customerName, input.rating, input.comment, imagesJson, now, now)
+      .run();
+
+    const { stats } = await getD1Reviews({ d1Binding: input.d1Binding });
+    return {
+      review: {
+        id,
+        customerName: input.customerName,
+        rating: input.rating,
+        comment: input.comment,
+        images: input.images.slice(0, 5),
+        status: 'VISIBLE',
+        createdAt: now,
+        updatedAt: now,
+      },
+      stats,
+    };
+  }
+
+  const created = await prisma.review.create({
+    data: {
+      id,
+      customerName: input.customerName,
+      rating: input.rating,
+      comment: input.comment,
+      images: imagesJson,
+      status: 'VISIBLE',
+    },
+  });
+
+  const { stats } = await getD1Reviews();
+  return {
+    review: {
+      id: created.id,
+      customerName: created.customerName,
+      rating: created.rating,
+      comment: created.comment,
+      images: parseReviewImages(created.images),
+      status: 'VISIBLE',
+      createdAt: created.createdAt.toISOString(),
+      updatedAt: created.updatedAt.toISOString(),
+    },
+    stats,
+  };
 }

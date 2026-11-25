@@ -100,3 +100,14 @@ model StoreSettings {
   announcement       String?  @default("อบสดใหม่ทุกวัน ส่งตรงถึงบ้านคุณด้วยความพิถีพิถัน")
   updatedAt          DateTime @updatedAt
 }
+
+model Review {
+  id           String   @id @default(cuid())
+  customerName String
+  rating       Int
+  comment      String
+  images       String   @default("[]") // JSON array of image URLs
+  status       String   @default("VISIBLE") // VISIBLE, HIDDEN
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
