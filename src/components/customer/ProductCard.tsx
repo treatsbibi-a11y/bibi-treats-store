@@ -119,12 +119,10 @@ export default function ProductCard({ product, onOpenModal }: ProductCardProps) 
             </Button>
           ) : (
             <Button
-              variant="primary"
+              variant={isAdded ? 'soft' : 'primary'}
               size="md"
               className={`w-full transition-all duration-200 text-xs font-medium ${
-                isAdded
-                  ? 'bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 shadow-none'
-                  : 'bg-slate-900 hover:bg-slate-800 text-white shadow-sm'
+                isAdded ? '' : 'bg-slate-900 hover:bg-slate-800 text-white shadow-sm'
               }`}
               onClick={handleQuickAdd}
             >

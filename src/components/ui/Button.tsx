@@ -3,7 +3,7 @@
 import React from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'soft';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
 }
@@ -37,6 +37,8 @@ export function Button({
       'text-slate-600 hover:text-slate-900 hover:bg-slate-100',
     danger:
       'bg-red-600 hover:bg-red-700 text-white shadow-subtle',
+    soft:
+      'bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 shadow-none',
   }[variant];
 
   return (
