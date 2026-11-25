@@ -178,7 +178,7 @@ export function ImageCarouselHero({
   };
 
   return (
-    <div id="home" className="relative w-full min-h-0 sm:min-h-[78vh] lg:min-h-[82vh] bg-gradient-to-b from-[#F0F7FF] via-[#FAFCFE] to-white overflow-hidden pt-4 sm:pt-8 md:pt-10 pb-4 sm:pb-14 md:pb-16 border-b border-slate-200/80">
+    <div id="home" className="relative w-full min-h-0 sm:min-h-[78vh] lg:min-h-[82vh] bg-gradient-to-b from-[#F0F7FF] via-[#FAFCFE] to-[#FAFCFE] overflow-hidden pt-4 sm:pt-8 md:pt-10 pb-4 sm:pb-14 md:pb-16">
       {/* Scoped Keyframes for Hand-Drawn Yellow Brush Draw-on Animation */}
       <style>{`
         @keyframes brushDrawOn {
