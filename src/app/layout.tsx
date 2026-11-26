@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
@@ -14,9 +14,20 @@ import { CartDrawer } from '@/components/customer/CartDrawer';
 import ScrollProgressBar from '@/components/customer/ScrollProgressBar';
 import ScrollToTop from '@/components/customer/ScrollToTop';
 import CookieConsent from '@/components/customer/CookieConsent';
+import PWAInstallPrompt from '@/components/customer/PWAInstallPrompt';
+
+export const viewport: Viewport = {
+  themeColor: '#D97706',
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_STOREFRONT_URL || 'https://bibitreats.com'),
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: "Bibi's Treats",
+  },
   title: "Bibi's Treats | Artisanal Confectionery & Pastries",
   description: 'Small-batch artisanal bakery crafted with 100% pure butter and single-origin chocolate. Fresh daily delivery in Bangkok.',
   alternates: {
@@ -74,6 +85,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <BottomNav />
             <CartDrawer />
             <CookieConsent />
+            <PWAInstallPrompt />
           </CartProvider>
         </MotionProvider>
       </body>
