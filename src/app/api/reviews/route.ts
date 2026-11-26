@@ -1,7 +1,7 @@
 export const runtime = 'edge';
 import { NextRequest, NextResponse } from 'next/server';
-import { getRequestContext } from '@cloudflare/next-on-pages';
-import { CloudflareD1Binding, createD1Review, getD1Reviews } from '@/lib/d1';
+import { resolveD1Binding } from '@/lib/d1-remote';
+import { createD1Review, getD1Reviews } from '@/lib/d1';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,10 +19,7 @@ export async function GET(req: NextRequest) {
     const sort =
       sortParam === 'highest' || sortParam === 'lowest' ? sortParam : 'latest';
 
-    let d1Binding: CloudflareD1Binding | undefined;
-    try {
-      d1Binding = (getRequestContext()?.env as any)?.DB;
-    } catch {}
+    const d1Binding = resolveD1Binding();
 
     const data = await getD1Reviews({
       rating: rating && !isNaN(rating) ? rating : undefined,
@@ -89,17 +86,20 @@ export async function POST(req: NextRequest) {
     const images = rawImages
       .filter((u: unknown): u is string => typeof u === 'string' && u.trim().length > 0)
       .slice(0, 5);
+    const productId =
+      typeof body.productId === 'string' && body.productId.trim() ? body.productId.trim() : null;
+    const productName =
+      typeof body.productName === 'string' && body.productName.trim() ? body.productName.trim() : null;
 
-    let d1Binding: CloudflareD1Binding | undefined;
-    try {
-      d1Binding = (getRequestContext()?.env as any)?.DB;
-    } catch {}
+    const d1Binding = resolveD1Binding();
 
     const result = await createD1Review({
       customerName,
       rating,
       comment,
       images,
+      productId,
+      productName,
       d1Binding,
     });
 

@@ -103,7 +103,7 @@ export default function BottomNav() {
         <Link
           href="/"
           onClick={handleHomeClick}
-          className={`flex flex-col items-center justify-center min-h-[46px] min-w-[58px] py-1 px-2 text-[11px] transition-all rounded-xl active:scale-95 ${
+          className={`flex flex-col items-center justify-center min-h-[46px] min-w-[58px] py-1 px-2 text-[11px] transition-[transform,color] duration-150 ease-[var(--ease-out)] rounded-xl active:scale-95 ${
             activeTab === 'home'
               ? 'text-slate-900 font-bold'
               : 'text-slate-400 hover:text-slate-600 font-normal'
@@ -139,7 +139,7 @@ export default function BottomNav() {
         <Link
           href="/#menu"
           onClick={handleMenuClick}
-          className={`flex flex-col items-center justify-center min-h-[46px] min-w-[58px] py-1 px-2 text-[11px] transition-all rounded-xl active:scale-95 ${
+          className={`flex flex-col items-center justify-center min-h-[46px] min-w-[58px] py-1 px-2 text-[11px] transition-[transform,color] duration-150 ease-[var(--ease-out)] rounded-xl active:scale-95 ${
             activeTab === 'menu'
               ? 'text-slate-900 font-bold'
               : 'text-slate-400 hover:text-slate-600 font-normal'
@@ -180,14 +180,14 @@ export default function BottomNav() {
         {/* 3. Cart (ตะกร้า) */}
         <button
           onClick={handleCartClick}
-          className={`relative flex flex-col items-center justify-center min-h-[46px] min-w-[58px] py-1 px-2 text-[11px] transition-all rounded-xl active:scale-95 ${
+          className={`relative flex flex-col items-center justify-center min-h-[46px] min-w-[58px] py-1 px-2 text-[11px] transition-[transform,color] duration-150 ease-[var(--ease-out)] rounded-xl active:scale-95 ${
             activeTab === 'cart'
               ? 'text-slate-900 font-bold'
               : 'text-slate-400 hover:text-slate-600 font-normal'
           }`}
           aria-label="เปิดตะกร้าสินค้า"
         >
-          <div className={`relative transition-all duration-300 ${isCartBouncing ? 'scale-110 text-brand-600' : ''}`}>
+          <div className={`relative transition-[transform,color] duration-200 ease-[var(--ease-out)] ${isCartBouncing ? 'scale-110 text-brand-600' : ''}`}>
             {activeTab === 'cart' ? (
               /* Solid Filled Luxury Shopping Bag */
               <svg
@@ -236,7 +236,7 @@ export default function BottomNav() {
             closeDrawer();
             setActiveTab('tracking');
           }}
-          className={`flex flex-col items-center justify-center min-h-[46px] min-w-[58px] py-1 px-2 text-[11px] transition-all rounded-xl active:scale-95 ${
+          className={`flex flex-col items-center justify-center min-h-[46px] min-w-[58px] py-1 px-2 text-[11px] transition-[transform,color] duration-150 ease-[var(--ease-out)] rounded-xl active:scale-95 ${
             activeTab === 'tracking'
               ? 'text-slate-900 font-bold'
               : 'text-slate-400 hover:text-slate-600 font-normal'

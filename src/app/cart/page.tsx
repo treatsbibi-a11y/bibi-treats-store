@@ -120,7 +120,7 @@ export default function CartPage() {
 
                   return (
                     <div key={item.product.id} className="p-4 sm:p-5 flex gap-4 items-center">
-                      <div className="w-20 h-20 rounded-md bg-slate-100 overflow-hidden flex-shrink-0 border border-slate-200 flex items-center justify-center">
+                      <div className="w-20 h-20 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0 flex items-center justify-center">
                         {primaryImg ? (
                           <img
                             src={primaryImg}

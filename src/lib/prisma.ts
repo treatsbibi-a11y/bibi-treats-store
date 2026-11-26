@@ -1,18 +1,14 @@
 import { PrismaClient } from '@prisma/client';
 import { PrismaD1 } from '@prisma/adapter-d1';
-import { getRequestContext } from '@cloudflare/next-on-pages';
+import { resolveD1Binding } from './d1-remote';
 
 let localPrisma: PrismaClient | null = null;
 
 export function getPrisma(): PrismaClient {
-  try {
-    const ctx = getRequestContext();
-    if (ctx?.env && (ctx.env as any).DB) {
-      const adapter = new PrismaD1((ctx.env as any).DB);
-      return new PrismaClient({ adapter: adapter as any });
-    }
-  } catch {
-    // getRequestContext is unavailable outside of active Cloudflare Pages request
+  const d1 = resolveD1Binding();
+  if (d1) {
+    const adapter = new PrismaD1(d1 as any);
+    return new PrismaClient({ adapter: adapter as any });
   }
 
   if (!localPrisma) {

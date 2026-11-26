@@ -296,9 +296,9 @@ export function ImageCarouselHero({
 
       {/* Animated Pale Sky Blue Ambient Blur Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
-        <div className="sky-drift-orb-1 absolute -top-24 -right-20 sm:right-10 w-[34rem] sm:w-[46rem] h-[34rem] sm:h-[46rem] rounded-full blur-[100px] opacity-80 transition-all" />
-        <div className="sky-drift-orb-2 absolute top-1/4 -left-28 sm:left-4 w-[32rem] sm:w-[44rem] h-[32rem] sm:h-[44rem] rounded-full blur-[95px] opacity-75 transition-all" />
-        <div className="sky-drift-orb-3 absolute -bottom-24 left-1/4 w-[30rem] sm:w-[40rem] h-[30rem] sm:h-[40rem] rounded-full blur-[90px] opacity-70 transition-all" />
+        <div className="sky-drift-orb-1 absolute -top-24 -right-20 sm:right-10 w-[34rem] sm:w-[46rem] h-[34rem] sm:h-[46rem] rounded-full blur-[100px] opacity-80" />
+        <div className="sky-drift-orb-2 absolute top-1/4 -left-28 sm:left-4 w-[32rem] sm:w-[44rem] h-[32rem] sm:h-[44rem] rounded-full blur-[95px] opacity-75" />
+        <div className="sky-drift-orb-3 absolute -bottom-24 left-1/4 w-[30rem] sm:w-[40rem] h-[30rem] sm:h-[40rem] rounded-full blur-[90px] opacity-70" />
       </div>
 
       <div className="relative z-10 flex flex-col items-center justify-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

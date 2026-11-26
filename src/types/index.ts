@@ -27,6 +27,7 @@ export interface CartItem {
 export type OrderStatus =
   | 'PENDING'
   | 'CONFIRMED'
+  | 'SLIP_UPLOADED'
   | 'PREPARING'
   | 'SHIPPING'
   | 'COMPLETED'
@@ -89,6 +90,8 @@ export interface ReviewItem {
   rating: number;
   comment: string;
   images: string[];
+  productId?: string | null;
+  productName?: string | null;
   status: ReviewStatus;
   createdAt: string;
   updatedAt: string;

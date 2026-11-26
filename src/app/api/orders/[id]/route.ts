@@ -2,8 +2,10 @@ export const runtime = 'edge';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getD1OrderDetail, CloudflareD1Binding } from '@/lib/d1';
+import { resolveD1Binding } from '@/lib/d1-remote';
 import { getRequestContext } from '@cloudflare/next-on-pages';
 import { notifySlipUploadedToLine } from '@/lib/line';
+import { getAdminSession } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,6 +18,7 @@ interface RouteContext {
 const VALID_STATUSES = [
   'PENDING',
   'CONFIRMED',
+  'SLIP_UPLOADED',
   'PREPARING',
   'SHIPPING',
   'COMPLETED',
@@ -32,12 +35,12 @@ export async function GET(
   try {
     const { id } = params;
 
-    // Check Cloudflare D1 binding & runtime env on Edge Runtime
-    let d1Binding: CloudflareD1Binding | undefined;
+    // Check Cloudflare D1 binding & runtime env on Edge Runtime or Localhost Remote Bridge
+    let d1Binding: CloudflareD1Binding | undefined = resolveD1Binding();
     let runtimeEnv: any;
     try {
       runtimeEnv = getRequestContext()?.env;
-      d1Binding = runtimeEnv?.DB;
+      d1Binding = runtimeEnv?.DB || d1Binding;
     } catch {}
 
     if (d1Binding) {
@@ -115,6 +118,28 @@ async function handleUpdateOrder(req: NextRequest, id: string) {
     const slipUrl = body.slipUrl;
     const paymentMethod = body.paymentMethod;
 
+    const trimmedSlipUrl =
+      slipUrl !== undefined && slipUrl !== null ? String(slipUrl).trim() : undefined;
+    const hasSlipSubmission = Boolean(trimmedSlipUrl);
+
+    if (hasSlipSubmission && !trimmedSlipUrl!.startsWith('/uploads/')) {
+      return NextResponse.json(
+        { error: 'URL สลิปไม่ถูกต้อง' },
+        { status: 400 }
+      );
+    }
+
+    // Only authenticated admins can change order status or paymentMethod directly
+    if (newStatus !== undefined || paymentMethod !== undefined) {
+      const session = await getAdminSession();
+      if (!session) {
+        return NextResponse.json(
+          { error: 'Unauthorized' },
+          { status: 401 }
+        );
+      }
+    }
+
     if (newStatus && !VALID_STATUSES.includes(newStatus)) {
       return NextResponse.json(
         { error: 'สถานะคำสั่งซื้อไม่ถูกต้อง' },
@@ -122,12 +147,12 @@ async function handleUpdateOrder(req: NextRequest, id: string) {
       );
     }
 
-    // Check Cloudflare D1 binding & runtime env on Edge Runtime
-    let d1Binding: CloudflareD1Binding | undefined;
+    // Check Cloudflare D1 binding & runtime env on Edge Runtime or Localhost Remote Bridge
+    let d1Binding: CloudflareD1Binding | undefined = resolveD1Binding();
     let runtimeEnv: any;
     try {
       runtimeEnv = getRequestContext()?.env;
-      d1Binding = runtimeEnv?.DB;
+      d1Binding = runtimeEnv?.DB || d1Binding;
     } catch {}
 
     if (d1Binding) {
@@ -149,10 +174,20 @@ async function handleUpdateOrder(req: NextRequest, id: string) {
         );
       }
 
+      if (hasSlipSubmission && existingOrder.status !== 'CONFIRMED') {
+        return NextResponse.json(
+          { error: 'กรุณารอร้านยืนยันคำสั่งซื้อก่อนแนบสลิปการโอนเงิน' },
+          { status: 403 }
+        );
+      }
+
       const oldStatus = existingOrder.status;
+      const targetStatus: ValidStatus | undefined = hasSlipSubmission
+        ? 'SLIP_UPLOADED'
+        : newStatus;
 
       // 1. If transitioning to CANCELLED from an active status: RESTOCK
-      if (newStatus === 'CANCELLED' && oldStatus !== 'CANCELLED') {
+      if (targetStatus === 'CANCELLED' && oldStatus !== 'CANCELLED') {
         const { results: items } = await d1Binding
           .prepare(`SELECT productId, quantity FROM OrderItem WHERE orderId = ?`)
           .bind(existingOrder.id)
@@ -169,7 +204,7 @@ async function handleUpdateOrder(req: NextRequest, id: string) {
       }
 
       // 2. If un-cancelling (from CANCELLED to an active status): VERIFY & RE-DEDUCT
-      if (oldStatus === 'CANCELLED' && newStatus && newStatus !== 'CANCELLED') {
+      if (oldStatus === 'CANCELLED' && targetStatus && targetStatus !== 'CANCELLED') {
         const { results: items } = await d1Binding
           .prepare(`SELECT productId, productName, quantity FROM OrderItem WHERE orderId = ?`)
           .bind(existingOrder.id)
@@ -214,12 +249,12 @@ async function handleUpdateOrder(req: NextRequest, id: string) {
       const updates: string[] = [];
       const updateParams: any[] = [];
 
-      if (newStatus) {
+      if (targetStatus) {
         updates.push('status = ?');
-        updateParams.push(newStatus);
+        updateParams.push(targetStatus);
       }
       if (note !== undefined) {
-        if (existingOrder.status !== 'PENDING' && !newStatus) {
+        if (existingOrder.status !== 'PENDING' && !targetStatus) {
           throw new Error('ไม่สามารถแก้ไขหมายเหตุได้ เนื่องจากร้านค้ายืนยันออเดอร์แล้ว');
         }
         updates.push('note = ?');
@@ -227,7 +262,7 @@ async function handleUpdateOrder(req: NextRequest, id: string) {
       }
       if (slipUrl !== undefined) {
         updates.push('slipUrl = ?');
-        updateParams.push(slipUrl ? String(slipUrl).trim() : null);
+        updateParams.push(trimmedSlipUrl || null);
       }
       if (paymentMethod !== undefined && ['TRANSFER', 'COD'].includes(paymentMethod)) {
         updates.push('paymentMethod = ?');
@@ -246,7 +281,7 @@ async function handleUpdateOrder(req: NextRequest, id: string) {
       }
 
       const updated = await getD1OrderDetail(existingOrder.id, d1Binding);
-      if (updated && slipUrl) {
+      if (updated && hasSlipSubmission) {
         await notifySlipUploadedToLine(updated, runtimeEnv);
       }
       return NextResponse.json(updated);
@@ -272,12 +307,22 @@ async function handleUpdateOrder(req: NextRequest, id: string) {
       );
     }
 
+    if (hasSlipSubmission && existingOrder.status !== 'CONFIRMED') {
+      return NextResponse.json(
+        { error: 'กรุณารอร้านยืนยันคำสั่งซื้อก่อนแนบสลิปการโอนเงิน' },
+        { status: 403 }
+      );
+    }
+
     const oldStatus = existingOrder.status;
+    const targetStatus: ValidStatus | undefined = hasSlipSubmission
+      ? 'SLIP_UPLOADED'
+      : newStatus;
 
     // Execute atomic transaction for status update and stock restock/adjust
     const updatedOrder = await prisma.$transaction(async (tx) => {
       // 1. If transitioning to CANCELLED from an active status: RESTOCK
-      if (newStatus === 'CANCELLED' && oldStatus !== 'CANCELLED') {
+      if (targetStatus === 'CANCELLED' && oldStatus !== 'CANCELLED') {
         for (const item of existingOrder.items) {
           if (item.productId) {
             await tx.product.update({
@@ -292,7 +337,7 @@ async function handleUpdateOrder(req: NextRequest, id: string) {
       }
 
       // 2. If un-cancelling (from CANCELLED to an active status): VERIFY & RE-DEDUCT
-      if (oldStatus === 'CANCELLED' && newStatus && newStatus !== 'CANCELLED') {
+      if (oldStatus === 'CANCELLED' && targetStatus && targetStatus !== 'CANCELLED') {
         // First verify sufficient stock
         for (const item of existingOrder.items) {
           if (item.productId) {
@@ -339,15 +384,15 @@ async function handleUpdateOrder(req: NextRequest, id: string) {
         slipUrl?: string | null;
         paymentMethod?: string;
       } = {};
-      if (newStatus) updateData.status = newStatus;
+      if (targetStatus) updateData.status = targetStatus;
       if (note !== undefined) {
-        if (existingOrder.status !== 'PENDING' && !newStatus) {
+        if (existingOrder.status !== 'PENDING' && !targetStatus) {
           throw new Error('ไม่สามารถแก้ไขหมายเหตุได้ เนื่องจากร้านค้ายืนยันออเดอร์แล้ว');
         }
         updateData.note = note ? String(note).trim() : null;
       }
       if (slipUrl !== undefined) {
-        updateData.slipUrl = slipUrl ? String(slipUrl).trim() : null;
+        updateData.slipUrl = trimmedSlipUrl || null;
       }
       if (paymentMethod !== undefined) {
         if (['TRANSFER', 'COD'].includes(paymentMethod)) {
@@ -375,7 +420,7 @@ async function handleUpdateOrder(req: NextRequest, id: string) {
       });
     });
 
-    if (updatedOrder && slipUrl) {
+    if (updatedOrder && hasSlipSubmission) {
       await notifySlipUploadedToLine(updatedOrder, runtimeEnv);
     }
     return NextResponse.json(updatedOrder);

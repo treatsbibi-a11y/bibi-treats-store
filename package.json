@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "node --no-node-snapshot ./node_modules/next/dist/bin/next dev",
+    "dev": "node scripts/sync-wrangler-env.mjs && node --no-node-snapshot ./node_modules/next/dist/bin/next dev -H 0.0.0.0",
     "build": "prisma generate && node --no-node-snapshot ./node_modules/next/dist/bin/next build",
     "pages:build": "npx @cloudflare/next-on-pages",
-    "start": "node --no-node-snapshot ./node_modules/next/dist/bin/next start",
+    "start": "node scripts/sync-wrangler-env.mjs && node --no-node-snapshot ./node_modules/next/dist/bin/next start",
     "postinstall": "prisma generate",
     "lint": "next lint",
     "db:push": "prisma db push",

@@ -58,6 +58,7 @@ async function pushLineText(
 ): Promise<void> {
   const { token, recipients } = getLineCredentials(runtimeEnv);
   if (!token || recipients.length === 0) {
+    console.warn('[LINE] Missing LINE_CHANNEL_ACCESS_TOKEN or LINE_ADMIN_TO; skipping LINE push.');
     return;
   }
 
@@ -108,6 +109,7 @@ export async function notifyNewOrderToLine(
     itemsText ? `📦 รายการ:\n${itemsText}` : '',
     `💰 ยอดสุทธิ: ฿${Number(order.total).toLocaleString()}`,
     `💳 ชำระเงิน: ${paymentLabel}`,
+    order.slipUrl ? `📎 สลิป: แนบหลักฐานการโอนเงินแล้ว` : '',
     order.note ? `📝 หมายเหตุ: ${order.note}` : '',
     `🔗 จัดการออเดอร์: https://bibi-treats-admin.pages.dev/orders`,
   ].filter(Boolean);

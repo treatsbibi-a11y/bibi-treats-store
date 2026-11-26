@@ -3,8 +3,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
 import { createD1Order, getD1Orders, CloudflareD1Binding } from '@/lib/d1';
+import { resolveD1Binding } from '@/lib/d1-remote';
 import { getRequestContext } from '@cloudflare/next-on-pages';
 import { notifyNewOrderToLine } from '@/lib/line';
+import { getAdminSession } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -81,12 +83,12 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Check Cloudflare D1 binding & runtime env on Edge Runtime
-    let d1Binding: CloudflareD1Binding | undefined;
+    // Check Cloudflare D1 binding & runtime env on Edge Runtime or Localhost Remote Bridge
+    let d1Binding: CloudflareD1Binding | undefined = resolveD1Binding();
     let runtimeEnv: any;
     try {
       runtimeEnv = getRequestContext()?.env;
-      d1Binding = runtimeEnv?.DB;
+      d1Binding = runtimeEnv?.DB || d1Binding;
     } catch {}
 
     if (d1Binding) {
@@ -99,7 +101,6 @@ export async function POST(req: NextRequest) {
         },
         items: requestedItems as { productId: string; quantity: number }[],
         paymentMethod: body.paymentMethod === 'COD' ? 'COD' : 'TRANSFER',
-        shippingFee: body.shippingFee !== undefined ? Number(body.shippingFee) : undefined,
         note: body.note?.trim() || null,
         slipUrl: body.slipUrl ? String(body.slipUrl).trim() : null,
         d1Binding,
@@ -172,11 +173,8 @@ export async function POST(req: NextRequest) {
         });
       }
 
-      // 4. Shipping fee and total
-      const shippingFee =
-        body.shippingFee !== undefined
-          ? Number(body.shippingFee)
-          : settings?.defaultShippingFee ?? 40;
+      // 4. Shipping fee and total (always computed server-side from StoreSettings)
+      const shippingFee = settings?.defaultShippingFee ?? 40;
       const total = subtotal + shippingFee;
 
       // 5. Generate unique orderNumber (e.g. BT-0001, BT-0002)
@@ -215,6 +213,9 @@ export async function POST(req: NextRequest) {
 
       // 7. Create order record
       const paymentMethod = body.paymentMethod === 'COD' ? 'COD' : 'TRANSFER';
+      const cleanSlipUrl = body.slipUrl ? String(body.slipUrl).trim() : null;
+      const initialStatus =
+        paymentMethod === 'TRANSFER' && cleanSlipUrl ? 'SLIP_UPLOADED' : 'PENDING';
       const order = await tx.order.create({
         data: {
           orderNumber,
@@ -222,9 +223,9 @@ export async function POST(req: NextRequest) {
           subtotal,
           shippingFee,
           total,
-          status: 'PENDING',
+          status: initialStatus,
           paymentMethod,
-          slipUrl: body.slipUrl ? String(body.slipUrl).trim() : null,
+          slipUrl: cleanSlipUrl,
           note: body.note?.trim() || null,
           items: {
             create: preparedOrderItems.map((item) => ({
@@ -267,6 +268,10 @@ export async function POST(req: NextRequest) {
 // GET /api/orders - list orders for admin with status filter and sort by createdAt desc
 export async function GET(req: NextRequest) {
   try {
+    const session = await getAdminSession();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const { searchParams } = new URL(req.url);
     const status = searchParams.get('status');
     const search = searchParams.get('search');
@@ -274,11 +279,8 @@ export async function GET(req: NextRequest) {
     const endDate = searchParams.get('endDate');
     const format = searchParams.get('format'); // 'array' or 'object'
 
-    // Check Cloudflare D1 binding on Edge Runtime
-    let d1Binding: CloudflareD1Binding | undefined;
-    try {
-      d1Binding = (getRequestContext()?.env as any)?.DB;
-    } catch {}
+    // Check Cloudflare D1 binding on Edge Runtime or Localhost Remote Bridge
+    const d1Binding = resolveD1Binding();
 
     if (d1Binding) {
       const orders = await getD1Orders({

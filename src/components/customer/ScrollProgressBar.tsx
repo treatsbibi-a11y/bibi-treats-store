@@ -38,8 +38,8 @@ export default function ScrollProgressBar() {
       aria-hidden="true"
     >
       <div
-        className="h-full bg-gradient-to-r from-amber-400 via-amber-500 to-brand-600 shadow-[0_0_10px_rgba(245,158,11,0.7),0_0_4px_rgba(2,106,199,0.7)] transition-[width] duration-75 ease-out"
-        style={{ width: `${scrollProgress}%` }}
+        className="h-full w-full origin-left bg-gradient-to-r from-amber-400 via-amber-500 to-brand-600 shadow-[0_0_10px_rgba(245,158,11,0.7),0_0_4px_rgba(2,106,199,0.7)] transition-transform duration-75 ease-out will-change-transform"
+        style={{ transform: `scaleX(${scrollProgress / 100})` }}
       />
     </div>
   );

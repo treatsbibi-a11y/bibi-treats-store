@@ -13,6 +13,7 @@ import {
   faCakeCandles,
 } from '@fortawesome/free-solid-svg-icons';
 import { useCart } from '@/context/CartContext';
+import { formatPrice } from '@/lib/order-utils';
 import { Drawer } from '@/components/ui/Drawer';
 import { Button } from '@/components/ui/Button';
 
@@ -46,7 +47,7 @@ export function CartDrawer() {
             <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm">
               <div className="flex justify-between text-slate-600">
                 <span>ยอดรวมสินค้า</span>
-                <span className="font-medium text-slate-900">฿{subtotal.toLocaleString()}</span>
+                <span className="font-medium text-slate-900">฿{formatPrice(subtotal)}</span>
               </div>
               <div className="flex justify-between text-slate-600">
                 <span>ค่าจัดส่งโดยประมาณ</span>
@@ -54,20 +55,20 @@ export function CartDrawer() {
                   {shippingFee === 0 ? (
                     <span className="font-semibold text-emerald-600">จัดส่งฟรี</span>
                   ) : (
-                    `฿${shippingFee.toLocaleString()}`
+                    `฿${formatPrice(shippingFee)}`
                   )}
                 </span>
               </div>
               <div className="flex justify-between text-sm sm:text-base font-bold text-slate-900 pt-1.5 sm:pt-2 border-t border-slate-200">
                 <span>ยอดรวมสุทธิ</span>
-                <span className="text-brand-600">฿{total.toLocaleString()}</span>
+                <span className="text-brand-600">฿{formatPrice(total)}</span>
               </div>
             </div>
 
             <Button
               variant="primary"
               size="lg"
-              className="w-full h-11 sm:h-12 text-sm sm:text-base font-bold flex items-center justify-center gap-2 shadow-sm active:scale-[0.99] transition-all"
+              className="w-full h-11 sm:h-12 text-sm sm:text-base font-bold flex items-center justify-center gap-2 shadow-sm active:scale-[0.99] transition-[transform,background-color,box-shadow] duration-150 ease-[var(--ease-out)]"
               onClick={handleCheckout}
             >
               <span>ดำเนินการสั่งซื้อ</span>
@@ -104,7 +105,7 @@ export function CartDrawer() {
 
             return (
               <div key={item.product.id} className="py-4 flex gap-4">
-                <div className="w-20 h-20 rounded-md bg-slate-100 overflow-hidden flex-shrink-0 border border-slate-200/80 flex items-center justify-center">
+                <div className="w-20 h-20 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0 flex items-center justify-center">
                   {primaryImg ? (
                     <img
                       src={primaryImg}
@@ -123,7 +124,7 @@ export function CartDrawer() {
                         {item.product.name}
                       </h4>
                       <p className="text-xs text-slate-500 font-mono mt-0.5">
-                        ชิ้นละ ฿{item.product.price}
+                        ชิ้นละ ฿{formatPrice(item.product.price)}
                       </p>
                     </div>
                     <button
@@ -158,7 +159,7 @@ export function CartDrawer() {
                     </div>
 
                     <span className="text-sm font-bold text-slate-900 font-mono">
-                      ฿{(item.product.price * item.quantity).toLocaleString()}
+                      ฿{formatPrice(item.product.price * item.quantity)}
                     </span>
                   </div>
                 </div>

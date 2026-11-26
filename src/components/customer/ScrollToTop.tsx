@@ -30,7 +30,7 @@ export default function ScrollToTop() {
       onClick={scrollToTop}
       aria-label="กลับขึ้นด้านบน"
       title="กลับขึ้นด้านบน"
-      className={`fixed right-5 sm:right-8 bottom-20 sm:bottom-8 z-30 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-slate-900/90 hover:bg-slate-950 text-white backdrop-blur-md border border-white/20 shadow-xl shadow-slate-950/30 flex items-center justify-center transition-all duration-300 group active:scale-95 hover:scale-105 hover:shadow-2xl ${
+      className={`fixed right-5 sm:right-8 bottom-20 sm:bottom-8 z-30 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-slate-900/90 hover:bg-slate-950 text-white backdrop-blur-md border border-white/20 shadow-xl shadow-slate-950/30 flex items-center justify-center transition-[opacity,transform,background-color,box-shadow] duration-200 ease-[var(--ease-out)] group active:scale-95 [@media(hover:hover)_and_(pointer:fine)]:hover:scale-105 [@media(hover:hover)_and_(pointer:fine)]:hover:shadow-2xl ${
         isVisible
           ? 'opacity-100 translate-y-0 pointer-events-auto'
           : 'opacity-0 translate-y-4 pointer-events-none'

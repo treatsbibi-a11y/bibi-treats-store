@@ -1,0 +1,42 @@
+# Robots.txt for Bibi's Treats Bakery Storefront
+# Formatted for Googlebot, Bingbot, Applebot, and Generative Engine Optimization (GEO) AI Bots
+
+User-agent: *
+Allow: /
+Allow: /tracking
+Disallow: /api/
+Disallow: /checkout
+Disallow: /cart
+Disallow: /order-success/
+
+# Search Engine Crawlers
+User-agent: Googlebot
+User-agent: Google-Extended
+User-agent: Bingbot
+User-agent: Applebot
+User-agent: Applebot-Extended
+Allow: /
+Allow: /tracking
+Disallow: /api/
+Disallow: /checkout
+Disallow: /cart
+Disallow: /order-success/
+
+# AI Search & GEO Crawlers
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: PerplexityBot
+User-agent: ClaudeBot
+User-agent: anthropic-ai
+User-agent: cohere-ai
+User-agent: CCBot
+Allow: /
+Allow: /tracking
+Disallow: /api/
+Disallow: /checkout
+Disallow: /cart
+Disallow: /order-success/
+
+# Sitemaps
+Sitemap: https://bibitreats.com/sitemap.xml
+Sitemap: https://bibitreats.com/sitemap.txt

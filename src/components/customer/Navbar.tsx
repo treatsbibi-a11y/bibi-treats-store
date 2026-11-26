@@ -77,21 +77,35 @@ export default function Navbar() {
     }
   }, [pathname]);
 
-  useEffect(() => {
-    async function fetchSettings() {
-      try {
-        const res = await fetch('/api/settings');
-        if (res.ok) {
-          const data = await res.json();
-          if (data.logoUrl) setLogoUrl(data.logoUrl);
-          if (data.shopName) setShopName(data.shopName);
-        }
-      } catch (e) {
-        // use fallback defaults
+  const fetchSettings = React.useCallback(async () => {
+    try {
+      const res = await fetch('/api/settings', { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.logoUrl) setLogoUrl(data.logoUrl);
+        if (data.shopName) setShopName(data.shopName);
       }
+    } catch (e) {
+      // use fallback defaults
     }
-    fetchSettings();
   }, []);
+
+  useEffect(() => {
+    fetchSettings();
+    const id = setInterval(() => {
+      if (document.visibilityState === 'visible') fetchSettings();
+    }, 5000);
+    const onFocus = () => {
+      if (document.visibilityState === 'visible') fetchSettings();
+    };
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onFocus);
+    return () => {
+      clearInterval(id);
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onFocus);
+    };
+  }, [fetchSettings]);
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, item: NavItem) => {
     if (pathname === '/' && item.id !== 'tracking') {
@@ -123,14 +137,14 @@ export default function Navbar() {
 
   return (
     <header
-      className={`sticky z-40 transition-all duration-300 ${
+      className={`sticky z-40 transition-[top,padding,background-color,border-color] duration-200 ease-[var(--ease-out)] ${
         isScrolled
           ? 'top-2 sm:top-3.5 px-3 sm:px-6 pointer-events-none bg-transparent border-b-0 border-transparent'
           : 'top-0 px-0 bg-white/95 backdrop-blur-md border-b border-slate-200/80 pointer-events-auto'
       }`}
     >
       <div
-        className={`mx-auto flex items-center justify-between pointer-events-auto text-slate-900 transition-all duration-300 ${
+        className={`mx-auto flex items-center justify-between pointer-events-auto text-slate-900 transition-[height,padding,border-radius,background-color,border-color,box-shadow] duration-200 ease-[var(--ease-out)] ${
           isScrolled
             ? 'max-w-6xl h-14 sm:h-16 px-4 sm:px-6 rounded-2xl bg-white/90 backdrop-blur-md border border-slate-200/90 shadow-lg shadow-slate-900/5 ring-1 ring-slate-900/5'
             : 'max-w-7xl w-full h-16 px-4 sm:px-6 lg:px-8 rounded-none border-0 border-transparent ring-0 shadow-none bg-transparent'
@@ -171,7 +185,7 @@ export default function Navbar() {
                 onClick={(e) => handleNavClick(e, item)}
                 title={item.label}
                 aria-label={item.label}
-                className={`relative rounded-full transition-all duration-200 flex items-center justify-center ${
+                className={`relative rounded-full transition-[color,background-color,box-shadow] duration-150 ease-[var(--ease-out)] flex items-center justify-center ${
                   isHome ? 'px-3 py-1.5 min-w-[38px] h-8' : 'px-4 py-1.5 text-xs sm:text-sm'
                 } ${
                   isActive
@@ -215,7 +229,7 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           <button
             onClick={openDrawer}
-            className={`relative w-10 h-10 rounded-xl border transition-all duration-300 flex items-center justify-center shadow-xs hover:shadow active:scale-95 ${
+            className={`relative w-10 h-10 rounded-xl border transition-[transform,background-color,border-color,color,box-shadow] duration-200 ease-[var(--ease-out)] flex items-center justify-center shadow-xs hover:shadow active:scale-95 ${
               isCartBouncing
                 ? 'scale-105 ring-2 ring-brand-200/80 border-brand-200 bg-brand-50 text-brand-600'
                 : 'bg-slate-100 hover:bg-slate-200/80 border-slate-200/90 text-slate-800'
@@ -224,12 +238,12 @@ export default function Navbar() {
           >
             <FontAwesomeIcon
               icon={faBagShopping}
-              className={`w-4 h-4 transition-all duration-300 ${
+              className={`w-4 h-4 transition-[transform,color] duration-200 ease-[var(--ease-out)] ${
                 isCartBouncing ? 'text-brand-600 scale-105' : 'text-slate-800'
               }`}
             />
             <span
-              className={`absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[10px] font-mono min-w-[19px] h-[19px] px-1 rounded-full flex items-center justify-center font-bold shadow-sm transition-transform duration-300 ${
+              className={`absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[10px] font-mono min-w-[19px] h-[19px] px-1 rounded-full flex items-center justify-center font-bold shadow-sm transition-transform duration-200 ease-[var(--ease-out)] ${
                 isCartBouncing ? 'scale-110' : ''
               }`}
             >

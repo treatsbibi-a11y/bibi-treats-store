@@ -340,6 +340,8 @@ export async function createD1Order(input: CreateOrderInput): Promise<OrderDetai
     .run();
 
   const paymentMethod = input.paymentMethod === 'COD' ? 'COD' : 'TRANSFER';
+  const cleanSlipUrl = input.slipUrl ? String(input.slipUrl).trim() : null;
+  const initialStatus = paymentMethod === 'TRANSFER' && cleanSlipUrl ? 'SLIP_UPLOADED' : 'PENDING';
 
   await d1Binding
     .prepare(`
@@ -355,9 +357,9 @@ export async function createD1Order(input: CreateOrderInput): Promise<OrderDetai
       subtotal,
       shippingFee,
       total,
-      'PENDING',
+      initialStatus,
       paymentMethod,
-      input.slipUrl ? String(input.slipUrl).trim() : null,
+      cleanSlipUrl,
       input.note?.trim() || null,
       now,
       now
@@ -409,9 +411,9 @@ export async function createD1Order(input: CreateOrderInput): Promise<OrderDetai
     subtotal,
     shippingFee,
     total,
-    status: 'PENDING',
+    status: initialStatus,
     paymentMethod: paymentMethod as PaymentMethod,
-    slipUrl: input.slipUrl ? String(input.slipUrl).trim() : null,
+    slipUrl: cleanSlipUrl,
     note: input.note?.trim() || null,
     createdAt: now,
     customer: {
@@ -807,6 +809,19 @@ export function computeReviewStats(visibleReviews: ReviewItem[]): ReviewStats {
   return { averageRating, totalCount, breakdown };
 }
 
+async function ensureReviewProductColumns(d1Binding: CloudflareD1Binding) {
+  try {
+    await d1Binding.prepare(`ALTER TABLE Review ADD COLUMN productId TEXT`).bind().run();
+  } catch {
+    // Column already exists
+  }
+  try {
+    await d1Binding.prepare(`ALTER TABLE Review ADD COLUMN productName TEXT`).bind().run();
+  } catch {
+    // Column already exists
+  }
+}
+
 export async function getD1Reviews(options?: {
   rating?: number;
   hasImages?: boolean;
@@ -817,9 +832,10 @@ export async function getD1Reviews(options?: {
   let allRows: ReviewItem[] = [];
 
   if (options?.d1Binding) {
+    await ensureReviewProductColumns(options.d1Binding);
     const sql = options.includeHidden
-      ? `SELECT id, customerName, rating, comment, images, status, createdAt, updatedAt FROM Review ORDER BY datetime(createdAt) DESC`
-      : `SELECT id, customerName, rating, comment, images, status, createdAt, updatedAt FROM Review WHERE status = 'VISIBLE' ORDER BY datetime(createdAt) DESC`;
+      ? `SELECT id, customerName, rating, comment, images, productId, productName, status, createdAt, updatedAt FROM Review ORDER BY datetime(createdAt) DESC`
+      : `SELECT id, customerName, rating, comment, images, productId, productName, status, createdAt, updatedAt FROM Review WHERE status = 'VISIBLE' ORDER BY datetime(createdAt) DESC`;
 
     const { results } = await options.d1Binding.prepare(sql).bind().all<any>();
     allRows = (results || []).map((row: any) => ({
@@ -828,6 +844,8 @@ export async function getD1Reviews(options?: {
       rating: Number(row.rating),
       comment: row.comment,
       images: parseReviewImages(row.images),
+      productId: row.productId ?? null,
+      productName: row.productName ?? null,
       status: (row.status === 'HIDDEN' ? 'HIDDEN' : 'VISIBLE') as ReviewStatus,
       createdAt: new Date(row.createdAt).toISOString(),
       updatedAt: new Date(row.updatedAt).toISOString(),
@@ -877,19 +895,24 @@ export async function createD1Review(input: {
   rating: number;
   comment: string;
   images: string[];
+  productId?: string | null;
+  productName?: string | null;
   d1Binding?: CloudflareD1Binding;
 }): Promise<{ review: ReviewItem; stats: ReviewStats }> {
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
   const imagesJson = JSON.stringify(input.images.slice(0, 5));
+  const productId = input.productId || null;
+  const productName = input.productName || null;
 
   if (input.d1Binding) {
+    await ensureReviewProductColumns(input.d1Binding);
     await input.d1Binding
       .prepare(
-        `INSERT INTO Review (id, customerName, rating, comment, images, status, createdAt, updatedAt)
-         VALUES (?, ?, ?, ?, ?, 'VISIBLE', ?, ?)`
+        `INSERT INTO Review (id, customerName, rating, comment, images, productId, productName, status, createdAt, updatedAt)
+         VALUES (?, ?, ?, ?, ?, ?, ?, 'VISIBLE', ?, ?)`
       )
-      .bind(id, input.customerName, input.rating, input.comment, imagesJson, now, now)
+      .bind(id, input.customerName, input.rating, input.comment, imagesJson, productId, productName, now, now)
       .run();
 
     const { stats } = await getD1Reviews({ d1Binding: input.d1Binding });
@@ -900,6 +923,8 @@ export async function createD1Review(input: {
         rating: input.rating,
         comment: input.comment,
         images: input.images.slice(0, 5),
+        productId,
+        productName,
         status: 'VISIBLE',
         createdAt: now,
         updatedAt: now,

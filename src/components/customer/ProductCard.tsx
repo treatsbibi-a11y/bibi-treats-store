@@ -2,11 +2,11 @@
 
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faCheck, faCakeCandles, faFire } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faCheck, faCakeCandles } from '@fortawesome/free-solid-svg-icons';
 import { ProductWithImages } from '@/types';
+import { formatPrice } from '@/lib/order-utils';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
 
 interface ProductCardProps {
   product: ProductWithImages;
@@ -24,7 +24,6 @@ export default function ProductCard({ product, onOpenModal }: ProductCardProps) 
     '';
 
   const isOutOfStock = product.stock <= 0;
-  const isLowStock = product.stock > 0 && product.stock <= 5;
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -40,7 +39,7 @@ export default function ProductCard({ product, onOpenModal }: ProductCardProps) 
   return (
     <div
       onClick={() => onOpenModal(product)}
-      className="group bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm hover:shadow-lg hover:border-slate-300 transition-all duration-300 flex flex-col cursor-pointer"
+      className="group bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm [@media(hover:hover)_and_(pointer:fine)]:hover:shadow-lg [@media(hover:hover)_and_(pointer:fine)]:hover:border-slate-300 transition-[box-shadow,border-color,transform] duration-200 ease-[var(--ease-out)] active:scale-[0.99] flex flex-col cursor-pointer"
     >
       {/* Product Image */}
       <div className="relative aspect-[4/3] bg-slate-50 overflow-hidden">
@@ -48,7 +47,7 @@ export default function ProductCard({ product, onOpenModal }: ProductCardProps) 
           <img
             src={primaryImage}
             alt={product.name}
-            className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${
+            className={`w-full h-full object-cover transition-transform duration-300 ease-[var(--ease-out)] [@media(hover:hover)_and_(pointer:fine)]:group-hover:scale-105 ${
               isOutOfStock ? 'grayscale opacity-75' : ''
             }`}
           />
@@ -83,7 +82,7 @@ export default function ProductCard({ product, onOpenModal }: ProductCardProps) 
               {product.name}
             </h3>
             <span className="font-semibold text-base text-slate-900 font-rubik flex-shrink-0">
-              ฿{product.price}
+              ฿{formatPrice(product.price)}
             </span>
           </div>
 
@@ -121,7 +120,7 @@ export default function ProductCard({ product, onOpenModal }: ProductCardProps) 
             <Button
               variant={isAdded ? 'soft' : 'primary'}
               size="md"
-              className={`w-full transition-all duration-200 text-xs font-medium ${
+              className={`w-full transition-[transform,background-color,color,box-shadow] duration-150 ease-[var(--ease-out)] text-xs font-medium ${
                 isAdded ? '' : 'bg-slate-900 hover:bg-slate-800 text-white shadow-sm'
               }`}
               onClick={handleQuickAdd}

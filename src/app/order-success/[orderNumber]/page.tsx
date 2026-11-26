@@ -2,41 +2,59 @@
 
 export const runtime = 'edge';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import confetti from 'canvas-confetti';
-import { formatPrice } from '@/lib/order-utils';
+import { formatPrice, formatDate } from '@/lib/order-utils';
 import { OrderDetail, StoreSettingsData } from '@/types';
+import { useSmartPolling } from '@/hooks/useSmartPolling';
 import { Button } from '@/components/ui/Button';
-import { Card, CardBody, CardHeader } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
 import PaymentSlipSection from '@/components/customer/PaymentSlipSection';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faCircleCheck,
   faCopy,
   faCheck,
   faMagnifyingGlass,
   faHouse,
-  faQrcode,
   faLocationDot,
   faPrint,
-  faTruck,
-  faMoneyBillWave,
-  faBuildingColumns,
   faDownload,
   faReceipt,
   faRotate,
+  faBell,
+  faXmark,
 } from '@fortawesome/free-solid-svg-icons';
 
 const STATUS_CONFIG: Record<string, { label: string; badgeClass: string }> = {
-  PENDING: { label: 'รอตรวจสอบยอดชำระ', badgeClass: 'text-amber-800 bg-amber-50 border border-amber-200' },
-  CONFIRMED: { label: 'ยืนยันออเดอร์แล้ว', badgeClass: 'text-emerald-800 bg-emerald-50 border border-emerald-200' },
-  PREPARING: { label: 'กำลังเตรียมขนม', badgeClass: 'text-blue-800 bg-blue-50 border border-blue-200' },
-  SHIPPING: { label: 'กำลังจัดส่งพัสดุ', badgeClass: 'text-indigo-800 bg-indigo-50 border border-indigo-200' },
-  COMPLETED: { label: 'จัดส่งสำเร็จเรียบร้อย', badgeClass: 'text-emerald-800 bg-emerald-50 border border-emerald-200' },
-  CANCELLED: { label: 'ยกเลิกคำสั่งซื้อ', badgeClass: 'text-rose-800 bg-rose-50 border border-rose-200' },
+  PENDING: {
+    label: '🟡 รอร้านยืนยัน',
+    badgeClass: 'text-amber-800 bg-amber-50 border border-amber-200',
+  },
+  CONFIRMED: {
+    label: '🟢 ร้านยืนยันแล้ว / รอชำระเงิน',
+    badgeClass: 'text-emerald-800 bg-emerald-50 border border-emerald-200',
+  },
+  SLIP_UPLOADED: {
+    label: '🔵 ชำระเงินแล้ว / รอตรวจสอบ',
+    badgeClass: 'text-sky-800 bg-sky-50 border border-sky-200',
+  },
+  PREPARING: {
+    label: '🟣 กำลังเตรียมสินค้า',
+    badgeClass: 'text-purple-800 bg-purple-50 border border-purple-200',
+  },
+  SHIPPING: {
+    label: '🚚 กำลังจัดส่ง',
+    badgeClass: 'text-indigo-800 bg-indigo-50 border border-indigo-200',
+  },
+  COMPLETED: {
+    label: '✅ เสร็จสิ้น',
+    badgeClass: 'text-emerald-800 bg-emerald-50 border border-emerald-200',
+  },
+  CANCELLED: {
+    label: '🔴 ปฏิเสธออเดอร์',
+    badgeClass: 'text-rose-800 bg-rose-50 border border-rose-200',
+  },
 };
 
 export default function OrderSuccessPage() {
@@ -48,6 +66,8 @@ export default function OrderSuccessPage() {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [isSavingImage, setIsSavingImage] = useState(false);
+  const [showConfirmedBanner, setShowConfirmedBanner] = useState(false);
+  const prevStatusRef = useRef<string | null>(null);
 
   useEffect(() => {
     try {
@@ -57,21 +77,47 @@ export default function OrderSuccessPage() {
         origin: { y: 0.6 },
         colors: ['#0F87E8', '#38A4F6', '#BAE0FD', '#F1F5F9'],
       });
-    } catch (e) {}
+    } catch {}
   }, []);
+
+  const applyLatestOrder = useCallback((latest: OrderDetail) => {
+    const nextStatus = latest.status as string;
+    if (prevStatusRef.current === 'PENDING' && nextStatus === 'CONFIRMED') {
+      setShowConfirmedBanner(true);
+    } else if (nextStatus !== 'CONFIRMED') {
+      setShowConfirmedBanner(false);
+    }
+    prevStatusRef.current = nextStatus;
+    setOrder(latest);
+  }, []);
+
+  const refreshOrder = useCallback(async () => {
+    if (!orderNumber) return;
+    try {
+      const res = await fetch(`/api/orders/${encodeURIComponent(orderNumber)}`, {
+        cache: 'no-store',
+      });
+      if (res.ok) {
+        const data: OrderDetail = await res.json();
+        applyLatestOrder(data);
+      }
+    } catch (e) {
+      console.error('Failed to refresh order', e);
+    }
+  }, [orderNumber, applyLatestOrder]);
 
   useEffect(() => {
     async function loadData() {
       try {
         setLoading(true);
         const [orderRes, settingsRes] = await Promise.all([
-          fetch(`/api/orders/${orderNumber}`),
-          fetch('/api/settings'),
+          fetch(`/api/orders/${encodeURIComponent(orderNumber)}`, { cache: 'no-store' }),
+          fetch('/api/settings', { cache: 'no-store' }),
         ]);
 
         if (orderRes.ok) {
-          const orderData = await orderRes.json();
-          setOrder(orderData);
+          const orderData: OrderDetail = await orderRes.json();
+          applyLatestOrder(orderData);
         }
 
         if (settingsRes.ok) {
@@ -88,7 +134,10 @@ export default function OrderSuccessPage() {
     if (orderNumber) {
       loadData();
     }
-  }, [orderNumber]);
+  }, [orderNumber, applyLatestOrder]);
+
+  // Poll order status every 3000ms so customer receives live confirm/reject updates
+  useSmartPolling(refreshOrder, 3000, Boolean(orderNumber));
 
   const handleCopyAccount = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -139,21 +188,7 @@ export default function OrderSuccessPage() {
 
   const formattedOrderDate = React.useMemo(() => {
     if (!order?.createdAt) return '';
-    try {
-      const d = new Date(order.createdAt);
-      if (isNaN(d.getTime())) return '';
-      return (
-        d.toLocaleDateString('th-TH', {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        }) + ' น.'
-      );
-    } catch {
-      return '';
-    }
+    return formatDate(order.createdAt);
   }, [order?.createdAt]);
 
   if (loading) {
@@ -167,10 +202,17 @@ export default function OrderSuccessPage() {
     );
   }
 
+  const currentStatusMeta = order
+    ? STATUS_CONFIG[order.status as string] || {
+        label: order.status,
+        badgeClass: 'bg-slate-100 text-slate-700 border border-slate-200',
+      }
+    : null;
+
   return (
-    <div className="min-h-screen bg-surface-ground py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-b from-sky-50/50 via-surface-ground to-surface-ground py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto space-y-8">
-        {/* Success Header - Luxury Minimalist */}
+        {/* Success Header */}
         <div className="text-center space-y-3">
           <div className="w-12 h-12 bg-brand-50 text-brand-600 rounded-full flex items-center justify-center mx-auto border border-brand-200/80">
             <FontAwesomeIcon icon={faCheck} className="w-5 h-5" />
@@ -183,7 +225,7 @@ export default function OrderSuccessPage() {
               ขอบคุณที่ไว้วางใจขนมอบสดใหม่จาก Bibi&apos;s Treats
             </p>
           </div>
-          <div className="pt-1">
+          <div className="pt-1 flex flex-wrap items-center justify-center gap-2">
             <button
               type="button"
               onClick={() => handleCopyAccount(orderNumber)}
@@ -198,27 +240,48 @@ export default function OrderSuccessPage() {
                 className={`w-3 h-3 ${copied ? 'text-brand-600' : 'text-slate-400'}`}
               />
             </button>
+            {currentStatusMeta && (
+              <span
+                className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${currentStatusMeta.badgeClass}`}
+              >
+                {currentStatusMeta.label}
+              </span>
+            )}
           </div>
         </div>
+
+        {/* Sky-Blue Notification Banner when status transitions PENDING -> CONFIRMED */}
+        {showConfirmedBanner && (
+          <div
+            role="status"
+            aria-live="polite"
+            className="p-4 rounded-2xl bg-gradient-to-r from-sky-500 to-brand-600 text-white shadow-hover border border-sky-300 flex items-center justify-between gap-4"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+                <FontAwesomeIcon icon={faBell} className="w-4 h-4 text-white" />
+              </div>
+              <p className="text-sm font-bold">
+                ร้านยืนยันออเดอร์แล้ว สามารถชำระเงินได้
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowConfirmedBanner(false)}
+              className="p-1.5 rounded-lg hover:bg-white/15 text-white cursor-pointer"
+              aria-label="ปิดการแจ้งเตือน"
+            >
+              <FontAwesomeIcon icon={faXmark} className="w-4 h-4" />
+            </button>
+          </div>
+        )}
 
         {/* Payment & Slip Section */}
         {order && (
           <PaymentSlipSection
             order={order}
-            settings={settings}
-            onOrderUpdated={(updated) => setOrder(updated)}
-            onRefresh={async () => {
-              if (!orderNumber) return;
-              try {
-                const res = await fetch(`/api/orders/${orderNumber}`);
-                if (res.ok) {
-                  const data = await res.json();
-                  setOrder(data);
-                }
-              } catch (e) {
-                console.error(e);
-              }
-            }}
+            onOrderUpdated={applyLatestOrder}
+            onRefresh={refreshOrder}
           />
         )}
 
@@ -262,7 +325,7 @@ export default function OrderSuccessPage() {
             {/* Boutique Receipt Card */}
             <div
               id="printable-slip"
-              className="w-full max-w-lg mx-auto bg-white rounded-2xl border border-slate-200/80 shadow-subtle relative overflow-hidden text-slate-800 font-sans transition-all"
+              className="w-full max-w-lg mx-auto bg-white rounded-3xl border border-sky-200/70 shadow-subtle relative overflow-hidden text-slate-800 font-sans transition-all"
             >
               <div className="p-6 sm:p-8 space-y-6">
                 {/* Store Header */}
@@ -322,8 +385,12 @@ export default function OrderSuccessPage() {
                   </div>
                   <div className="text-right">
                     <span className="text-[11px] text-slate-400 block">สถานะ</span>
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-700 mt-0.5">
-                      {STATUS_CONFIG[order.status]?.label || order.status}
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold mt-0.5 ${
+                        currentStatusMeta?.badgeClass || 'bg-slate-100 text-slate-700'
+                      }`}
+                    >
+                      {currentStatusMeta?.label || order.status}
                     </span>
                   </div>
                 </div>
@@ -387,12 +454,12 @@ export default function OrderSuccessPage() {
                 </div>
 
                 {/* Customer & Delivery Section */}
-                <div className="bg-slate-50/80 rounded-xl p-4 space-y-1.5 border border-slate-100 text-xs">
+                <div className="bg-sky-50/50 rounded-2xl p-4 space-y-1.5 border border-sky-100 text-xs">
                   <div className="text-[11px] font-medium text-slate-400">
                     ข้อมูลจัดส่ง
                   </div>
                   <div className="flex items-center gap-1.5 font-semibold text-slate-900">
-                    <FontAwesomeIcon icon={faLocationDot} className="w-3 h-3 text-slate-400 shrink-0" />
+                    <FontAwesomeIcon icon={faLocationDot} className="w-3 h-3 text-brand-600 shrink-0" />
                     <span>{order.customer.name}</span>
                     <span className="text-slate-500 font-mono font-normal">({order.customer.phone})</span>
                   </div>
@@ -421,13 +488,13 @@ export default function OrderSuccessPage() {
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 pt-2">
           <Link href="/tracking" className="flex-1">
-            <Button variant="primary" size="lg" className="w-full gap-2">
+            <Button variant="primary" size="lg" className="w-full gap-2 rounded-2xl">
               <FontAwesomeIcon icon={faMagnifyingGlass} className="w-3.5 h-3.5 mr-1" />
               <span>ติดตามสถานะออเดอร์</span>
             </Button>
           </Link>
           <Link href="/#menu" className="flex-1">
-            <Button variant="outline" size="lg" className="w-full gap-2">
+            <Button variant="outline" size="lg" className="w-full gap-2 rounded-2xl">
               <FontAwesomeIcon icon={faHouse} className="w-3.5 h-3.5 mr-1" />
               <span>กลับหน้าหลักร้านค้า</span>
             </Button>

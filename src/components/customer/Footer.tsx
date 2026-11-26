@@ -90,7 +90,7 @@ export default function Footer() {
                 </li>
                 <li className="flex items-center gap-2">
                   <FontAwesomeIcon icon={faClock} className="w-3.5 h-3.5 text-slate-400" />
-                  <span>เปิดบริการ: อังคาร – อาทิตย์ (10:00 – 19:00 น.)</span>
+                  <span>เปิดบริการ: อาทิตย์ – ศุกร์ (10:00 – 19:00 น.)</span>
                 </li>
               </ul>
             </div>

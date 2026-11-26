@@ -1,6 +1,8 @@
 export const runtime = 'edge';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { resolveD1Binding, CloudflareD1Binding } from '@/lib/d1-remote';
+import { getAdminSession } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,12 +12,34 @@ interface RouteContext {
   };
 }
 
-// POST /api/products/[id]/images - add image
+async function listD1ProductImages(d1: CloudflareD1Binding, productId: string) {
+  const { results } = await d1
+    .prepare(
+      `SELECT id, productId, imageUrl, isPrimary, displayOrder
+       FROM ProductImage WHERE productId = ? ORDER BY displayOrder ASC`
+    )
+    .bind(productId)
+    .all<any>();
+
+  return (results || []).map((img: any) => ({
+    id: img.id,
+    productId: img.productId,
+    imageUrl: img.imageUrl,
+    isPrimary: Boolean(img.isPrimary),
+    displayOrder: Number(img.displayOrder),
+  }));
+}
+
+// POST /api/products/[id]/images - add image (admin only)
 export async function POST(
   req: NextRequest,
   { params }: RouteContext
 ) {
   try {
+    const session = await getAdminSession();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const { id } = params;
     const body = await req.json();
     const { imageUrl, isPrimary, displayOrder } = body;
@@ -25,6 +49,47 @@ export async function POST(
         { error: 'กรุณาระบุ URL ของรูปภาพ' },
         { status: 400 }
       );
+    }
+
+    const d1 = resolveD1Binding();
+    if (d1) {
+      const product = await d1
+        .prepare(`SELECT id FROM Product WHERE id = ? LIMIT 1`)
+        .bind(id)
+        .first<any>();
+
+      if (!product) {
+        return NextResponse.json(
+          { error: 'ไม่พบข้อมูลสินค้านี้' },
+          { status: 404 }
+        );
+      }
+
+      const existingImages = await listD1ProductImages(d1, id);
+      const currentImagesCount = existingImages.length;
+      const shouldBePrimary =
+        isPrimary !== undefined ? Boolean(isPrimary) : currentImagesCount === 0;
+
+      if (shouldBePrimary) {
+        await d1
+          .prepare(`UPDATE ProductImage SET isPrimary = 0 WHERE productId = ?`)
+          .bind(id)
+          .run();
+      }
+
+      const nextOrder =
+        displayOrder !== undefined ? Number(displayOrder) : currentImagesCount + 1;
+
+      await d1
+        .prepare(
+          `INSERT INTO ProductImage (id, productId, imageUrl, isPrimary, displayOrder)
+           VALUES (?, ?, ?, ?, ?)`
+        )
+        .bind(crypto.randomUUID(), id, imageUrl.trim(), shouldBePrimary ? 1 : 0, nextOrder)
+        .run();
+
+      const updatedImages = await listD1ProductImages(d1, id);
+      return NextResponse.json(updatedImages, { status: 201 });
     }
 
     const product = await prisma.product.findUnique({
@@ -67,7 +132,6 @@ export async function POST(
       orderBy: { displayOrder: 'asc' },
     });
 
-    // Return array of updated images for frontend compatibility
     return NextResponse.json(updatedImages, { status: 201 });
   } catch (error) {
     console.error('Error adding product image:', error);
@@ -78,14 +142,80 @@ export async function POST(
   }
 }
 
-// PUT /api/products/[id]/images - reorder images or set primary
+// PUT /api/products/[id]/images - reorder images or set primary (admin only)
 export async function PUT(
   req: NextRequest,
   { params }: RouteContext
 ) {
   try {
+    const session = await getAdminSession();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const { id } = params;
     const body = await req.json();
+
+    const d1 = resolveD1Binding();
+    if (d1) {
+      const product = await d1
+        .prepare(`SELECT id FROM Product WHERE id = ? LIMIT 1`)
+        .bind(id)
+        .first<any>();
+
+      if (!product) {
+        return NextResponse.json(
+          { error: 'ไม่พบข้อมูลสินค้านี้' },
+          { status: 404 }
+        );
+      }
+
+      if (body.action === 'SET_PRIMARY' || (body.imageId && body.isPrimary)) {
+        const targetId = body.imageId;
+        await d1
+          .prepare(`UPDATE ProductImage SET isPrimary = 0 WHERE productId = ?`)
+          .bind(id)
+          .run();
+        await d1
+          .prepare(`UPDATE ProductImage SET isPrimary = 1 WHERE id = ? AND productId = ?`)
+          .bind(targetId, id)
+          .run();
+      } else if (body.action === 'REORDER' && Array.isArray(body.orderedIds)) {
+        for (let index = 0; index < body.orderedIds.length; index++) {
+          await d1
+            .prepare(`UPDATE ProductImage SET displayOrder = ? WHERE id = ? AND productId = ?`)
+            .bind(index + 1, body.orderedIds[index], id)
+            .run();
+        }
+      } else if (Array.isArray(body.images)) {
+        for (const item of body.images as { id: string; displayOrder?: number; isPrimary?: boolean }[]) {
+          const updates: string[] = [];
+          const vals: any[] = [];
+          if (item.displayOrder !== undefined) {
+            updates.push('displayOrder = ?');
+            vals.push(item.displayOrder);
+          }
+          if (item.isPrimary !== undefined) {
+            updates.push('isPrimary = ?');
+            vals.push(item.isPrimary ? 1 : 0);
+          }
+          if (updates.length > 0) {
+            vals.push(item.id, id);
+            await d1
+              .prepare(`UPDATE ProductImage SET ${updates.join(', ')} WHERE id = ? AND productId = ?`)
+              .bind(...vals)
+              .run();
+          }
+        }
+      } else {
+        return NextResponse.json(
+          { error: 'ข้อมูลสำหรับอัปเดตรูปภาพไม่ถูกต้อง' },
+          { status: 400 }
+        );
+      }
+
+      const updatedImages = await listD1ProductImages(d1, id);
+      return NextResponse.json(updatedImages);
+    }
 
     const product = await prisma.product.findUnique({
       where: { id },
@@ -159,12 +289,16 @@ export async function PUT(
   }
 }
 
-// DELETE /api/products/[id]/images - delete image
+// DELETE /api/products/[id]/images - delete image (admin only)
 export async function DELETE(
   req: NextRequest,
   { params }: RouteContext
 ) {
   try {
+    const session = await getAdminSession();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const { id } = params;
     const { searchParams } = new URL(req.url);
     let imageId = searchParams.get('imageId');
@@ -183,6 +317,45 @@ export async function DELETE(
         { error: 'กรุณาระบุ imageId ที่ต้องการลบ' },
         { status: 400 }
       );
+    }
+
+    const d1 = resolveD1Binding();
+    if (d1) {
+      const targetImage = await d1
+        .prepare(`SELECT id, isPrimary FROM ProductImage WHERE id = ? AND productId = ? LIMIT 1`)
+        .bind(imageId, id)
+        .first<any>();
+
+      if (!targetImage) {
+        return NextResponse.json(
+          { error: 'ไม่พบรูปภาพนี้ในสินค้า' },
+          { status: 404 }
+        );
+      }
+
+      const wasPrimary = Boolean(targetImage.isPrimary);
+
+      await d1
+        .prepare(`DELETE FROM ProductImage WHERE id = ? AND productId = ?`)
+        .bind(imageId, id)
+        .run();
+
+      if (wasPrimary) {
+        const remainingFirst = await d1
+          .prepare(`SELECT id FROM ProductImage WHERE productId = ? ORDER BY displayOrder ASC LIMIT 1`)
+          .bind(id)
+          .first<any>();
+
+        if (remainingFirst) {
+          await d1
+            .prepare(`UPDATE ProductImage SET isPrimary = 1 WHERE id = ?`)
+            .bind(remainingFirst.id)
+            .run();
+        }
+      }
+
+      const remainingImages = await listD1ProductImages(d1, id);
+      return NextResponse.json(remainingImages);
     }
 
     const targetImage = await prisma.productImage.findFirst({

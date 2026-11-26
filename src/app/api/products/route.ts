@@ -1,7 +1,7 @@
 export const runtime = 'edge';
 import { NextRequest, NextResponse } from 'next/server';
 import { getD1Products } from '@/lib/d1';
-import { getRequestContext } from '@cloudflare/next-on-pages';
+import { resolveD1Binding } from '@/lib/d1-remote';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,10 +13,7 @@ export async function GET(req: NextRequest) {
     const status = (searchParams.get('status') as any) || undefined;
     const search = searchParams.get('search') || undefined;
 
-    let d1Binding: any;
-    try {
-      d1Binding = (getRequestContext()?.env as any)?.DB;
-    } catch {}
+    const d1Binding = resolveD1Binding();
 
     const products = await getD1Products({
       category,

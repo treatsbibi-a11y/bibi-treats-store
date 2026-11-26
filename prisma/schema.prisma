@@ -107,6 +107,8 @@ model Review {
   rating       Int
   comment      String
   images       String   @default("[]") // JSON array of image URLs
+  productId    String?
+  productName  String?
   status       String   @default("VISIBLE") // VISIBLE, HIDDEN
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

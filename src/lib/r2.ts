@@ -1,13 +1,14 @@
-import { S3Client, PutObjectCommand, DeleteObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client } from '@aws-sdk/client-s3';
+import { deleteR2Object, putR2Object } from './d1-remote';
 
-const accountId = process.env.CLOUDFLARE_ACCOUNT_ID || '4e1feb4e65dce0b8f09e0b1d31a5c90f';
-const accessKeyId = process.env.CLOUDFLARE_R2_ACCESS_KEY_ID || 'fd4b7ef65cadd7a9e87a01176621985e';
-const secretAccessKey = process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY || 'd2okSfSt2C2Def4x';
+const accountId = process.env.CLOUDFLARE_ACCOUNT_ID || '';
+const accessKeyId = process.env.CLOUDFLARE_R2_ACCESS_KEY_ID || '';
+const secretAccessKey = process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY || '';
 const bucketName = process.env.CLOUDFLARE_R2_BUCKET_NAME || 'bibi-treats-assets';
 
 export const r2Client = new S3Client({
   region: 'auto',
-  endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+  endpoint: accountId ? `https://${accountId}.r2.cloudflarestorage.com` : undefined,
   credentials: {
     accessKeyId,
     secretAccessKey,
@@ -24,15 +25,8 @@ export async function uploadFileToR2(
   contentType: string
 ) {
   const cleanKey = key.startsWith('/') ? key.substring(1) : key;
-  const command = new PutObjectCommand({
-    Bucket: bucketName,
-    Key: cleanKey,
-    Body: body,
-    ContentType: contentType,
-    CacheControl: 'public, max-age=31536000, immutable',
-  });
-
-  return await r2Client.send(command);
+  const uint8 = body instanceof Uint8Array ? body : new Uint8Array(body);
+  return await putR2Object(cleanKey, uint8, contentType);
 }
 
 /**
@@ -40,12 +34,7 @@ export async function uploadFileToR2(
  */
 export async function deleteFileFromR2(key: string) {
   const cleanKey = key.startsWith('/') ? key.substring(1) : key;
-  const command = new DeleteObjectCommand({
-    Bucket: bucketName,
-    Key: cleanKey,
-  });
-
-  return await r2Client.send(command);
+  return await deleteR2Object(cleanKey);
 }
 
 /**

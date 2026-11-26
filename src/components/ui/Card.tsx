@@ -16,7 +16,7 @@ export function Card({
   return (
     <div
       className={`bg-white rounded-card border border-slate-200/80 shadow-card ${
-        hoverable ? 'transition-all duration-200 hover:shadow-hover hover:border-slate-300' : ''
+        hoverable ? 'transition-[box-shadow,border-color] duration-200 ease-[var(--ease-out)] hover:shadow-hover hover:border-slate-300' : ''
       } ${className}`}
       {...props}
     >

@@ -2,9 +2,15 @@ import bcrypt from 'bcryptjs';
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'bibi-treats-super-cute-secret-key-2026';
-const secretKey = new TextEncoder().encode(JWT_SECRET);
 const COOKIE_NAME = 'bibi_admin_token';
+
+function getJwtSecretKey(): Uint8Array {
+  const secret = process.env.JWT_SECRET;
+  if (!secret || secret.trim().length < 16) {
+    throw new Error('Missing or weak JWT_SECRET environment variable');
+  }
+  return new TextEncoder().encode(secret);
+}
 
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 10);
@@ -18,12 +24,12 @@ export async function signAdminToken(payload: { id: string; username: string; ro
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
     .setExpirationTime('7d')
-    .sign(secretKey);
+    .sign(getJwtSecretKey());
 }
 
 export async function verifyAdminToken(token: string): Promise<{ id: string; username: string; role: string } | null> {
   try {
-    const { payload } = await jwtVerify(token, secretKey);
+    const { payload } = await jwtVerify(token, getJwtSecretKey());
     return payload as unknown as { id: string; username: string; role: string };
   } catch {
     return null;

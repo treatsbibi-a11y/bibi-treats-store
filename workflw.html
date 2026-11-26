@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bibi's Treats — Customer Storefront Workflow (React Flow)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://esm.sh/@xyflow/react@12.6.0/dist/style.css" />
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #0284c7;
+      --accent-soft: #e0f2fe;
+    }
+    * { box-sizing: border-box; }
+    html, body, #root {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      font-family: 'Inter', 'Noto Sans Thai', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+    }
+    .topbar {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      pointer-events: none;
+    }
+    .topbar-card {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px 16px;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+    }
+    .brand-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+    .title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .subtitle {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .pill-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .pill {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .pill:hover { border-color: #cbd5e1; color: var(--text); }
+    .pill.active {
+      background: var(--text);
+      border-color: var(--text);
+      color: #fff;
+    }
+    .wf-node {
+      width: 240px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease;
+    }
+    .wf-node.selected {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.14), 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+    .wf-node.dimmed { opacity: 0.28; }
+    .wf-node-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .wf-tag {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+    .tag-ui { background: #eff6ff; color: #1d4ed8; }
+    .tag-api { background: #f0fdf4; color: #15803d; }
+    .tag-data { background: #fffbeb; color: #b45309; }
+    .tag-admin { background: #f5f3ff; color: #6d28d9; }
+    .tag-notify { background: #fdf2f8; color: #be185d; }
+    .wf-node-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0 0 4px;
+      line-height: 1.3;
+    }
+    .wf-node-desc {
+      font-size: 11.5px;
+      color: var(--muted);
+      line-height: 1.45;
+      margin: 0;
+    }
+    .wf-node-file {
+      margin-top: 8px;
+      padding-top: 7px;
+      border-top: 1px dashed #e2e8f0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10.5px;
+      color: #475569;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .inspector {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      width: 320px;
+      max-width: calc(100vw - 32px);
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.09);
+    }
+    .inspector h4 { margin: 6px 0 4px; font-size: 15px; }
+    .inspector p { margin: 0 0 10px; font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+    .inspector code {
+      display: block;
+      background: #f1f5f9;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      color: #0f172a;
+      word-break: break-all;
+    }
+    .inspector-close {
+      float: right;
+      border: none;
+      background: #f1f5f9;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      cursor: pointer;
+      color: var(--muted);
+    }
+    .react-flow__handle {
+      width: 8px;
+      height: 8px;
+      background: #94a3b8;
+      border: 2px solid #fff;
+    }
+    .react-flow__controls {
+      border-radius: 12px !important;
+      overflow: hidden;
+      border: 1px solid var(--border) !important;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06) !important;
+    }
+    .react-flow__minimap {
+      border-radius: 12px !important;
+      overflow: hidden;
+      border: 1px solid var(--border) !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="module">
+    import React, { useState, useMemo, useCallback } from 'https://esm.sh/react@18.3.1';
+    import { createRoot } from 'https://esm.sh/react-dom@18.3.1/client';
+    import {
+      ReactFlow,
+      ReactFlowProvider,
+      Background,
+      Controls,
+      MiniMap,
+      Handle,
+      Position,
+      MarkerType,
+      useNodesState,
+      useEdgesState,
+      useReactFlow,
+    } from 'https://esm.sh/@xyflow/react@12.6.0?deps=react@18.3.1,react-dom@18.3.1';
+
+    const e = React.createElement;
+
+    const TAG_LABELS = {
+      ui: { label: 'Customer UI', cls: 'tag-ui' },
+      api: { label: 'Edge API', cls: 'tag-api' },
+      data: { label: 'Cloudflare', cls: 'tag-data' },
+      admin: { label: 'Admin :3001', cls: 'tag-admin' },
+      notify: { label: 'Notification', cls: 'tag-notify' },
+    };
+
+    function CleanWorkflowNode({ data, selected }) {
+      const tag = TAG_LABELS[data.layer] || TAG_LABELS.ui;
+      return e(
+        'div',
+        { className: `wf-node ${selected ? 'selected' : ''} ${data.dimmed ? 'dimmed' : ''}` },
+        e(Handle, { type: 'target', position: Position.Left }),
+        e(
+          'div',
+          { className: 'wf-node-head' },
+          e('span', { className: `wf-tag ${tag.cls}` }, tag.label),
+          e('span', { style: { fontSize: '11px', color: '#94a3b8' } }, data.step || '')
+        ),
+        e('h3', { className: 'wf-node-title' }, data.title),
+        e('p', { className: 'wf-node-desc' }, data.desc),
+        e('div', { className: 'wf-node-file', title: data.file }, data.file),
+        e(Handle, { type: 'source', position: Position.Right })
+      );
+    }
+
+    // Defined outside component per React Flow best practices
+    const nodeTypes = { clean: CleanWorkflowNode };
+
+    const initialNodes = [
+      {
+        id: 'storefront',
+        type: 'clean',
+        position: { x: 40, y: 100 },
+        data: {
+          layer: 'ui',
+          step: '01 · Storefront',
+          title: 'หน้าหลัก & เมนูขนม',
+          desc: 'Hero, หมวดหมู่, ค้นหา, ProductModal รูปไร้ขอบ, CartDrawer + Native Motion (5s Poll)',
+          file: 'src/app/page.tsx · src/components/customer/ProductModal.tsx',
+        },
+      },
+      {
+        id: 'reviews-ui',
+        type: 'clean',
+        position: { x: 40, y: 290 },
+        data: {
+          layer: 'ui',
+          step: '02 · Reviews',
+          title: 'รีวิว OrbitCardStack & เมนู Dropdown',
+          desc: 'การ์ดรีวิวไร้ขอบ, ปุ่มลูกศร ↗ เปิดเมนูที่รีวิว, แนบรูปแปลง WebP อัตโนมัติ',
+          file: 'src/components/customer/ReviewsSection.tsx · OrbitCardStack.tsx',
+        },
+      },
+      {
+        id: 'checkout-ui',
+        type: 'clean',
+        position: { x: 40, y: 480 },
+        data: {
+          layer: 'ui',
+          step: '03 · Checkout',
+          title: 'Pre-Approval Checkout & สลิป WebP',
+          desc: 'TRANSFER รอร้าน CONFIRMED (3s Poll) จึงปลดล็อก QR และอัปโหลดสลิป WebP',
+          file: 'src/app/checkout/page.tsx · PaymentSlipSection.tsx',
+        },
+      },
+      {
+        id: 'tracking-ui',
+        type: 'clean',
+        position: { x: 40, y: 670 },
+        data: {
+          layer: 'ui',
+          step: '04 · Tracking',
+          title: 'ติดตามออเดอร์ 7 สถานะ',
+          desc: 'PENDING → CONFIRMED → SLIP_UPLOADED → PREPARING → SHIPPING → COMPLETED / CANCELLED',
+          file: 'src/app/tracking/page.tsx · src/lib/order-utils.ts',
+        },
+      },
+      {
+        id: 'api-products',
+        type: 'clean',
+        position: { x: 360, y: 100 },
+        data: {
+          layer: 'api',
+          step: 'GET',
+          title: '/api/products & /api/settings',
+          desc: 'ดึงเมนูที่เปิดขาย + ปกปิดข้อมูล QR/บัญชีร้านใน Public Settings',
+          file: 'src/app/api/products/route.ts · src/app/api/settings/route.ts',
+        },
+      },
+      {
+        id: 'api-reviews',
+        type: 'clean',
+        position: { x: 360, y: 290 },
+        data: {
+          layer: 'api',
+          step: 'GET / POST',
+          title: '/api/reviews & /api/upload',
+          desc: 'บันทึกรีวิวพร้อม productId/productName และเก็บรูป WebP ลง R2',
+          file: 'src/app/api/reviews/route.ts · src/app/api/upload/route.ts',
+        },
+      },
+      {
+        id: 'api-orders',
+        type: 'clean',
+        position: { x: 360, y: 480 },
+        data: {
+          layer: 'api',
+          step: 'POST / PATCH',
+          title: '/api/orders & /api/orders/[id]',
+          desc: 'สร้างออเดอร์, บล็อก slipUrl จนกว่า CONFIRMED, อัปเดตเป็น SLIP_UPLOADED',
+          file: 'src/app/api/orders/route.ts · src/app/api/orders/[id]/route.ts',
+        },
+      },
+      {
+        id: 'api-qr',
+        type: 'clean',
+        position: { x: 360, y: 670 },
+        data: {
+          layer: 'api',
+          step: 'QR Gate',
+          title: '/api/orders/[id]/payment-qr',
+          desc: 'ตรวจ D1 แบบ Realtime ทุกครั้ง (403 จนกว่า CONFIRMED + TRANSFER)',
+          file: 'src/app/api/orders/[id]/payment-qr/route.ts',
+        },
+      },
+      {
+        id: 'd1-bridge',
+        type: 'clean',
+        position: { x: 690, y: 220 },
+        data: {
+          layer: 'data',
+          step: 'Cloudflare D1',
+          title: 'D1 Binding / Remote OAuth Bridge',
+          desc: 'Product, Order (7 สถานะ), Review (+productId/productName), StoreSettings',
+          file: 'src/lib/d1.ts · src/lib/d1-remote.ts · prisma/schema.prisma',
+        },
+      },
+      {
+        id: 'r2-storage',
+        type: 'clean',
+        position: { x: 690, y: 440 },
+        data: {
+          layer: 'data',
+          step: 'Cloudflare R2',
+          title: 'R2 Assets & /uploads/* Gate',
+          desc: 'fetchR2Object (REST + Binding), บล็อก QR 403, เก็บรูป WebP ทั้งระบบ',
+          file: 'src/lib/r2.ts · src/app/uploads/[...path]/route.ts',
+        },
+      },
+      {
+        id: 'line-notify',
+        type: 'clean',
+        position: { x: 690, y: 660 },
+        data: {
+          layer: 'notify',
+          step: 'Messaging API',
+          title: 'LINE Push Notification',
+          desc: 'ส่ง Flex Message แจ้งแอดมินทันทีเมื่อมีออเดอร์ใหม่หรืออัปโหลดสลิป',
+          file: 'src/lib/line.ts',
+        },
+      },
+      {
+        id: 'admin-orders',
+        type: 'clean',
+        position: { x: 1020, y: 200 },
+        data: {
+          layer: 'admin',
+          step: 'Admin Orders',
+          title: 'ยืนยันออเดอร์ & โหลดสลิป JPEG',
+          desc: '3s Poll, ยืนยัน/ปฏิเสธ PENDING, แท็บ SLIP_UPLOADED, ดาวน์โหลดสลิปเป็น .jpg',
+          file: 'admin-bibi-store/src/app/orders/page.tsx · page.tsx',
+        },
+      },
+      {
+        id: 'admin-reviews',
+        type: 'clean',
+        position: { x: 1020, y: 400 },
+        data: {
+          layer: 'admin',
+          step: 'Admin Reviews',
+          title: 'จัดการรีวิว & โหลดรูป JPEG',
+          desc: 'แสดงป้ายเมนูที่รีวิว (productName), ซ่อน/แสดง, ดาวน์โหลดรูปรีวิวเป็น .jpg',
+          file: 'admin-bibi-store/src/app/reviews/page.tsx · api/admin/reviews',
+        },
+      },
+      {
+        id: 'admin-catalog',
+        type: 'clean',
+        position: { x: 1020, y: 600 },
+        data: {
+          layer: 'admin',
+          step: 'Products & Settings',
+          title: 'จัดการเมนู & QR (อัปโหลด WebP)',
+          desc: 'อัปโหลดรูปสินค้า โลโก้ และ QR Code แปลง WebP อัตโนมัติลง R2',
+          file: 'admin-bibi-store/src/app/products/page.tsx · settings/page.tsx',
+        },
+      },
+    ];
+
+    const edgeStyle = { stroke: '#94a3b8', strokeWidth: 1.6 };
+    const markerEnd = { type: MarkerType.ArrowClosed, color: '#94a3b8', width: 16, height: 16 };
+    const adminEdgeStyle = { stroke: '#8b5cf6', strokeWidth: 1.6 };
+    const adminMarkerEnd = { type: MarkerType.ArrowClosed, color: '#8b5cf6', width: 16, height: 16 };
+
+    const initialEdges = [
+      { id: 'e1', source: 'storefront', target: 'api-products', type: 'smoothstep', animated: true, style: edgeStyle, markerEnd, label: '5s Poll' },
+      { id: 'e2', source: 'reviews-ui', target: 'api-reviews', type: 'smoothstep', animated: true, style: edgeStyle, markerEnd, label: 'WebP + 5s Poll' },
+      { id: 'e3', source: 'checkout-ui', target: 'api-orders', type: 'smoothstep', animated: true, style: edgeStyle, markerEnd, label: '3s Poll + Slip WebP' },
+      { id: 'e4', source: 'checkout-ui', target: 'api-qr', type: 'smoothstep', style: edgeStyle, markerEnd, label: 'CONFIRMED Only' },
+      { id: 'e5', source: 'tracking-ui', target: 'api-orders', type: 'smoothstep', animated: true, style: edgeStyle, markerEnd, label: '3s Poll' },
+      { id: 'e6', source: 'api-products', target: 'd1-bridge', type: 'smoothstep', style: edgeStyle, markerEnd },
+      { id: 'e7', source: 'api-reviews', target: 'd1-bridge', type: 'smoothstep', style: edgeStyle, markerEnd },
+      { id: 'e8', source: 'api-reviews', target: 'r2-storage', type: 'smoothstep', style: edgeStyle, markerEnd, label: 'PutObject WebP' },
+      { id: 'e9', source: 'api-orders', target: 'd1-bridge', type: 'smoothstep', style: edgeStyle, markerEnd },
+      { id: 'e10', source: 'api-qr', target: 'd1-bridge', type: 'smoothstep', style: edgeStyle, markerEnd, label: 'Check Status' },
+      { id: 'e11', source: 'api-qr', target: 'r2-storage', type: 'smoothstep', style: edgeStyle, markerEnd, label: 'fetchR2Object' },
+      { id: 'e12', source: 'api-orders', target: 'line-notify', type: 'smoothstep', animated: true, style: { stroke: '#ec4899', strokeWidth: 1.8 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ec4899', width: 16, height: 16 }, label: 'LINE Alert' },
+      { id: 'e13', source: 'd1-bridge', target: 'admin-orders', type: 'smoothstep', animated: true, style: adminEdgeStyle, markerEnd: adminMarkerEnd, label: '3s Poll' },
+      { id: 'e14', source: 'r2-storage', target: 'admin-orders', type: 'smoothstep', style: adminEdgeStyle, markerEnd: adminMarkerEnd, label: 'Slip → JPEG' },
+      { id: 'e15', source: 'd1-bridge', target: 'admin-reviews', type: 'smoothstep', style: adminEdgeStyle, markerEnd: adminMarkerEnd, label: 'Sync +productName' },
+      { id: 'e16', source: 'r2-storage', target: 'admin-reviews', type: 'smoothstep', style: adminEdgeStyle, markerEnd: adminMarkerEnd, label: 'Photo → JPEG' },
+      { id: 'e17', source: 'r2-storage', target: 'admin-catalog', type: 'smoothstep', style: adminEdgeStyle, markerEnd: adminMarkerEnd, label: 'Upload WebP' },
+    ];
+
+    function WorkflowCanvas() {
+      const [filter, setFilter] = useState('all');
+      const [selectedNode, setSelectedNode] = useState(null);
+      const [nodes, , onNodesChange] = useNodesState(initialNodes);
+      const [edges, , onEdgesChange] = useEdgesState(initialEdges);
+      const { fitView } = useReactFlow();
+
+      const visibleNodes = useMemo(
+        () =>
+          nodes.map((n) => ({
+            ...n,
+            data: { ...n.data, dimmed: filter !== 'all' && n.data.layer !== filter },
+          })),
+        [nodes, filter]
+      );
+
+      const onNodeClick = useCallback((_, node) => {
+        setSelectedNode(node);
+      }, []);
+
+      return e(
+        React.Fragment,
+        null,
+        e(
+          'div',
+          { className: 'topbar' },
+          e(
+            'div',
+            { className: 'topbar-card' },
+            e('span', { className: 'brand-dot' }),
+            e(
+              'div',
+              null,
+              e('div', { className: 'title' }, "Bibi's Treats — Full-Stack Workflow"),
+              e('div', { className: 'subtitle' }, 'User (:3000) ↔ Admin (:3001) · Cloudflare D1 & R2 Real-time')
+            )
+          ),
+          e(
+            'div',
+            { className: 'topbar-card pill-group' },
+            [
+              ['all', 'All'],
+              ['ui', 'Customer UI'],
+              ['api', 'Edge API'],
+              ['data', 'D1 / R2'],
+              ['admin', 'Admin :3001'],
+              ['notify', 'LINE'],
+            ].map(([key, label]) =>
+              e(
+                'button',
+                {
+                  key,
+                  className: `pill ${filter === key ? 'active' : ''}`,
+                  onClick: () => setFilter(key),
+                },
+                label
+              )
+            ),
+            e(
+              'button',
+              {
+                className: 'pill',
+                onClick: () => fitView({ padding: 0.18, duration: 350 }),
+              },
+              'Fit View'
+            )
+          )
+        ),
+        e(
+          ReactFlow,
+          {
+            nodes: visibleNodes,
+            edges,
+            nodeTypes,
+            onNodesChange,
+            onEdgesChange,
+            onNodeClick,
+            onPaneClick: () => setSelectedNode(null),
+            fitView: true,
+            fitViewOptions: { padding: 0.18 },
+            proOptions: { hideAttribution: true },
+          },
+          e(Background, { gap: 22, size: 1, color: '#cbd5e1' }),
+          e(Controls, { showInteractive: false }),
+          e(MiniMap, {
+            nodeColor: (n) =>
+              n.data?.layer === 'data'
+                ? '#f59e0b'
+                : n.data?.layer === 'api'
+                ? '#16a34a'
+                : n.data?.layer === 'admin'
+                ? '#7c3aed'
+                : n.data?.layer === 'notify'
+                ? '#db2777'
+                : '#0284c7',
+            maskColor: 'rgba(248, 250, 252, 0.72)',
+          })
+        ),
+        selectedNode &&
+          e(
+            'div',
+            { className: 'inspector' },
+            e(
+              'button',
+              { className: 'inspector-close', onClick: () => setSelectedNode(null) },
+              '×'
+            ),
+            e(
+              'span',
+              { className: `wf-tag ${(TAG_LABELS[selectedNode.data.layer] || TAG_LABELS.ui).cls}` },
+              (TAG_LABELS[selectedNode.data.layer] || TAG_LABELS.ui).label
+            ),
+            e('h4', null, selectedNode.data.title),
+            e('p', null, selectedNode.data.desc),
+            e('code', null, selectedNode.data.file)
+          )
+      );
+    }
+
+    createRoot(document.getElementById('root')).render(
+      e(ReactFlowProvider, null, e(WorkflowCanvas))
+    );
+  </script>
+</body>
+</html>

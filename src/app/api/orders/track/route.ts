@@ -1,7 +1,7 @@
 export const runtime = 'edge';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getRequestContext } from '@cloudflare/next-on-pages';
+import { resolveD1Binding } from '@/lib/d1-remote';
 import { CloudflareD1Binding } from '@/lib/d1';
 
 export const dynamic = 'force-dynamic';
@@ -38,11 +38,8 @@ export async function POST(req: NextRequest) {
     const cleanOrderNumber = orderNumber.trim().toUpperCase();
     const normalizedInputPhone = cleanPhone(phone.trim());
 
-    // Check Cloudflare D1 binding on Edge Runtime
-    let d1Binding: CloudflareD1Binding | undefined;
-    try {
-      d1Binding = (getRequestContext()?.env as any)?.DB;
-    } catch {}
+    // Check Cloudflare D1 binding on Edge Runtime or Localhost Remote Bridge
+    const d1Binding = resolveD1Binding();
 
     if (d1Binding) {
       const orderRow = (await d1Binding

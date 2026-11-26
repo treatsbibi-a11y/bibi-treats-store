@@ -8,6 +8,20 @@
   --font-thai: 'Noto Sans Thai', sans-serif;
   --font-signature: 'Caveat', cursive;
   --font-hairline: 'Caveat', cursive;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Native touch ergonomics across mobile & tablet */
+a,
+button,
+[role="button"],
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 body {
@@ -160,5 +174,11 @@ body::-webkit-scrollbar,
   .draw-brush-flourish {
     stroke-dashoffset: 0 !important;
     animation: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
   }
 }

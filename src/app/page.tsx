@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import HeroBanner from '@/components/customer/HeroBanner';
@@ -8,6 +8,7 @@ import ProductCard from '@/components/customer/ProductCard';
 import ProductModal from '@/components/customer/ProductModal';
 import ReviewsSection from '@/components/customer/ReviewsSection';
 import { CartDrawer } from '@/components/customer/CartDrawer';
+import { useSmartPolling } from '@/hooks/useSmartPolling';
 import { ProductWithImages } from '@/types';
 
 export default function HomePage() {
@@ -18,22 +19,26 @@ export default function HomePage() {
   const [onlyInStock, setOnlyInStock] = useState(false);
   const [modalProduct, setModalProduct] = useState<ProductWithImages | null>(null);
 
-  useEffect(() => {
-    async function loadProducts() {
-      try {
-        const res = await fetch('/api/products');
-        if (res.ok) {
-          const data = await res.json();
-          setProducts(data);
-        }
-      } catch (err) {
-        console.error('Failed to load menu products', err);
-      } finally {
-        setIsLoading(false);
+  const loadProducts = useCallback(async (silent = false) => {
+    try {
+      if (!silent) setIsLoading(true);
+      const res = await fetch('/api/products', { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        setProducts(Array.isArray(data) ? data : []);
       }
+    } catch (err) {
+      console.error('Failed to load menu products', err);
+    } finally {
+      if (!silent) setIsLoading(false);
     }
-    loadProducts();
   }, []);
+
+  useEffect(() => {
+    loadProducts(false);
+  }, [loadProducts]);
+
+  useSmartPolling(() => loadProducts(true), 5000);
 
   // Extract unique categories
   const categories = useMemo(() => {
@@ -52,6 +57,12 @@ export default function HomePage() {
       return matchCategory && matchSearch && matchStock;
     });
   }, [products, selectedCategory, searchQuery, onlyInStock]);
+
+  // Keep open modal product synced with live polled products
+  const activeModalProduct = useMemo(() => {
+    if (!modalProduct) return null;
+    return products.find((p) => p.id === modalProduct.id) ?? modalProduct;
+  }, [modalProduct, products]);
 
   return (
     <div className="min-h-screen bg-surface-ground">
@@ -150,11 +161,17 @@ export default function HomePage() {
       </section>
 
       {/* Customer Reviews Section */}
-      <ReviewsSection />
+      <ReviewsSection
+        products={products}
+        onSelectProduct={(productId) => {
+          const found = products.find((p) => p.id === productId);
+          if (found) setModalProduct(found);
+        }}
+      />
 
       {/* Product Detail Modal */}
       <ProductModal
-        product={modalProduct}
+        product={activeModalProduct}
         onClose={() => setModalProduct(null)}
       />
 

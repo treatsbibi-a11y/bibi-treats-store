@@ -1,27 +1,36 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowLeft,
   faLock,
-  faShieldHalved,
   faCircleExclamation,
-  faCheck,
   faCakeCandles,
   faQrcode,
   faTruck,
-  faMoneyBillWave,
-  faBuildingColumns,
+  faReceipt,
+  faMagnifyingGlass,
+  faBell,
+  faXmark,
+  faLocationDot,
 } from '@fortawesome/free-solid-svg-icons';
 import { useCart } from '@/context/CartContext';
+import { useSmartPolling } from '@/hooks/useSmartPolling';
+import { formatPrice } from '@/lib/order-utils';
+import { OrderDetail } from '@/types';
+import { convertImageToWebP } from '@/lib/image-utils';
 import { Button } from '@/components/ui/Button';
 import { Card, CardBody, CardHeader } from '@/components/ui/Card';
+import PaymentSlipSection from '@/components/customer/PaymentSlipSection';
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const orderParam = searchParams.get('order')?.trim() || '';
+
   const { items, subtotal, shippingFee, total, clearCart } = useCart();
 
   const [formData, setFormData] = useState({
@@ -33,9 +42,107 @@ export default function CheckoutPage() {
   });
 
   const [paymentMethod, setPaymentMethod] = useState<'TRANSFER' | 'COD'>('TRANSFER');
+  const [preSlipUrl, setPreSlipUrl] = useState<string | null>(null);
+  const [isUploadingSlip, setIsUploadingSlip] = useState(false);
+  const [slipError, setSlipError] = useState<string | null>(null);
+  const [isQrZoomOpen, setIsQrZoomOpen] = useState(false);
+
+  useEffect(() => {
+    if (isQrZoomOpen) {
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = '';
+      };
+    }
+  }, [isQrZoomOpen]);
+
+  const handlePreSlipUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setSlipError(null);
+    setIsUploadingSlip(true);
+    try {
+      const webpFile = await convertImageToWebP(file);
+      const formData = new FormData();
+      formData.append('file', webpFile);
+      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (!res.ok || !data.url) {
+        throw new Error(data.error || 'อัปโหลดสลิปไม่สำเร็จ');
+      }
+      setPreSlipUrl(data.url);
+    } catch (err: any) {
+      setSlipError(err?.message || 'เกิดข้อผิดพลาดในการอัปโหลดสลิป');
+    } finally {
+      setIsUploadingSlip(false);
+    }
+  };
   const [confirmedChecked, setConfirmedChecked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Active order state when ?order=BT-xxxx is present
+  const [activeOrder, setActiveOrder] = useState<OrderDetail | null>(null);
+  const [orderLoading, setOrderLoading] = useState(false);
+  const [orderLoadError, setOrderLoadError] = useState('');
+  const [showConfirmedBanner, setShowConfirmedBanner] = useState(false);
+  const prevStatusRef = useRef<string | null>(null);
+
+  const applyLatestOrder = useCallback((latest: OrderDetail) => {
+    const prevStatus = prevStatusRef.current;
+    const nextStatus = latest.status as string;
+    if (prevStatus === 'PENDING' && nextStatus === 'CONFIRMED') {
+      setShowConfirmedBanner(true);
+    } else if (nextStatus !== 'CONFIRMED') {
+      setShowConfirmedBanner(false);
+    }
+    prevStatusRef.current = nextStatus;
+    setActiveOrder(latest);
+  }, []);
+
+  const fetchActiveOrder = useCallback(async () => {
+    if (!orderParam) return;
+    try {
+      const res = await fetch(`/api/orders/${encodeURIComponent(orderParam)}`, {
+        cache: 'no-store',
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData?.error || 'ไม่พบข้อมูลคำสั่งซื้อ');
+      }
+      const data: OrderDetail = await res.json();
+      setOrderLoadError('');
+      applyLatestOrder(data);
+    } catch (err: any) {
+      setOrderLoadError(err?.message || 'ไม่สามารถโหลดข้อมูลคำสั่งซื้อได้');
+    }
+  }, [orderParam, applyLatestOrder]);
+
+  useEffect(() => {
+    if (!orderParam) {
+      setActiveOrder(null);
+      setOrderLoadError('');
+      setShowConfirmedBanner(false);
+      prevStatusRef.current = null;
+      return;
+    }
+
+    let cancelled = false;
+    setOrderLoading(true);
+    fetchActiveOrder().finally(() => {
+      if (!cancelled) {
+        setOrderLoading(false);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [orderParam, fetchActiveOrder]);
+
+  // Poll every 3000ms (with focus/visibility revalidation) when ?order=BT-xxxx is active
+  useSmartPolling(fetchActiveOrder, 3000, Boolean(orderParam));
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData((prev) => ({
@@ -73,6 +180,7 @@ export default function CheckoutPage() {
         address: formData.address.trim(),
         note: formData.note.trim() || null,
         paymentMethod,
+        slipUrl: paymentMethod === 'TRANSFER' ? preSlipUrl : null,
         items: items.map((item) => ({
           productId: item.product.id,
           productName: item.product.name,
@@ -94,15 +202,211 @@ export default function CheckoutPage() {
         throw new Error(data.error || 'ไม่สามารถสร้างออเดอร์ได้ กรุณาลองใหม่อีกครั้ง');
       }
 
-      // Clear cart on success and navigate to order success page
       clearCart();
-      router.push(`/order-success/${data.orderNumber}`);
+
+      if (paymentMethod === 'TRANSFER') {
+        prevStatusRef.current = (data.status as string) || 'PENDING';
+        setActiveOrder(data);
+        setIsSubmitting(false);
+        router.replace(`/checkout?order=${encodeURIComponent(data.orderNumber)}`);
+      } else {
+        router.push(`/order-success/${data.orderNumber}`);
+      }
     } catch (err: any) {
       console.error('Order creation error:', err);
       setErrorMessage(err.message || 'เกิดข้อผิดพลาดในการสั่งซื้อ');
       setIsSubmitting(false);
     }
   };
+
+  // Active order view on /checkout?order=BT-xxxx
+  if (orderParam) {
+    const activeStatus = (activeOrder?.status as string) || '';
+    const canViewReceipt =
+      activeStatus !== '' && activeStatus !== 'PENDING' && activeStatus !== 'CANCELLED';
+
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-sky-50/60 via-surface-ground to-surface-ground py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto space-y-6">
+          {/* Top Navigation */}
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <Link
+              href="/#menu"
+              className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors"
+            >
+              <FontAwesomeIcon icon={faArrowLeft} className="w-3.5 h-3.5" />
+              <span>กลับหน้าหลักร้านค้า</span>
+            </Link>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-sky-200 text-xs font-mono text-slate-700 shadow-subtle">
+              <span className="text-slate-400">ออเดอร์</span>
+              <span className="font-bold text-brand-700">{orderParam}</span>
+            </div>
+          </div>
+
+          {/* Prominent Sky-Blue Notification Banner on PENDING -> CONFIRMED transition */}
+          {showConfirmedBanner && (
+            <div
+              role="status"
+              aria-live="polite"
+              className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-sky-500 to-brand-600 text-white shadow-hover border border-sky-300 flex items-center justify-between gap-4 animate-in fade-in duration-200"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0">
+                  <FontAwesomeIcon icon={faBell} className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm sm:text-base font-bold tracking-tight">
+                    ร้านยืนยันออเดอร์แล้ว สามารถชำระเงินได้
+                  </p>
+                  <p className="text-xs text-sky-100 mt-0.5">
+                    สแกน QR Code ด้านล่างและแนบสลิปการโอนเงินเพื่อเริ่มจัดเตรียมขนม
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowConfirmedBanner(false)}
+                className="p-2 rounded-xl hover:bg-white/15 text-white/90 transition-colors cursor-pointer shrink-0"
+                aria-label="ปิดการแจ้งเตือน"
+              >
+                <FontAwesomeIcon icon={faXmark} className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+
+          {orderLoading && !activeOrder ? (
+            <Card className="border-sky-200/80 bg-white rounded-3xl shadow-sm">
+              <CardBody className="p-10 text-center space-y-3">
+                <div className="w-10 h-10 border-2 border-brand-600 border-t-transparent rounded-full animate-spin mx-auto" />
+                <p className="text-xs text-slate-500 font-medium">
+                  กำลังโหลดสถานะคำสั่งซื้อ {orderParam}...
+                </p>
+              </CardBody>
+            </Card>
+          ) : orderLoadError && !activeOrder ? (
+            <Card className="border-rose-200 bg-white rounded-3xl shadow-sm">
+              <CardBody className="p-8 text-center space-y-4">
+                <p className="text-sm font-bold text-rose-700">{orderLoadError}</p>
+                <div className="flex justify-center gap-3">
+                  <Link href="/tracking">
+                    <Button variant="primary" size="md">
+                      ไปหน้าติดตามออเดอร์
+                    </Button>
+                  </Link>
+                  <Link href="/#menu">
+                    <Button variant="outline" size="md">
+                      กลับหน้าหลัก
+                    </Button>
+                  </Link>
+                </div>
+              </CardBody>
+            </Card>
+          ) : activeOrder ? (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              {/* Main Payment / Waiting / Status Section */}
+              <div className="lg:col-span-7 space-y-5">
+                <PaymentSlipSection
+                  order={activeOrder}
+                  onOrderUpdated={applyLatestOrder}
+                  onRefresh={fetchActiveOrder}
+                />
+
+                {/* View Receipt Button once confirmed / paid */}
+                {canViewReceipt && (
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Link href={`/order-success/${activeOrder.orderNumber}`} className="flex-1 min-w-[200px]">
+                      <Button variant="primary" size="lg" className="w-full gap-2 rounded-2xl">
+                        <FontAwesomeIcon icon={faReceipt} className="w-4 h-4" />
+                        <span>ดูใบเสร็จรับเงิน ({activeOrder.orderNumber})</span>
+                      </Button>
+                    </Link>
+                    <Link href="/tracking">
+                      <Button variant="outline" size="lg" className="gap-2 rounded-2xl border-sky-200 text-sky-900 hover:bg-sky-50">
+                        <FontAwesomeIcon icon={faMagnifyingGlass} className="w-3.5 h-3.5" />
+                        <span>ติดตามสถานะ</span>
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Right Column: Order Summary */}
+              <div className="lg:col-span-5">
+                <Card className="border-sky-200/80 bg-white rounded-3xl shadow-sm overflow-hidden">
+                  <CardHeader className="bg-sky-50/70 border-b border-sky-100 px-5 py-4 flex items-center justify-between">
+                    <h2 className="text-sm font-bold text-slate-900">
+                      สรุปรายการสั่งซื้อ
+                    </h2>
+                    <span className="text-xs font-mono font-semibold text-brand-700">
+                      {activeOrder.orderNumber}
+                    </span>
+                  </CardHeader>
+                  <CardBody className="p-5 space-y-4 text-xs">
+                    <div className="divide-y divide-slate-100">
+                      {activeOrder.items.map((item) => (
+                        <div key={item.id} className="py-2.5 flex justify-between items-start gap-3">
+                          <div className="min-w-0">
+                            <p className="font-semibold text-slate-900">{item.productName}</p>
+                            <p className="text-[11px] text-slate-500 font-mono mt-0.5">
+                              ฿{formatPrice(item.price)} × {item.quantity}
+                            </p>
+                          </div>
+                          <span className="font-mono font-bold text-slate-900 shrink-0">
+                            ฿{formatPrice(item.subtotal)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="pt-3 border-t border-slate-100 space-y-2">
+                      <div className="flex justify-between text-slate-600">
+                        <span>ยอดรวมสินค้า</span>
+                        <span className="font-mono font-medium text-slate-900">
+                          ฿{formatPrice(activeOrder.subtotal)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-slate-600">
+                        <span>ค่าจัดส่ง</span>
+                        <span className="font-mono font-medium text-slate-900">
+                          {activeOrder.shippingFee === 0 ? (
+                            <span className="font-sans font-semibold text-emerald-600">จัดส่งฟรี</span>
+                          ) : (
+                            `฿${formatPrice(activeOrder.shippingFee)}`
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-base font-bold text-slate-950 pt-2 border-t border-slate-200">
+                        <span>ยอดชำระสุทธิ</span>
+                        <span className="font-mono text-brand-700">
+                          ฿{formatPrice(activeOrder.total)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="p-3.5 rounded-2xl bg-sky-50/50 border border-sky-100 space-y-1 text-slate-600">
+                      <div className="flex items-center gap-1.5 font-semibold text-slate-900">
+                        <FontAwesomeIcon icon={faLocationDot} className="w-3 h-3 text-brand-600 shrink-0" />
+                        <span>{activeOrder.customer?.name}</span>
+                        <span className="text-slate-500 font-mono font-normal">
+                          ({activeOrder.customer?.phone})
+                        </span>
+                      </div>
+                      <p className="pl-4 leading-relaxed">{activeOrder.customer?.address}</p>
+                      {activeOrder.note && (
+                        <p className="pl-4 text-[11px] text-slate-500">
+                          หมายเหตุ: {activeOrder.note}
+                        </p>
+                      )}
+                    </div>
+                  </CardBody>
+                </Card>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    );
+  }
 
   if (items.length === 0 && !isSubmitting) {
     return (
@@ -310,6 +614,122 @@ export default function CheckoutPage() {
                     </div>
                   </label>
 
+                  {/* Immediate Bank Details, Original QR Code & Slip Upload when TRANSFER is selected */}
+                  {paymentMethod === 'TRANSFER' && (
+                    <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5 space-y-4">
+                      {/* Bank Details */}
+                      <div className="bg-white rounded-xl border border-slate-200/80 p-3.5 sm:p-4 space-y-1.5 text-xs sm:text-sm">
+                        <div className="font-bold text-slate-900 mb-2">
+                          💳 รายละเอียดบัญชีธนาคาร
+                        </div>
+                        <div className="flex justify-between gap-2">
+                          <span className="text-slate-500">ธนาคาร:</span>
+                          <span className="font-semibold text-slate-900">กสิกรไทย</span>
+                        </div>
+                        <div className="flex justify-between gap-2">
+                          <span className="text-slate-500">ชื่อบัญชี:</span>
+                          <span className="font-semibold text-slate-900">น.ส.ฮาบีบี บุตรเหล่</span>
+                        </div>
+                        <div className="flex justify-between gap-2">
+                          <span className="text-slate-500">เลขบัญชี:</span>
+                          <span className="font-mono font-bold text-slate-900">142-1-52907-4</span>
+                        </div>
+                        <div className="flex justify-between gap-2">
+                          <span className="text-slate-500">PromptPay:</span>
+                          <span className="font-mono font-bold text-brand-700">0862965767</span>
+                        </div>
+                      </div>
+
+                      {/* Original QR Code (no crop, no distortion, clickable to zoom) */}
+                      <div className="bg-white rounded-xl border border-slate-200/80 p-4 text-center space-y-2.5">
+                        <button
+                          type="button"
+                          onClick={() => setIsQrZoomOpen(true)}
+                          className="inline-block rounded-lg overflow-hidden cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-brand-500"
+                          aria-label="กดเพื่อขยายรูป QR Code"
+                        >
+                          <img
+                            src="/images/thai-qr-payment.jpg"
+                            alt="PromptPay QR Code"
+                            className="w-56 sm:w-64 h-auto object-contain mx-auto"
+                          />
+                        </button>
+                        <div className="space-y-0.5">
+                          <p className="text-sm font-bold text-slate-900">
+                            สแกน QR Code เพื่อชำระเงิน
+                          </p>
+                          <p className="text-xs text-slate-500">
+                            กรุณาชำระเงินตามยอดรวมของออเดอร์ (แตะที่รูปเพื่อขยาย)
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Slip Upload */}
+                      <div className="bg-white rounded-xl border border-slate-200/80 p-3.5 sm:p-4 space-y-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-xs sm:text-sm font-bold text-slate-900">
+                            แนบหลักฐานการชำระเงิน (สลิปโอนเงิน)
+                          </span>
+                          {preSlipUrl && (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                              แนบหลักฐานการชำระเงินแล้ว
+                            </span>
+                          )}
+                        </div>
+
+                        {preSlipUrl ? (
+                          <div className="space-y-3">
+                            <div className="rounded-xl overflow-hidden border border-slate-200 bg-slate-50 p-2 flex justify-center">
+                              <img
+                                src={preSlipUrl}
+                                alt="ตัวอย่างสลิปการโอนเงิน"
+                                className="max-h-56 w-auto object-contain rounded-lg"
+                              />
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <label className="flex-1 py-2 px-3 rounded-xl border border-slate-200 hover:border-brand-400 bg-white text-slate-700 text-xs font-semibold text-center cursor-pointer">
+                                {isUploadingSlip ? 'กำลังอัปโหลด...' : 'เปลี่ยนสลิป'}
+                                <input
+                                  type="file"
+                                  accept="image/jpeg,image/jpg,image/png,image/webp"
+                                  disabled={isUploadingSlip}
+                                  onChange={handlePreSlipUpload}
+                                  className="hidden"
+                                />
+                              </label>
+                              <button
+                                type="button"
+                                onClick={() => setPreSlipUrl(null)}
+                                className="py-2 px-3 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-semibold cursor-pointer"
+                              >
+                                ลบสลิป
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <label className="block w-full py-5 px-4 rounded-xl border-2 border-dashed border-slate-200 hover:border-brand-400 bg-slate-50/70 hover:bg-brand-50/30 text-center cursor-pointer transition-colors">
+                            <span className="text-xs font-semibold text-slate-700 block">
+                              {isUploadingSlip
+                                ? 'กำลังอัปโหลดสลิป...'
+                                : 'แตะเพื่อเลือกรูปสลิปการโอนเงิน (จากมือถือหรือคอมพิวเตอร์)'}
+                            </span>
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/jpg,image/png,image/webp"
+                              disabled={isUploadingSlip}
+                              onChange={handlePreSlipUpload}
+                              className="hidden"
+                            />
+                          </label>
+                        )}
+
+                        {slipError && (
+                          <p className="text-xs text-rose-600 font-medium">{slipError}</p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Option 2: Cash on Delivery (COD) */}
                   <label
                     onClick={() => setPaymentMethod('COD')}
@@ -368,7 +788,7 @@ export default function CheckoutPage() {
 
                       return (
                         <div key={item.product.id} className="py-3 flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-lg bg-slate-50 overflow-hidden flex-shrink-0 border border-slate-200/80 flex items-center justify-center">
+                          <div className="w-12 h-12 rounded-xl bg-slate-50 overflow-hidden flex-shrink-0 flex items-center justify-center">
                             {primaryImg ? (
                               <img
                                 src={primaryImg}
@@ -384,11 +804,11 @@ export default function CheckoutPage() {
                               {item.product.name}
                             </p>
                             <p className="text-[11px] text-slate-500 font-mono mt-0.5">
-                              ฿{item.product.price} × {item.quantity}
+                              ฿{formatPrice(item.product.price)} × {item.quantity}
                             </p>
                           </div>
                           <div className="text-xs font-bold text-slate-900 font-mono">
-                            ฿{(item.product.price * item.quantity).toLocaleString()}
+                            ฿{formatPrice(item.product.price * item.quantity)}
                           </div>
                         </div>
                       );
@@ -400,7 +820,7 @@ export default function CheckoutPage() {
                     <div className="flex justify-between text-slate-600">
                       <span>ยอดรวมสินค้า</span>
                       <span className="font-mono font-medium text-slate-900">
-                        ฿{subtotal.toLocaleString()}
+                        ฿{formatPrice(subtotal)}
                       </span>
                     </div>
                     <div className="flex justify-between text-slate-600">
@@ -409,7 +829,7 @@ export default function CheckoutPage() {
                         {shippingFee === 0 ? (
                           <span className="font-sans font-semibold text-emerald-600">จัดส่งฟรี</span>
                         ) : (
-                          `฿${shippingFee.toLocaleString()}`
+                          `฿${formatPrice(shippingFee)}`
                         )}
                       </span>
                     </div>
@@ -429,7 +849,7 @@ export default function CheckoutPage() {
                     </div>
                     <div className="flex justify-between text-base font-bold text-slate-950 pt-2 border-t border-slate-200">
                       <span>ยอดชำระสุทธิ</span>
-                      <span className="font-mono text-slate-950">฿{total.toLocaleString()}</span>
+                      <span className="font-mono text-slate-950">฿{formatPrice(total)}</span>
                     </div>
                   </div>
 
@@ -455,7 +875,7 @@ export default function CheckoutPage() {
                     isLoading={isSubmitting}
                     disabled={!confirmedChecked || items.length === 0}
                   >
-                    ยืนยันการสั่งซื้อ · ฿{total.toLocaleString()}
+                    ยืนยันการสั่งซื้อ · ฿{formatPrice(total)}
                   </Button>
                 </CardBody>
               </Card>
@@ -463,6 +883,53 @@ export default function CheckoutPage() {
           </div>
         </form>
       </div>
+      {/* QR Code Zoom Modal */}
+      {isQrZoomOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="ขยายรูป QR Code"
+          onClick={() => setIsQrZoomOpen(false)}
+          className="fixed inset-0 z-[120] bg-slate-900/75 backdrop-blur-sm flex items-center justify-center p-4"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white rounded-3xl p-5 sm:p-6 max-w-md w-full text-center space-y-3 shadow-2xl"
+          >
+            <img
+              src="/images/thai-qr-payment.jpg"
+              alt="PromptPay QR Code"
+              className="w-full h-auto object-contain mx-auto rounded-xl"
+            />
+            <p className="text-sm font-bold text-slate-900">สแกน QR Code เพื่อชำระเงิน</p>
+            <p className="text-xs text-slate-500">กรุณาชำระเงินตามยอดรวมของออเดอร์</p>
+            <button
+              type="button"
+              onClick={() => setIsQrZoomOpen(false)}
+              className="w-full py-2.5 rounded-xl bg-slate-900 text-white text-xs font-semibold cursor-pointer"
+            >
+              ปิดหน้าต่าง
+            </button>
+          </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-surface-ground flex items-center justify-center p-4">
+          <div className="text-center space-y-3">
+            <div className="w-10 h-10 border-2 border-brand-600 border-t-transparent rounded-full animate-spin mx-auto" />
+            <p className="text-xs text-slate-500 font-mono">Loading checkout...</p>
+          </div>
+        </div>
+      }
+    >
+      <CheckoutContent />
+    </Suspense>
   );
 }

@@ -2,12 +2,55 @@ export const runtime = 'edge';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
+import { resolveD1Binding, CloudflareD1Binding } from '@/lib/d1-remote';
+import { getAdminSession } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
 interface RouteContext {
   params: {
     id: string;
+  };
+}
+
+async function getD1ProductById(d1: CloudflareD1Binding, id: string) {
+  const row = await d1
+    .prepare(
+      `SELECT id, name, description, price, stock, initialStock, sold, category, status, createdAt, updatedAt
+       FROM Product WHERE id = ? LIMIT 1`
+    )
+    .bind(id)
+    .first<any>();
+
+  if (!row) return null;
+
+  const { results: images } = await d1
+    .prepare(
+      `SELECT id, productId, imageUrl, isPrimary, displayOrder
+       FROM ProductImage WHERE productId = ? ORDER BY displayOrder ASC`
+    )
+    .bind(id)
+    .all<any>();
+
+  return {
+    id: row.id,
+    name: row.name,
+    description: row.description || '',
+    price: Number(row.price),
+    stock: Number(row.stock),
+    initialStock: Number(row.initialStock),
+    sold: Number(row.sold),
+    category: row.category,
+    status: row.status,
+    createdAt: new Date(row.createdAt).toISOString(),
+    updatedAt: new Date(row.updatedAt).toISOString(),
+    images: (images || []).map((img: any) => ({
+      id: img.id,
+      productId: img.productId,
+      imageUrl: img.imageUrl,
+      isPrimary: Boolean(img.isPrimary),
+      displayOrder: Number(img.displayOrder),
+    })),
   };
 }
 
@@ -18,6 +61,18 @@ export async function GET(
 ) {
   try {
     const { id } = params;
+    const d1 = resolveD1Binding();
+
+    if (d1) {
+      const product = await getD1ProductById(d1, id);
+      if (!product) {
+        return NextResponse.json(
+          { error: 'ไม่พบข้อมูลสินค้านี้' },
+          { status: 404 }
+        );
+      }
+      return NextResponse.json(product);
+    }
 
     const product = await prisma.product.findUnique({
       where: { id },
@@ -47,14 +102,149 @@ export async function GET(
   }
 }
 
-// PUT /api/products/[id] - update product fields
+// PUT /api/products/[id] - update product fields (admin only)
 export async function PUT(
   req: NextRequest,
   { params }: RouteContext
 ) {
   try {
+    const session = await getAdminSession();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const { id } = params;
     const body = await req.json();
+    const d1 = resolveD1Binding();
+
+    if (d1) {
+      const existing = await d1
+        .prepare(`SELECT id FROM Product WHERE id = ? LIMIT 1`)
+        .bind(id)
+        .first<any>();
+
+      if (!existing) {
+        return NextResponse.json(
+          { error: 'ไม่พบสินค้าที่ต้องการแก้ไข' },
+          { status: 404 }
+        );
+      }
+
+      const updates: string[] = [];
+      const updateParams: any[] = [];
+
+      if (body.name !== undefined) {
+        if (typeof body.name !== 'string' || !body.name.trim()) {
+          return NextResponse.json({ error: 'ชื่อสินค้าต้องไม่เป็นค่าว่าง' }, { status: 400 });
+        }
+        updates.push('name = ?');
+        updateParams.push(body.name.trim());
+      }
+
+      if (body.description !== undefined) {
+        updates.push('description = ?');
+        updateParams.push(String(body.description || '').trim());
+      }
+
+      if (body.price !== undefined) {
+        const price = Number(body.price);
+        if (isNaN(price) || price < 0) {
+          return NextResponse.json({ error: 'ราคาต้องเป็นตัวเลขที่ถูกต้อง' }, { status: 400 });
+        }
+        updates.push('price = ?');
+        updateParams.push(price);
+      }
+
+      if (body.stock !== undefined) {
+        const stock = parseInt(body.stock, 10);
+        if (isNaN(stock) || stock < 0) {
+          return NextResponse.json({ error: 'จำนวนสต็อกต้องไม่ติดลบ' }, { status: 400 });
+        }
+        updates.push('stock = ?');
+        updateParams.push(stock);
+      }
+
+      if (body.initialStock !== undefined) {
+        const initialStock = parseInt(body.initialStock, 10);
+        if (!isNaN(initialStock) && initialStock >= 0) {
+          updates.push('initialStock = ?');
+          updateParams.push(initialStock);
+        }
+      }
+
+      if (body.sold !== undefined) {
+        const sold = parseInt(body.sold, 10);
+        if (!isNaN(sold) && sold >= 0) {
+          updates.push('sold = ?');
+          updateParams.push(sold);
+        }
+      }
+
+      if (body.category !== undefined) {
+        updates.push('category = ?');
+        updateParams.push(String(body.category).trim() || 'Bakery');
+      }
+
+      if (body.status !== undefined) {
+        const validStatuses = ['ACTIVE', 'INACTIVE'];
+        if (!validStatuses.includes(body.status)) {
+          return NextResponse.json({ error: 'สถานะสินค้าไม่ถูกต้อง (ACTIVE หรือ INACTIVE)' }, { status: 400 });
+        }
+        updates.push('status = ?');
+        updateParams.push(body.status);
+      }
+
+      if (Array.isArray(body.images)) {
+        await d1.prepare(`DELETE FROM ProductImage WHERE productId = ?`).bind(id).run();
+
+        let hasPrimary = false;
+        const newImages = body.images
+          .map((img: unknown, index: number) => {
+            if (typeof img === 'string') {
+              const isPrimary = !hasPrimary;
+              hasPrimary = true;
+              return { imageUrl: img, isPrimary, displayOrder: index + 1 };
+            } else if (img && typeof img === 'object') {
+              const imageObj = img as { imageUrl?: string; isPrimary?: boolean; displayOrder?: number };
+              const isPrimary = Boolean(imageObj.isPrimary) || (!hasPrimary && index === 0);
+              if (isPrimary) hasPrimary = true;
+              return {
+                imageUrl: imageObj.imageUrl || '',
+                isPrimary,
+                displayOrder: imageObj.displayOrder ?? index + 1,
+              };
+            }
+            return { imageUrl: '', isPrimary: index === 0, displayOrder: index + 1 };
+          })
+          .filter((img: { imageUrl: string }) => Boolean(img.imageUrl));
+
+        if (newImages.length > 0 && !newImages.some((i: { isPrimary: boolean }) => i.isPrimary)) {
+          newImages[0].isPrimary = true;
+        }
+
+        for (const img of newImages) {
+          await d1
+            .prepare(
+              `INSERT INTO ProductImage (id, productId, imageUrl, isPrimary, displayOrder)
+               VALUES (?, ?, ?, ?, ?)`
+            )
+            .bind(crypto.randomUUID(), id, img.imageUrl, img.isPrimary ? 1 : 0, img.displayOrder)
+            .run();
+        }
+      }
+
+      if (updates.length > 0) {
+        updates.push('updatedAt = ?');
+        updateParams.push(new Date().toISOString());
+        updateParams.push(id);
+        await d1
+          .prepare(`UPDATE Product SET ${updates.join(', ')} WHERE id = ?`)
+          .bind(...updateParams)
+          .run();
+      }
+
+      const updated = await getD1ProductById(d1, id);
+      return NextResponse.json(updated);
+    }
 
     // Check if product exists
     const existing = await prisma.product.findUnique({
@@ -126,7 +316,6 @@ export async function PUT(
 
     // Optional: if images array is provided in PUT, update/sync images
     if (Array.isArray(body.images)) {
-      // Delete existing and replace, or preserve
       await prisma.productImage.deleteMany({
         where: { productId: id },
       });
@@ -189,13 +378,45 @@ export async function PUT(
   }
 }
 
-// DELETE /api/products/[id] - soft delete / set status INACTIVE
+// DELETE /api/products/[id] - soft delete / set status INACTIVE (admin only)
 export async function DELETE(
   req: NextRequest,
   { params }: RouteContext
 ) {
   try {
+    const session = await getAdminSession();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const { id } = params;
+    const d1 = resolveD1Binding();
+
+    if (d1) {
+      const existing = await d1
+        .prepare(`SELECT id FROM Product WHERE id = ? LIMIT 1`)
+        .bind(id)
+        .first<any>();
+
+      if (!existing) {
+        return NextResponse.json(
+          { error: 'ไม่พบสินค้าที่ต้องการลบ' },
+          { status: 404 }
+        );
+      }
+
+      await d1
+        .prepare(`UPDATE Product SET status = 'INACTIVE', updatedAt = ? WHERE id = ?`)
+        .bind(new Date().toISOString(), id)
+        .run();
+
+      const updated = await getD1ProductById(d1, id);
+
+      return NextResponse.json({
+        success: true,
+        message: 'สินค้าถูกปิดการขายเรียบร้อยแล้ว (INACTIVE)',
+        product: updated,
+      });
+    }
 
     const existing = await prisma.product.findUnique({
       where: { id },
