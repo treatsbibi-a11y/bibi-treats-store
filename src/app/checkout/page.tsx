@@ -46,6 +46,39 @@ function CheckoutContent() {
   const [isUploadingSlip, setIsUploadingSlip] = useState(false);
   const [slipError, setSlipError] = useState<string | null>(null);
   const [isQrZoomOpen, setIsQrZoomOpen] = useState(false);
+  const [storeSettings, setStoreSettings] = useState<{
+    bankName?: string;
+    bankAccountName?: string;
+    bankAccountNo?: string;
+    promptpayNumber?: string;
+    promptpayName?: string;
+    qrImageUrl?: string;
+  }>({
+    bankName: 'ธนาคารกสิกรไทย (Kasikorn Bank)',
+    bankAccountName: 'น.ส. ฮาบีบี บุตรแหล่',
+    bankAccountNo: '142-1-52907-4',
+    promptpayNumber: '086-296-5765',
+    promptpayName: 'น.ส. ฮาบีบี บุตรแหล่',
+    qrImageUrl: '/images/thai-qr-payment.jpg',
+  });
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && !data.error) {
+          setStoreSettings({
+            bankName: data.bankName || 'ธนาคารกสิกรไทย (Kasikorn Bank)',
+            bankAccountName: data.bankAccountName || 'น.ส. ฮาบีบี บุตรแหล่',
+            bankAccountNo: data.bankAccountNo || '142-1-52907-4',
+            promptpayNumber: data.promptpayNumber || '086-296-5765',
+            promptpayName: data.promptpayName || 'น.ส. ฮาบีบี บุตรแหล่',
+            qrImageUrl: data.qrImageUrl || '/images/thai-qr-payment.jpg',
+          });
+        }
+      })
+      .catch((err) => console.warn('Failed to load store settings:', err));
+  }, []);
 
   useEffect(() => {
     if (isQrZoomOpen) {
@@ -624,19 +657,27 @@ function CheckoutContent() {
                         </div>
                         <div className="flex justify-between gap-2">
                           <span className="text-slate-500">ธนาคาร:</span>
-                          <span className="font-semibold text-slate-900">กสิกรไทย</span>
+                          <span className="font-semibold text-slate-900">
+                            {storeSettings.bankName || 'กสิกรไทย'}
+                          </span>
                         </div>
                         <div className="flex justify-between gap-2">
                           <span className="text-slate-500">ชื่อบัญชี:</span>
-                          <span className="font-semibold text-slate-900">น.ส.ฮาบีบี บุตรเหล่</span>
+                          <span className="font-semibold text-slate-900">
+                            {storeSettings.bankAccountName || storeSettings.promptpayName || 'น.ส. ฮาบีบี บุตรแหล่'}
+                          </span>
                         </div>
                         <div className="flex justify-between gap-2">
                           <span className="text-slate-500">เลขบัญชี:</span>
-                          <span className="font-mono font-bold text-slate-900">142-1-52907-4</span>
+                          <span className="font-mono font-bold text-slate-900">
+                            {storeSettings.bankAccountNo || '142-1-52907-4'}
+                          </span>
                         </div>
                         <div className="flex justify-between gap-2">
                           <span className="text-slate-500">PromptPay:</span>
-                          <span className="font-mono font-bold text-brand-700">0862965767</span>
+                          <span className="font-mono font-bold text-brand-700">
+                            {storeSettings.promptpayNumber || '086-296-5765'}
+                          </span>
                         </div>
                       </div>
 
@@ -649,7 +690,7 @@ function CheckoutContent() {
                           aria-label="กดเพื่อขยายรูป QR Code"
                         >
                           <img
-                            src="/images/thai-qr-payment.jpg"
+                            src={storeSettings.qrImageUrl || '/images/thai-qr-payment.jpg'}
                             alt="PromptPay QR Code"
                             className="w-56 sm:w-64 h-auto object-contain mx-auto"
                           />

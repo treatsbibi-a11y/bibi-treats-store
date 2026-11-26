@@ -6,16 +6,16 @@ import { resolveD1Binding } from '@/lib/d1-remote';
 
 export const dynamic = 'force-dynamic';
 
-// Strip sensitive payment/QR fields from public settings until order is confirmed
+// Public store settings for customer UI (including store payment details for checkout)
 function sanitizePublicSettings<T extends Record<string, any>>(settings: T) {
   return {
     ...settings,
-    qrImageUrl: null,
-    promptpayNumber: null,
-    promptpayName: null,
-    bankName: null,
-    bankAccountNo: null,
-    bankAccountName: null,
+    qrImageUrl: settings.qrImageUrl || '/images/thai-qr-payment.jpg',
+    promptpayNumber: settings.promptpayNumber || '086-296-5765',
+    promptpayName: settings.promptpayName || 'น.ส. ฮาบีบี บุตรแหล่',
+    bankName: settings.bankName || 'ธนาคารกสิกรไทย (Kasikorn Bank)',
+    bankAccountNo: settings.bankAccountNo || '142-1-52907-4',
+    bankAccountName: settings.bankAccountName || 'น.ส. ฮาบีบี บุตรแหล่',
   };
 }
 
