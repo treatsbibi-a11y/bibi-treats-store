@@ -13,6 +13,7 @@ import Footer from '@/components/customer/Footer';
 import { CartDrawer } from '@/components/customer/CartDrawer';
 import ScrollProgressBar from '@/components/customer/ScrollProgressBar';
 import ScrollToTop from '@/components/customer/ScrollToTop';
+import CookieConsent from '@/components/customer/CookieConsent';
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_STOREFRONT_URL || 'https://bibitreats.com'),
@@ -72,6 +73,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <ScrollToTop />
             <BottomNav />
             <CartDrawer />
+            <CookieConsent />
           </CartProvider>
         </MotionProvider>
       </body>
