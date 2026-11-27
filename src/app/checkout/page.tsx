@@ -563,6 +563,19 @@ function CheckoutContent() {
                   </div>
                 </CardHeader>
                 <CardBody className="space-y-4">
+                  {/* Premium Pickup Schedule Notice */}
+                  <div className="p-3.5 bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-300/70 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs">
+                    <div className="flex items-center gap-2.5 text-amber-950 font-medium">
+                      <FontAwesomeIcon icon={faLocationDot} className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                      <span>
+                        <strong className="text-amber-900 font-bold">วันและจุดนัดรับขนม:</strong> อาทิตย์ – พฤหัสฯ (ตันหยงมัส) · ศุกร์ – เสาร์ (เมืองนราธิวาส)
+                      </span>
+                    </div>
+                    <span className="text-[11px] font-semibold text-amber-800 bg-amber-100/90 px-2.5 py-0.5 rounded-full border border-amber-300/70 self-start sm:self-auto shrink-0 shadow-2xs">
+                      หรือจัดส่งถึงบ้านตามที่อยู่
+                    </span>
+                  </div>
+
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 mb-1">
                       ที่อยู่จัดส่งพัสดุ (บ้านเลขที่, ถนน, แขวง/ตำบล, เขต/อำเภอ, รหัสไปรษณีย์) <span className="text-red-500">*</span>
