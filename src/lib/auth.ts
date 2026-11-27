@@ -3,6 +3,11 @@ import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { getRequestContext } from '@cloudflare/next-on-pages';
 
+// Edge Runtime polyfill for setImmediate to prevent Node.js API warnings
+if (typeof (globalThis as any).setImmediate === 'undefined') {
+  (globalThis as any).setImmediate = (fn: (...args: any[]) => void, ...args: any[]) => setTimeout(fn, 0, ...args);
+}
+
 const COOKIE_NAME = 'bibi_admin_token';
 const DEFAULT_JWT_SECRET = 'bibi-treats-super-cute-secret-key-2026';
 
@@ -23,11 +28,16 @@ function getJwtSecretKey(): Uint8Array {
 }
 
 export async function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, 10);
+  return bcrypt.hashSync(password, 10);
 }
 
 export async function comparePassword(password: string, hash: string): Promise<boolean> {
-  return bcrypt.compare(password, hash);
+  if (!password || !hash) return false;
+  try {
+    return bcrypt.compareSync(password, hash);
+  } catch {
+    return false;
+  }
 }
 
 export async function signAdminToken(payload: { id: string; username: string; role: string }): Promise<string> {
