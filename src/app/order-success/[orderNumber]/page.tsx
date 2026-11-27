@@ -339,8 +339,7 @@ export default function OrderSuccessPage() {
                     ARTISANAL HOMEMADE BAKERY
                   </div>
                   <div
-                    className="text-4xl font-semibold text-slate-900 py-0.5 select-none"
-                    style={{ fontFamily: "'Caveat', cursive" }}
+                    className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight py-0.5 select-none font-sans"
                   >
                     {settings?.shopName || "Bibi's Treats"}
                   </div>
