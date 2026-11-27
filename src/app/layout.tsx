@@ -17,7 +17,10 @@ import CookieConsent from '@/components/customer/CookieConsent';
 import PWAInstallPrompt from '@/components/customer/PWAInstallPrompt';
 
 export const viewport: Viewport = {
-  themeColor: '#D97706',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#FFFFFF' },
+    { media: '(prefers-color-scheme: dark)', color: '#0F172A' },
+  ],
 };
 
 export const metadata: Metadata = {
