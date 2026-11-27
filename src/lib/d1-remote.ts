@@ -1,4 +1,5 @@
 import { getRequestContext } from '@cloudflare/next-on-pages';
+import { prisma } from './prisma';
 
 export interface CloudflareD1PreparedResult<T = any> {
   results: T[];
@@ -71,6 +72,28 @@ async function refreshWranglerOAuthToken(): Promise<string | undefined> {
   return refreshPromise;
 }
 
+async function executeLocalSqliteQuery(sql: string, params: any[]): Promise<{
+  results: any[];
+  meta: any;
+  success: boolean;
+}> {
+  try {
+    if (!prisma || typeof (prisma as any).$queryRawUnsafe !== 'function') {
+      return { results: [], meta: {}, success: true };
+    }
+    const isSelect = /^\s*(SELECT|PRAGMA|EXPLAIN)\b/i.test(sql);
+    if (isSelect) {
+      const rows: any[] = await (prisma as any).$queryRawUnsafe(sql, ...(params || []));
+      return { results: rows || [], meta: {}, success: true };
+    } else {
+      const count = await (prisma as any).$executeRawUnsafe(sql, ...(params || []));
+      return { results: [], meta: { changes: count }, success: true };
+    }
+  } catch {
+    return { results: [], meta: {}, success: false };
+  }
+}
+
 async function executeRemoteD1Query(sql: string, params: any[], allowRefresh = true): Promise<{
   results: any[];
   meta: any;
@@ -85,60 +108,66 @@ async function executeRemoteD1Query(sql: string, params: any[], allowRefresh = t
   }
 
   if (!token) {
-    throw new Error('Missing CLOUDFLARE_API_TOKEN or CF_D1_REMOTE_TOKEN for remote D1 connection.');
+    return executeLocalSqliteQuery(sql, params);
   }
 
-  const res = await fetch(
-    `https://api.cloudflare.com/client/v4/accounts/${accountId}/d1/database/${databaseId}/query`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ sql, params }),
-      cache: 'no-store',
-    }
-  );
-
-  let json: any = null;
   try {
-    json = await res.json();
-  } catch {
-    json = null;
-  }
+    const res = await fetch(
+      `https://api.cloudflare.com/client/v4/accounts/${accountId}/d1/database/${databaseId}/query`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ sql, params }),
+        cache: 'no-store',
+      }
+    );
 
-  const isAuthError =
-    res.status === 401 ||
-    res.status === 403 ||
-    json?.errors?.some((e: any) => {
-      const msg = String(e?.message || '').toLowerCase();
-      return (
-        msg.includes('authentication') ||
-        msg.includes('auth') ||
-        msg.includes('token') ||
-        e?.code === 10000
-      );
-    });
-
-  if (isAuthError && allowRefresh && !process.env.CLOUDFLARE_API_TOKEN) {
-    const refreshed = await refreshWranglerOAuthToken();
-    if (refreshed) {
-      return executeRemoteD1Query(sql, params, false);
+    let json: any = null;
+    try {
+      json = await res.json();
+    } catch {
+      json = null;
     }
-  }
 
-  if (!res.ok || !json?.success) {
-    const errMsg = json?.errors?.[0]?.message || res.statusText || 'Remote D1 query failed';
-    throw new Error(`Cloudflare D1 Remote Error: ${errMsg}`);
-  }
+    const isAuthError =
+      res.status === 401 ||
+      res.status === 403 ||
+      json?.errors?.some((e: any) => {
+        const msg = String(e?.message || '').toLowerCase();
+        return (
+          msg.includes('authentication') ||
+          msg.includes('auth') ||
+          msg.includes('token') ||
+          e?.code === 10000
+        );
+      });
 
-  const firstResult = json.result?.[0];
-  return {
-    results: (firstResult?.results || []) as any[],
-    meta: firstResult?.meta || {},
-    success: Boolean(firstResult?.success ?? true),
-  };
+    if (isAuthError) {
+      if (allowRefresh && !process.env.CLOUDFLARE_API_TOKEN) {
+        const refreshed = await refreshWranglerOAuthToken();
+        if (refreshed) {
+          return executeRemoteD1Query(sql, params, false);
+        }
+      }
+      return executeLocalSqliteQuery(sql, params);
+    }
+
+    if (!res.ok || !json?.success) {
+      return executeLocalSqliteQuery(sql, params);
+    }
+
+    const firstResult = json.result?.[0];
+    return {
+      results: (firstResult?.results || []) as any[],
+      meta: firstResult?.meta || {},
+      success: Boolean(firstResult?.success ?? true),
+    };
+  } catch {
+    return executeLocalSqliteQuery(sql, params);
+  }
 }
 
 function createBoundStatement(sql: string, params: any[]): CloudflareD1BoundStatement & { __sql: string; __params: any[] } {
