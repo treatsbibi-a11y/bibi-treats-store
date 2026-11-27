@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { resolveD1Binding } from '@/lib/d1-remote';
 import { CloudflareD1Binding } from '@/lib/d1';
 import { grantOrderAccess } from '@/lib/order-token';
+import { getClientIp, checkRateLimit } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,6 +20,23 @@ function cleanPhone(phone: string): string {
 // POST /api/orders/track - verify orderNumber and phone number match
 export async function POST(req: NextRequest) {
   try {
+    // Rate limit: max 10 tracking requests per 1 minute per IP
+    const clientIp = getClientIp(req);
+    const limitResult = checkRateLimit(`track:${clientIp}`, 10, 60 * 1000);
+    if (limitResult.limited) {
+      return NextResponse.json(
+        { error: 'คุณตรวจสอบสถานะคำสั่งซื้อบ่อยเกินไป กรุณารอสักครู่แล้วลองใหม่อีกครั้ง' },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(limitResult.resetInSeconds),
+            'X-RateLimit-Limit': '10',
+            'X-RateLimit-Remaining': '0',
+          },
+        }
+      );
+    }
+
     const body = await req.json();
     const { orderNumber, phone } = body;
 

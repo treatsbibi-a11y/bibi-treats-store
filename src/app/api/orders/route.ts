@@ -8,6 +8,7 @@ import { getRequestContext } from '@cloudflare/next-on-pages';
 import { notifyNewOrderToLine } from '@/lib/line';
 import { getAdminSession } from '@/lib/auth';
 import { grantOrderAccess } from '@/lib/order-token';
+import { getClientIp, checkRateLimit } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,6 +23,23 @@ interface OrderItemInput {
 // POST /api/orders - atomic checkout transaction
 export async function POST(req: NextRequest) {
   try {
+    // Rate limit: max 5 checkout requests per 1 minute per IP
+    const clientIp = getClientIp(req);
+    const limitResult = checkRateLimit(`orders:${clientIp}`, 5, 60 * 1000);
+    if (limitResult.limited) {
+      return NextResponse.json(
+        { error: 'คุณทำรายการสั่งซื้อบ่อยเกินไป กรุณารอสักครู่แล้วลองใหม่อีกครั้ง' },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(limitResult.resetInSeconds),
+            'X-RateLimit-Limit': '5',
+            'X-RateLimit-Remaining': '0',
+          },
+        }
+      );
+    }
+
     const body = await req.json();
 
     // Extract customer info (support both nested customer object and flat fields)
