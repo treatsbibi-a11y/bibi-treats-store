@@ -1,5 +1,5 @@
 // Bibi's Treats Minimal Service Worker for PWA compliance
-const CACHE_NAME = 'bibi-treats-cache-v1';
+const CACHE_NAME = 'bibi-treats-cache-v2';
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',
