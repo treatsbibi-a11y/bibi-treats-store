@@ -84,7 +84,12 @@ export async function POST(req: NextRequest) {
     }
 
     const images = rawImages
-      .filter((u: unknown): u is string => typeof u === 'string' && u.trim().length > 0)
+      .filter((u: unknown): u is string => {
+        if (typeof u !== 'string') return false;
+        const trimmed = u.trim();
+        return trimmed.startsWith('/uploads/') || trimmed.startsWith('https://');
+      })
+      .map((u: string) => u.trim())
       .slice(0, 5);
     const productId =
       typeof body.productId === 'string' && body.productId.trim() ? body.productId.trim() : null;

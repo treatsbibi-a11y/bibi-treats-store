@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { resolveD1Binding } from '@/lib/d1-remote';
 import { CloudflareD1Binding } from '@/lib/d1';
+import { grantOrderAccess } from '@/lib/order-token';
 
 export const dynamic = 'force-dynamic';
 
@@ -122,11 +123,12 @@ export async function POST(req: NextRequest) {
         })),
       };
 
-      return NextResponse.json({
+      const res = NextResponse.json({
         success: true,
         order: formattedOrder,
         ...formattedOrder,
       });
+      return await grantOrderAccess(req, res, [formattedOrder.id, formattedOrder.orderNumber]);
     }
 
     // Find the order by orderNumber
@@ -208,11 +210,12 @@ export async function POST(req: NextRequest) {
     };
 
     // Return with both root fields and nested 'order' property for maximum frontend compatibility
-    return NextResponse.json({
+    const res = NextResponse.json({
       success: true,
       order: formattedOrder,
       ...formattedOrder,
     });
+    return await grantOrderAccess(req, res, [formattedOrder.id, formattedOrder.orderNumber]);
   } catch (error) {
     console.error('Error tracking order:', error);
     return NextResponse.json(

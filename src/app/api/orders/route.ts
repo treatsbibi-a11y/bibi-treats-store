@@ -7,6 +7,7 @@ import { resolveD1Binding } from '@/lib/d1-remote';
 import { getRequestContext } from '@cloudflare/next-on-pages';
 import { notifyNewOrderToLine } from '@/lib/line';
 import { getAdminSession } from '@/lib/auth';
+import { grantOrderAccess } from '@/lib/order-token';
 
 export const dynamic = 'force-dynamic';
 
@@ -52,9 +53,29 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (
+      customerData.name.trim().length > 100 ||
+      customerData.phone.trim().length > 30 ||
+      (customerData.instagram && String(customerData.instagram).trim().length > 60) ||
+      customerData.address.trim().length > 500 ||
+      (body.note && String(body.note).trim().length > 500)
+    ) {
+      return NextResponse.json(
+        { error: 'ข้อมูลที่กรอกมีความยาวเกินกำหนด' },
+        { status: 400 }
+      );
+    }
+
+    if (body.slipUrl && !String(body.slipUrl).trim().startsWith('/uploads/')) {
+      return NextResponse.json(
+        { error: 'URL สลิปไม่ถูกต้อง' },
+        { status: 400 }
+      );
+    }
+
     // Extract items
     const rawItems: OrderItemInput[] = body.items;
-    if (!Array.isArray(rawItems) || rawItems.length === 0) {
+    if (!Array.isArray(rawItems) || rawItems.length === 0 || rawItems.length > 50) {
       return NextResponse.json(
         { error: 'กรุณาเลือกสินค้าอย่างน้อย 1 รายการ' },
         { status: 400 }
@@ -107,7 +128,8 @@ export async function POST(req: NextRequest) {
       });
 
       await notifyNewOrderToLine(createdOrder, runtimeEnv);
-      return NextResponse.json(createdOrder, { status: 201 });
+      const res = NextResponse.json(createdOrder, { status: 201 });
+      return await grantOrderAccess(req, res, [createdOrder.id, createdOrder.orderNumber]);
     }
 
     // Execute atomic transaction via Prisma (Node.js fallback)
@@ -257,7 +279,8 @@ export async function POST(req: NextRequest) {
     });
 
     await notifyNewOrderToLine(createdOrder, runtimeEnv);
-    return NextResponse.json(createdOrder, { status: 201 });
+    const res = NextResponse.json(createdOrder, { status: 201 });
+    return await grantOrderAccess(req, res, [createdOrder.id, createdOrder.orderNumber]);
   } catch (error: unknown) {
     console.error('Checkout error:', error);
     const message = error instanceof Error ? error.message : 'เกิดข้อผิดพลาดในการสั่งซื้อสินค้า';

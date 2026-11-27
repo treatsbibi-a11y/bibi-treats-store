@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getD1StoreSettings } from '@/lib/d1';
 import { resolveD1Binding, fetchR2Object } from '@/lib/d1-remote';
+import { hasOrderAccess } from '@/lib/order-token';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,6 +44,12 @@ function resolveR2KeyFromQrUrl(qrImageUrl: string | null | undefined): string | 
 export async function GET(req: NextRequest, { params }: RouteContext) {
   try {
     const { id } = params;
+    if (!(await hasOrderAccess(req, id))) {
+      return NextResponse.json(
+        { allowed: false, error: 'Unauthorized' },
+        { status: 401, headers: NO_STORE_HEADERS }
+      );
+    }
     const d1Binding = resolveD1Binding();
 
     let order: OrderPaymentGate | null = null;

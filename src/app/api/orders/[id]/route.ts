@@ -6,6 +6,7 @@ import { resolveD1Binding } from '@/lib/d1-remote';
 import { getRequestContext } from '@cloudflare/next-on-pages';
 import { notifySlipUploadedToLine } from '@/lib/line';
 import { getAdminSession } from '@/lib/auth';
+import { hasOrderAccess } from '@/lib/order-token';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,6 +35,13 @@ export async function GET(
 ) {
   try {
     const { id } = params;
+
+    if (!(await hasOrderAccess(req, id))) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
 
     // Check Cloudflare D1 binding & runtime env on Edge Runtime or Localhost Remote Bridge
     let d1Binding: CloudflareD1Binding | undefined = resolveD1Binding();
@@ -112,6 +120,13 @@ export async function PUT(
 
 async function handleUpdateOrder(req: NextRequest, id: string) {
   try {
+    if (!(await hasOrderAccess(req, id))) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     const body = await req.json();
     const newStatus = body.status as ValidStatus | undefined;
     const note = body.note;
@@ -125,6 +140,16 @@ async function handleUpdateOrder(req: NextRequest, id: string) {
     if (hasSlipSubmission && !trimmedSlipUrl!.startsWith('/uploads/')) {
       return NextResponse.json(
         { error: 'URL สลิปไม่ถูกต้อง' },
+        { status: 400 }
+      );
+    }
+
+    if (
+      (body.address !== undefined && String(body.address).trim().length > 500) ||
+      (note !== undefined && note !== null && String(note).trim().length > 500)
+    ) {
+      return NextResponse.json(
+        { error: 'ข้อมูลที่กรอกมีความยาวเกินกำหนด' },
         { status: 400 }
       );
     }
