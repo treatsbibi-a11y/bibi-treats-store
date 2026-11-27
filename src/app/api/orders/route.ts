@@ -42,6 +42,42 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
+    // Cloudflare Turnstile bot verification (if secret key configured)
+    const turnstileSecret = process.env.TURNSTILE_SECRET_KEY;
+    if (turnstileSecret) {
+      const turnstileToken = body.turnstileToken;
+      if (!turnstileToken) {
+        return NextResponse.json(
+          { error: 'กรุณายืนยันการตรวจสอบความปลอดภัย (Turnstile)' },
+          { status: 403 }
+        );
+      }
+      try {
+        const verifyRes = await fetch(
+          'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+              secret: turnstileSecret,
+              response: turnstileToken,
+              remoteip: clientIp,
+            }),
+          }
+        );
+        const outcome = (await verifyRes.json()) as any;
+        if (!outcome.success) {
+          console.warn('Turnstile verification failed:', outcome);
+          return NextResponse.json(
+            { error: 'การตรวจสอบความปลอดภัยไม่ผ่าน กรุณาลองใหม่อีกครั้ง' },
+            { status: 403 }
+          );
+        }
+      } catch (verifyErr) {
+        console.error('Turnstile verification error:', verifyErr);
+      }
+    }
+
     // Extract customer info (support both nested customer object and flat fields)
     const customerData = body.customer || {
       name: body.name,

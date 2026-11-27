@@ -25,6 +25,7 @@ import { convertImageToWebP } from '@/lib/image-utils';
 import { Button } from '@/components/ui/Button';
 import { Card, CardBody, CardHeader } from '@/components/ui/Card';
 import PaymentSlipSection from '@/components/customer/PaymentSlipSection';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 function CheckoutContent() {
   const router = useRouter();
@@ -42,6 +43,7 @@ function CheckoutContent() {
   });
 
   const [paymentMethod, setPaymentMethod] = useState<'TRANSFER' | 'COD'>('TRANSFER');
+  const [turnstileToken, setTurnstileToken] = useState<string>('');
   const [preSlipUrl, setPreSlipUrl] = useState<string | null>(null);
   const [isUploadingSlip, setIsUploadingSlip] = useState(false);
   const [slipError, setSlipError] = useState<string | null>(null);
@@ -214,6 +216,7 @@ function CheckoutContent() {
         note: formData.note.trim() || null,
         paymentMethod,
         slipUrl: paymentMethod === 'TRANSFER' ? preSlipUrl : null,
+        turnstileToken: turnstileToken || undefined,
         items: items.map((item) => ({
           productId: item.product.id,
           productName: item.product.name,
@@ -919,6 +922,20 @@ function CheckoutContent() {
                       <span>ฉันตรวจสอบข้อมูลและรายการสั่งซื้อเรียบร้อยแล้ว</span>
                     </label>
                   </div>
+
+                  {/* Cloudflare Turnstile Bot Immunity */}
+                  {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
+                    <div className="pt-2 pb-1 flex justify-center">
+                      <Turnstile
+                        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                        onSuccess={(token) => setTurnstileToken(token)}
+                        options={{
+                          theme: 'light',
+                          size: 'flexible',
+                        }}
+                      />
+                    </div>
+                  )}
 
                   {/* Submit Button */}
                   <Button
