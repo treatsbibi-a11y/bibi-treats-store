@@ -1,0 +1,2272 @@
+{
+  "exportedAt": "2026-11-27T05:14:39.170Z",
+  "stats": {
+    "orders": 48,
+    "customers": 50,
+    "products": 20,
+    "productImages": 21,
+    "orderItems": 72,
+    "reviews": 6,
+    "settings": 1,
+    "admins": 1
+  },
+  "orders": [
+    {
+      "id": "cmwsul79w000ibqks9v1n3yyd",
+      "orderNumber": "BT-0001",
+      "customerId": "cmwsul79t000gbqks5obv0xb2",
+      "subtotal": 100,
+      "shippingFee": 40,
+      "total": 140,
+      "status": "CONFIRMED",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": null,
+      "note": "ขอแพ็กเกจของขวัญน่ารักๆ ค่ะ",
+      "createdAt": "2026-11-23T05:51:15.476Z",
+      "updatedAt": "2026-11-23T06:25:05.862Z"
+    },
+    {
+      "id": "cmwsv7otc0003lh42g6mtnoqi",
+      "orderNumber": "BT-0002",
+      "customerId": "cmwsv7ot80001lh42j1mftvu0",
+      "subtotal": 100,
+      "shippingFee": 40,
+      "total": 140,
+      "status": "CANCELLED",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": null,
+      "note": "ทดสอบตัดสต็อกและหมายเลขคำสั่งซื้อ BT-XXXX",
+      "createdAt": "2026-11-23T06:08:44.639Z",
+      "updatedAt": "2026-11-23T06:08:44.989Z"
+    },
+    {
+      "id": "cmwsxtynt0003pusln0kdk9qa",
+      "orderNumber": "BT-0003",
+      "customerId": "cmwsxtynq0001puslxa65oype",
+      "subtotal": 420,
+      "shippingFee": 40,
+      "total": 460,
+      "status": "CONFIRMED",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-23T07:22:03.065Z",
+      "updatedAt": "2026-11-23T07:22:53.225Z"
+    },
+    {
+      "id": "cmwsyoukl0005c7u8i4myteyb",
+      "orderNumber": "BT-0004",
+      "customerId": "cmwsyoukk0003c7u8i4mj95u6",
+      "subtotal": 470,
+      "shippingFee": 40,
+      "total": 510,
+      "status": "PENDING",
+      "paymentMethod": "COD",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-23T07:46:04.101Z",
+      "updatedAt": "2026-11-23T07:55:49.552Z"
+    },
+    {
+      "id": "cmwsyqr1f000cc7u8d3ssfpa1",
+      "orderNumber": "BT-0005",
+      "customerId": "cmwsyqr1f000ac7u8vl27n5i2",
+      "subtotal": 125,
+      "shippingFee": 40,
+      "total": 165,
+      "status": "PENDING",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-23T07:47:32.836Z",
+      "updatedAt": "2026-11-23T07:47:32.836Z"
+    },
+    {
+      "id": "cmwszdt2n0003vpq9azhiubzh",
+      "orderNumber": "BT-0006",
+      "customerId": "cmwszdt2m0001vpq9ujwafio7",
+      "subtotal": 115,
+      "shippingFee": 40,
+      "total": 155,
+      "status": "PENDING",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-23T08:05:28.560Z",
+      "updatedAt": "2026-11-23T08:05:28.560Z"
+    },
+    {
+      "id": "cmwt1fss30003o37ydme8wl2d",
+      "orderNumber": "BT-0007",
+      "customerId": "cmwt1fss10001o37y0wssnqsj",
+      "subtotal": 25,
+      "shippingFee": 40,
+      "total": 65,
+      "status": "PENDING",
+      "paymentMethod": "COD",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-23T09:03:00.723Z",
+      "updatedAt": "2026-11-23T09:03:00.723Z"
+    },
+    {
+      "id": "cmwt1ied800035r9iwtka58c0",
+      "orderNumber": "BT-0008",
+      "customerId": "cmwt1ied700015r9i1gqzql73",
+      "subtotal": 25,
+      "shippingFee": 40,
+      "total": 65,
+      "status": "PREPARING",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": "/uploads/bibi-1795424702243-w4x7v4f.png",
+      "note": "ขอใบเสร็จและแจ้งคิวอบด้วยนะคะ",
+      "createdAt": "2026-11-23T09:05:02.012Z",
+      "updatedAt": "2026-11-23T09:05:02.313Z"
+    },
+    {
+      "id": "cmwt1igx2000c5r9ifhv604c3",
+      "orderNumber": "BT-0009",
+      "customerId": "cmwt1igx1000a5r9i5tra3h76",
+      "subtotal": 50,
+      "shippingFee": 40,
+      "total": 90,
+      "status": "CONFIRMED",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": null,
+      "note": "ทดสอบตัดสต็อกและหมายเลขคำสั่งซื้อ BT-XXXX",
+      "createdAt": "2026-11-23T09:05:05.318Z",
+      "updatedAt": "2026-11-24T04:58:59.366Z"
+    },
+    {
+      "id": "cmwt1igxz000j5r9i7uhuky0q",
+      "orderNumber": "BT-0010",
+      "customerId": "cmwt1igxz000h5r9i3aikanub",
+      "subtotal": 25,
+      "shippingFee": 40,
+      "total": 65,
+      "status": "CONFIRMED",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-23T09:05:05.351Z",
+      "updatedAt": "2026-11-23T11:25:33.935Z"
+    },
+    {
+      "id": "cmwt1izba000s5r9ixca701fb",
+      "orderNumber": "BT-0011",
+      "customerId": "cmwt1izba000q5r9igrv7zpkm",
+      "subtotal": 100,
+      "shippingFee": 40,
+      "total": 140,
+      "status": "PREPARING",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": null,
+      "note": "ทดสอบตัดสต็อกและหมายเลขคำสั่งซื้อ BT-XXXX",
+      "createdAt": "2026-11-23T09:05:29.159Z",
+      "updatedAt": "2026-11-26T15:54:55.372Z"
+    },
+    {
+      "id": "cmwt1rkjq0003p7drptlhgg4o",
+      "orderNumber": "BT-0012",
+      "customerId": "cmwt1rkjq0001p7dr8ewx2psm",
+      "subtotal": 125,
+      "shippingFee": 40,
+      "total": 165,
+      "status": "CONFIRMED",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": null,
+      "note": "แพ็กของขวัญวันเกิด พร้อมการ์ดอวยพร",
+      "createdAt": "2026-11-23T09:12:09.927Z",
+      "updatedAt": "2026-11-23T09:13:06.277Z"
+    },
+    {
+      "id": "cmwt4ssnf0003n7z1dqaknzdb",
+      "orderNumber": "BT-0013",
+      "customerId": "cmwt4ssnc0001n7z1tfo54jbb",
+      "subtotal": 420,
+      "shippingFee": 40,
+      "total": 460,
+      "status": "CONFIRMED",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-23T10:37:05.931Z",
+      "updatedAt": "2026-11-23T10:37:05.953Z"
+    },
+    {
+      "id": "cmwt76too000313o2p6fbwijl",
+      "orderNumber": "BT-0014",
+      "customerId": "cmwt76toj000113o2it9twh9x",
+      "subtotal": 65,
+      "shippingFee": 40,
+      "total": 105,
+      "status": "CONFIRMED",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": "/uploads/bibi-1795434405158-ex0ld79.jpg",
+      "note": null,
+      "createdAt": "2026-11-23T11:43:59.687Z",
+      "updatedAt": "2026-11-23T11:46:45.167Z"
+    },
+    {
+      "id": "cmwu151cp0003b1ww9pob3nby",
+      "orderNumber": "BT-0015",
+      "customerId": "cmwu151cn0001b1ww29txvhhd",
+      "subtotal": 70,
+      "shippingFee": 40,
+      "total": 110,
+      "status": "PENDING",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-24T01:42:24.793Z",
+      "updatedAt": "2026-11-24T01:42:24.793Z"
+    },
+    {
+      "id": "cmwu1iats0009b1ww0eiwoi95",
+      "orderNumber": "BT-0016",
+      "customerId": "cmwu1iatr0007b1wwi77ong2j",
+      "subtotal": 240,
+      "shippingFee": 40,
+      "total": 280,
+      "status": "PENDING",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-24T01:52:43.600Z",
+      "updatedAt": "2026-11-24T01:52:43.600Z"
+    },
+    {
+      "id": "cmwu430h10003kokssrruvgnn",
+      "orderNumber": "BT-0017",
+      "customerId": "cmwu430gy0001koksjqpenm9v",
+      "subtotal": 230,
+      "shippingFee": 40,
+      "total": 270,
+      "status": "CONFIRMED",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-24T03:04:49.188Z",
+      "updatedAt": "2026-11-24T04:27:56.174Z"
+    },
+    {
+      "id": "cmwu9fkgp00047lprwmmjdeuv",
+      "orderNumber": "BT-0018",
+      "customerId": "cmwu9fkgl00027lpre4f70d0r",
+      "subtotal": 240,
+      "shippingFee": 40,
+      "total": 280,
+      "status": "PENDING",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-24T05:34:33.049Z",
+      "updatedAt": "2026-11-24T05:34:33.049Z"
+    },
+    {
+      "id": "bf0078ce-4069-4cd0-ae2e-3968d3718284",
+      "orderNumber": "BT-0019",
+      "customerId": "81de274a-5f4a-4a3a-bd39-6fdf7bfe1ba3",
+      "subtotal": 580,
+      "shippingFee": 40,
+      "total": 620,
+      "status": "COMPLETED",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-24T13:21:59.816Z",
+      "updatedAt": "2026-11-24T17:02:40.033Z"
+    },
+    {
+      "id": "01bb0d94-1aed-4b73-94c4-188364351380",
+      "orderNumber": "BT-0020",
+      "customerId": "51a4a121-dcb7-4a69-9875-a76c573df49c",
+      "subtotal": 85,
+      "shippingFee": 40,
+      "total": 125,
+      "status": "PENDING",
+      "paymentMethod": "COD",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-24T14:27:09.068Z",
+      "updatedAt": "2026-11-24T14:27:09.068Z"
+    },
+    {
+      "id": "25d2bf00-998d-48bd-b7a1-d6b796b3683e",
+      "orderNumber": "BT-0021",
+      "customerId": "21a0250c-982d-4398-9f7e-f3dcd9600a71",
+      "subtotal": 2790,
+      "shippingFee": 0,
+      "total": 2790,
+      "status": "PREPARING",
+      "paymentMethod": "COD",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-24T16:19:34.586Z",
+      "updatedAt": "2026-11-25T05:20:15.112Z"
+    },
+    {
+      "id": "ad1d64c2-8d55-4f21-841f-9ce03050be42",
+      "orderNumber": "BT-0022",
+      "customerId": "28ecfb9f-2ea2-4ed2-8f0e-d87c9320b040",
+      "subtotal": 420,
+      "shippingFee": 0,
+      "total": 420,
+      "status": "SHIPPING",
+      "paymentMethod": "COD",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-24T16:25:52.538Z",
+      "updatedAt": "2026-11-25T09:29:11.299Z"
+    },
+    {
+      "id": "0d46c8d4-6ec9-4cb4-940c-ad3187dc14b5",
+      "orderNumber": "BT-0023",
+      "customerId": "cf388b1d-e778-43b5-b1cf-541cd1e842ee",
+      "subtotal": 155,
+      "shippingFee": 0,
+      "total": 155,
+      "status": "PENDING",
+      "paymentMethod": "COD",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-25T15:14:14.058Z",
+      "updatedAt": "2026-11-25T15:14:14.058Z"
+    },
+    {
+      "id": "e778cf70-b8c2-48bc-be77-1e39ce3697e3",
+      "orderNumber": "BT-0024",
+      "customerId": "5fa0403b-6c25-4dd4-9167-1d82c6f579f5",
+      "subtotal": 300,
+      "shippingFee": 0,
+      "total": 300,
+      "status": "PENDING",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-25T15:17:12.967Z",
+      "updatedAt": "2026-11-25T15:17:12.967Z"
+    },
+    {
+      "id": "4eecec04-005e-427a-905b-1b10a5f8689b",
+      "orderNumber": "BT-0025",
+      "customerId": "599987fc-0831-4744-a49e-f9503bb7fcfe",
+      "subtotal": 660,
+      "shippingFee": 0,
+      "total": 660,
+      "status": "PENDING",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-25T15:56:10.293Z",
+      "updatedAt": "2026-11-25T15:56:10.293Z"
+    },
+    {
+      "id": "a081349d-0204-41f5-a0c1-48fd98a5a6b8",
+      "orderNumber": "BT-0026",
+      "customerId": "97aa6350-682e-4a40-8f21-8ec302561d36",
+      "subtotal": 660,
+      "shippingFee": 0,
+      "total": 660,
+      "status": "PENDING",
+      "paymentMethod": "COD",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-25T15:56:21.201Z",
+      "updatedAt": "2026-11-25T15:56:21.201Z"
+    },
+    {
+      "id": "b8799ab1-91cf-484d-8d14-9ea80434d5b1",
+      "orderNumber": "BT-0027",
+      "customerId": "6c375f76-adbf-446c-89cd-2d44af62840b",
+      "subtotal": 240,
+      "shippingFee": 0,
+      "total": 240,
+      "status": "CONFIRMED",
+      "paymentMethod": "COD",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-25T16:16:53.998Z",
+      "updatedAt": "2026-11-26T16:33:38.111Z"
+    },
+    {
+      "id": "2fc340ea-a110-4639-a309-3c0a537599fb",
+      "orderNumber": "BT-0028",
+      "customerId": "88117a37-224a-49f4-bfc4-2575351159e2",
+      "subtotal": 245,
+      "shippingFee": 0,
+      "total": 245,
+      "status": "CONFIRMED",
+      "paymentMethod": "COD",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-25T16:55:15.375Z",
+      "updatedAt": "2026-11-26T09:22:41.244Z"
+    },
+    {
+      "id": "57e63e6d-b34a-452b-a161-48b830c20b3e",
+      "orderNumber": "BT-0029",
+      "customerId": "38938fd3-b593-4829-b703-e68e0b764862",
+      "subtotal": 245,
+      "shippingFee": 0,
+      "total": 245,
+      "status": "CANCELLED",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-25T16:58:29.926Z",
+      "updatedAt": "2026-11-26T08:09:34.194Z"
+    },
+    {
+      "id": "fec5c4f8-080c-40a1-8c16-ec6e9718c084",
+      "orderNumber": "BT-0030",
+      "customerId": "72cb4697-d48a-4516-8c70-40d6c0128884",
+      "subtotal": 240,
+      "shippingFee": 0,
+      "total": 240,
+      "status": "CANCELLED",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-25T22:53:14.090Z",
+      "updatedAt": "2026-11-25T22:56:06.053Z"
+    },
+    {
+      "id": "a29b951b-5f7a-4039-ad2e-7b28e7e46bc3",
+      "orderNumber": "BT-0031",
+      "customerId": "6f87b8ec-ee65-4920-9409-0326327f159d",
+      "subtotal": 240,
+      "shippingFee": 0,
+      "total": 240,
+      "status": "PREPARING",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-25T23:05:22.447Z",
+      "updatedAt": "2026-11-26T09:22:31.104Z"
+    },
+    {
+      "id": "84dcd2ca-6cfa-4588-b496-ab8672ab127c",
+      "orderNumber": "BT-0032",
+      "customerId": "24ada5c4-b188-4321-a375-a1272eab131d",
+      "subtotal": 410,
+      "shippingFee": 0,
+      "total": 410,
+      "status": "SLIP_UPLOADED",
+      "paymentMethod": "COD",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-26T04:44:29.386Z",
+      "updatedAt": "2026-11-26T23:54:21.159Z"
+    },
+    {
+      "id": "ff046022-7ae8-414f-ad9d-bba045e64035",
+      "orderNumber": "BT-0033",
+      "customerId": "c020ec5e-5dd7-4cbc-b96e-93803e3033f0",
+      "subtotal": 410,
+      "shippingFee": 0,
+      "total": 410,
+      "status": "CONFIRMED",
+      "paymentMethod": "COD",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-26T04:45:47.924Z",
+      "updatedAt": "2026-11-26T09:22:16.552Z"
+    },
+    {
+      "id": "02daee80-52e2-4339-b68c-c5e73ab1c51f",
+      "orderNumber": "BT-0034",
+      "customerId": "00430fe4-68ac-45eb-a7a9-ae472dfbcbb7",
+      "subtotal": 240,
+      "shippingFee": 0,
+      "total": 240,
+      "status": "COMPLETED",
+      "paymentMethod": "COD",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-26T05:01:43.663Z",
+      "updatedAt": "2026-11-26T16:34:12.357Z"
+    },
+    {
+      "id": "06b76639-0ce3-4fb8-8eec-5495ce4f59fb",
+      "orderNumber": "BT-0035",
+      "customerId": "33a3f328-f292-453f-961a-f1ed007b1e05",
+      "subtotal": 160,
+      "shippingFee": 0,
+      "total": 160,
+      "status": "COMPLETED",
+      "paymentMethod": "COD",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-26T05:32:05.888Z",
+      "updatedAt": "2026-11-26T09:22:05.870Z"
+    },
+    {
+      "id": "a447c883-876f-48aa-b7e9-e3e9e7800450",
+      "orderNumber": "BT-0036",
+      "customerId": "4a0f2f86-5819-4dda-a137-e197b8869494",
+      "subtotal": 465,
+      "shippingFee": 0,
+      "total": 465,
+      "status": "COMPLETED",
+      "paymentMethod": "COD",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-26T23:38:34.805Z",
+      "updatedAt": "2026-11-26T23:53:41.466Z"
+    },
+    {
+      "id": "1b354132-a8d1-42f1-bf50-51f221151ed1",
+      "orderNumber": "BT-0037",
+      "customerId": "e6b0f649-1504-48f6-86d2-e911cc3423a6",
+      "subtotal": 420,
+      "shippingFee": 0,
+      "total": 420,
+      "status": "COMPLETED",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": "/uploads/bibi-1795736522121-4rqz34c.webp",
+      "note": null,
+      "createdAt": "2026-11-26T23:42:44.297Z",
+      "updatedAt": "2026-11-26T23:43:56.760Z"
+    },
+    {
+      "id": "16278778-b2dc-4311-9399-1ed4b7f573ba",
+      "orderNumber": "BT-0038",
+      "customerId": "ac066589-c794-404d-ae77-9a5a72aba9fe",
+      "subtotal": 755,
+      "shippingFee": 0,
+      "total": 755,
+      "status": "PREPARING",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": "/uploads/bibi-1795738612850-kkkm8lk.webp",
+      "note": null,
+      "createdAt": "2026-11-27T00:17:09.834Z",
+      "updatedAt": "2026-11-27T00:49:59.952Z"
+    },
+    {
+      "id": "7045ccf2-68c8-4b90-94f9-2e59ce3cb162",
+      "orderNumber": "BT-0039",
+      "customerId": "555f7d7d-e5c5-4d41-9ab0-20c6dfd1aa9d",
+      "subtotal": 420,
+      "shippingFee": 0,
+      "total": 420,
+      "status": "CANCELLED",
+      "paymentMethod": "COD",
+      "slipUrl": null,
+      "note": "E2E COD test",
+      "createdAt": "2026-11-27T00:52:14.727Z",
+      "updatedAt": "2026-11-27T00:52:27.857Z"
+    },
+    {
+      "id": "d9dc3840-00c6-4475-ae11-713f3b0fd11a",
+      "orderNumber": "BT-0040",
+      "customerId": "cc0e5b99-ccc2-4f74-b81d-a7ed9c73dadf",
+      "subtotal": 420,
+      "shippingFee": 0,
+      "total": 420,
+      "status": "CANCELLED",
+      "paymentMethod": "TRANSFER",
+      "slipUrl": "/uploads/bibi-1795740739597-xh5aq6r.png",
+      "note": "E2E Transfer test",
+      "createdAt": "2026-11-27T00:52:21.679Z",
+      "updatedAt": "2026-11-27T00:52:29.425Z"
+    },
+    {
+      "id": "e11df509-f708-4d40-b119-4e4e8199dfab",
+      "orderNumber": "BT-0041",
+      "customerId": "eee718ab-7d10-4e37-85a1-b3e2c513a610",
+      "subtotal": 960,
+      "shippingFee": 0,
+      "total": 960,
+      "status": "PENDING",
+      "paymentMethod": "COD",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-27T01:17:44.264Z",
+      "updatedAt": "2026-11-27T01:17:44.264Z"
+    },
+    {
+      "id": "2d1b45c2-b055-4017-b25d-2bee1a25f884",
+      "orderNumber": "BT-0042",
+      "customerId": "175b8d45-91cf-4b21-b2fd-1187c550868e",
+      "subtotal": 475,
+      "shippingFee": 0,
+      "total": 475,
+      "status": "PENDING",
+      "paymentMethod": "COD",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-27T03:08:06.493Z",
+      "updatedAt": "2026-11-27T03:08:06.493Z"
+    },
+    {
+      "id": "01882a20-bf69-4543-8181-e38f89c9f527",
+      "orderNumber": "BT-0043",
+      "customerId": "68e7cc56-1ccc-4194-b72e-06488e4a3dd4",
+      "subtotal": 475,
+      "shippingFee": 0,
+      "total": 475,
+      "status": "PENDING",
+      "paymentMethod": "COD",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-27T03:08:20.390Z",
+      "updatedAt": "2026-11-27T03:08:20.390Z"
+    },
+    {
+      "id": "4475ae0e-36f3-4ae3-8552-3b855cbdd744",
+      "orderNumber": "BT-0044",
+      "customerId": "a02b50ae-ed0c-48ad-a93f-d5a34897a47c",
+      "subtotal": 475,
+      "shippingFee": 0,
+      "total": 475,
+      "status": "PENDING",
+      "paymentMethod": "COD",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-27T03:09:53.135Z",
+      "updatedAt": "2026-11-27T03:09:53.135Z"
+    },
+    {
+      "id": "a1afa831-1464-4c24-9151-25c474e9b85f",
+      "orderNumber": "BT-0045",
+      "customerId": "a21a1d2c-0666-4b71-b624-48d55543c11f",
+      "subtotal": 840,
+      "shippingFee": 0,
+      "total": 840,
+      "status": "COMPLETED",
+      "paymentMethod": "COD",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-27T03:13:41.163Z",
+      "updatedAt": "2026-11-27T03:16:05.510Z"
+    },
+    {
+      "id": "607c870b-f1a8-41ff-937e-e6d7db6d6f98",
+      "orderNumber": "BT-0046",
+      "customerId": "a8145c7c-d7e6-43fe-89ff-051940e4104c",
+      "subtotal": 240,
+      "shippingFee": 0,
+      "total": 240,
+      "status": "PENDING",
+      "paymentMethod": "COD",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-27T03:36:41.597Z",
+      "updatedAt": "2026-11-27T03:36:41.597Z"
+    },
+    {
+      "id": "b66199dd-a823-4a0e-b26f-b22aba5a4640",
+      "orderNumber": "BT-0047",
+      "customerId": "67041936-b469-4e80-891c-127d3607528c",
+      "subtotal": 240,
+      "shippingFee": 0,
+      "total": 240,
+      "status": "PENDING",
+      "paymentMethod": "COD",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-27T03:42:07.768Z",
+      "updatedAt": "2026-11-27T03:42:07.768Z"
+    },
+    {
+      "id": "11416b17-7903-4166-92da-18340dd4d424",
+      "orderNumber": "BT-0048",
+      "customerId": "e1c0c59f-0769-43e5-947a-9f37dfb2882e",
+      "subtotal": 80,
+      "shippingFee": 0,
+      "total": 80,
+      "status": "PENDING",
+      "paymentMethod": "COD",
+      "slipUrl": null,
+      "note": null,
+      "createdAt": "2026-11-27T03:58:07.451Z",
+      "updatedAt": "2026-11-27T03:58:07.451Z"
+    }
+  ],
+  "customers": [
+    {
+      "id": "cmwsul79t000gbqks5obv0xb2",
+      "name": "พิมพ์ชนก ใจดี",
+      "phone": "081-999-8888",
+      "instagram": "pim.sweetie",
+      "address": "123/45 ถนนสุขุมวิท แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร 10110",
+      "createdAt": "2026-11-23T05:51:15.474Z"
+    },
+    {
+      "id": "cmwsuokyx0001qcurcr48fnr2",
+      "name": "พิมพ์ชนก ใจดี",
+      "phone": "081-999-8888",
+      "instagram": "pim.sweetie",
+      "address": "123/45 ถนนสุขุมวิท แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร 10110",
+      "createdAt": "2026-11-23T05:53:53.193Z"
+    },
+    {
+      "id": "cmwsv4k8x00011a6dop1loiwz",
+      "name": "พิมพ์ชนก ใจดี",
+      "phone": "081-999-8888",
+      "instagram": "pim.sweetie",
+      "address": "123/45 ถนนสุขุมวิท แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร 10110",
+      "createdAt": "2026-11-23T06:06:18.754Z"
+    },
+    {
+      "id": "cmwsv7ot80001lh42j1mftvu0",
+      "name": "พิมพ์ชนก ทดสอบระบบ",
+      "phone": "089-777-6655",
+      "instagram": "pim.test",
+      "address": "99/1 ซอยอารีย์ ถนนพหลโยธิน แขวงพญาไท เขตพญาไท กทม. 10400",
+      "createdAt": "2026-11-23T06:08:44.636Z"
+    },
+    {
+      "id": "cmwsxtynq0001puslxa65oype",
+      "name": "อารีฟีน  เจ๊ะตู",
+      "phone": "0651153822",
+      "instagram": "arifin",
+      "address": "บองอ",
+      "createdAt": "2026-11-23T07:22:03.063Z"
+    },
+    {
+      "id": "cmwsyoukk0003c7u8i4mj95u6",
+      "name": "ทดสอบ เก็บเงินปลายทาง",
+      "phone": "0899991111",
+      "instagram": null,
+      "address": "123/45 ถนนสุขุมวิท แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร 10110",
+      "createdAt": "2026-11-23T07:46:04.100Z"
+    },
+    {
+      "id": "cmwsyqr1f000ac7u8vl27n5i2",
+      "name": "พิมพ์ชนก รัตนวิบูลย์",
+      "phone": "0895551234",
+      "instagram": null,
+      "address": "99/12 อาคารสุขุมวิทการ์เดน ถ.สุขุมวิท 39 แขวงคลองตันเหนือ เขตวัฒนา กรุงเทพฯ 10110",
+      "createdAt": "2026-11-23T07:47:32.835Z"
+    },
+    {
+      "id": "cmwszdt2m0001vpq9ujwafio7",
+      "name": "อารีฟีน  เจ๊ะตู",
+      "phone": "0651153822",
+      "instagram": "arifin",
+      "address": "บองอ",
+      "createdAt": "2026-11-23T08:05:28.559Z"
+    },
+    {
+      "id": "cmwt1fss10001o37y0wssnqsj",
+      "name": "อารีฟีน  เจ๊ะตู",
+      "phone": "0651153822",
+      "instagram": "arifin",
+      "address": "บองอ",
+      "createdAt": "2026-11-23T09:03:00.722Z"
+    },
+    {
+      "id": "cmwt1ied700015r9i1gqzql73",
+      "name": "กานต์สินี สุขสมบูรณ์",
+      "phone": "086-296-5765",
+      "instagram": "kansinee.treats",
+      "address": "88/45 หมู่บ้านพฤกษาภิรมย์ ซอยลาดพร้าว 71 กทม. 10230",
+      "createdAt": "2026-11-23T09:05:02.011Z"
+    },
+    {
+      "id": "cmwt1igx1000a5r9i5tra3h76",
+      "name": "พิมพ์ชนก ทดสอบระบบ",
+      "phone": "089-777-6655",
+      "instagram": "pim.test",
+      "address": "99/1 ซอยอารีย์ ถนนพหลโยธิน แขวงพญาไท เขตพญาไท กทม. 10400",
+      "createdAt": "2026-11-23T09:05:05.318Z"
+    },
+    {
+      "id": "cmwt1igxz000h5r9i3aikanub",
+      "name": "ทดสอบ ซื้อของหมด",
+      "phone": "081-222-3333",
+      "instagram": null,
+      "address": "123 ถนนสุขุมวิท กทม.",
+      "createdAt": "2026-11-23T09:05:05.351Z"
+    },
+    {
+      "id": "cmwt1izba000q5r9igrv7zpkm",
+      "name": "พิมพ์ชนก ทดสอบระบบ",
+      "phone": "089-777-6655",
+      "instagram": "pim.test",
+      "address": "99/1 ซอยอารีย์ ถนนพหลโยธิน แขวงพญาไท เขตพญาไท กทม. 10400",
+      "createdAt": "2026-11-23T09:05:29.158Z"
+    },
+    {
+      "id": "cmwt1rkjq0001p7dr8ewx2psm",
+      "name": "ทดสอบ ระบบใหม่",
+      "phone": "0891234567",
+      "instagram": "@test.treats",
+      "address": "456 อาคารสุขุมวิทการ์เดน ถ.สุขุมวิท 39 แขวงคลองตันเหนือ เขตวัฒนา กรุงเทพฯ 10110",
+      "createdAt": "2026-11-23T09:12:09.926Z"
+    },
+    {
+      "id": "cmwt4ssnc0001n7z1tfo54jbb",
+      "name": "คุณสมชาย ยืนยันระบบแยกสโตร์",
+      "phone": "0812345678",
+      "instagram": null,
+      "address": "123/45 ถนนสุขุมวิท แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร 10110",
+      "createdAt": "2026-11-23T10:37:05.929Z"
+    },
+    {
+      "id": "cmwt76toj000113o2it9twh9x",
+      "name": "Areffeen Chetu",
+      "phone": "073671347",
+      "instagram": "่่fb h",
+      "address": "Areffeen Chetu",
+      "createdAt": "2026-11-23T11:43:59.683Z"
+    },
+    {
+      "id": "cmwu151cn0001b1ww29txvhhd",
+      "name": "อารี",
+      "phone": "0636358287",
+      "instagram": "ฟีน",
+      "address": "รร.",
+      "createdAt": "2026-11-24T01:42:24.791Z"
+    },
+    {
+      "id": "cmwu1iatr0007b1wwi77ong2j",
+      "name": "Areffeen Chetu",
+      "phone": "073671347",
+      "instagram": "่่fb h",
+      "address": "Areffeen Chetu",
+      "createdAt": "2026-11-24T01:52:43.599Z"
+    },
+    {
+      "id": "cmwu430gy0001koksjqpenm9v",
+      "name": "Areffeen Chetu",
+      "phone": "073671347",
+      "instagram": "่่fb h",
+      "address": "Areffeen Chetu",
+      "createdAt": "2026-11-24T03:04:49.186Z"
+    },
+    {
+      "id": "cmwu9fkgl00027lpre4f70d0r",
+      "name": "Areffeen Chetu",
+      "phone": "4486465421",
+      "instagram": null,
+      "address": "Areffeen Chetu",
+      "createdAt": "2026-11-24T05:34:33.045Z"
+    },
+    {
+      "id": "81de274a-5f4a-4a3a-bd39-6fdf7bfe1ba3",
+      "name": "ทดสอบ ระบบ",
+      "phone": "0891234567",
+      "instagram": null,
+      "address": "123/45 ถนนสุขุมวิท กรุงเทพฯ",
+      "createdAt": "2026-11-24T13:21:59.816Z"
+    },
+    {
+      "id": "51a4a121-dcb7-4a69-9875-a76c573df49c",
+      "name": "อารี",
+      "phone": "0651153822",
+      "instagram": "Arifin",
+      "address": "บองอ",
+      "createdAt": "2026-11-24T14:27:09.068Z"
+    },
+    {
+      "id": "21a0250c-982d-4398-9f7e-f3dcd9600a71",
+      "name": "Areffeen Chetu",
+      "phone": "073671347",
+      "instagram": "่่fb h",
+      "address": "Areffeen Chetu",
+      "createdAt": "2026-11-24T16:19:34.586Z"
+    },
+    {
+      "id": "28ecfb9f-2ea2-4ed2-8f0e-d87c9320b040",
+      "name": "้า่สทสว",
+      "phone": "0468465163",
+      "instagram": "่รน",
+      "address": "รน้นรส",
+      "createdAt": "2026-11-24T16:25:52.538Z"
+    },
+    {
+      "id": "cf388b1d-e778-43b5-b1cf-541cd1e842ee",
+      "name": "อารี",
+      "phone": "0628887896",
+      "instagram": "รัทสว",
+      "address": "บองอ",
+      "createdAt": "2026-11-25T15:14:14.058Z"
+    },
+    {
+      "id": "5fa0403b-6c25-4dd4-9167-1d82c6f579f5",
+      "name": "Areffeen Chetu",
+      "phone": "073671347",
+      "instagram": "่่fb h",
+      "address": "Areffeen Chetu",
+      "createdAt": "2026-11-25T15:17:12.967Z"
+    },
+    {
+      "id": "599987fc-0831-4744-a49e-f9503bb7fcfe",
+      "name": "Areffeen Chetu",
+      "phone": "073671347",
+      "instagram": "่่fb h",
+      "address": "Areffeen Chetu",
+      "createdAt": "2026-11-25T15:56:10.293Z"
+    },
+    {
+      "id": "97aa6350-682e-4a40-8f21-8ec302561d36",
+      "name": "Areffeen Chetu",
+      "phone": "073671347",
+      "instagram": "่่fb h",
+      "address": "Areffeen Chetu",
+      "createdAt": "2026-11-25T15:56:21.201Z"
+    },
+    {
+      "id": "6c375f76-adbf-446c-89cd-2d44af62840b",
+      "name": "Areffeen Chetu",
+      "phone": "073671347",
+      "instagram": "ฟีน",
+      "address": "Areffeen Chetu",
+      "createdAt": "2026-11-25T16:16:53.998Z"
+    },
+    {
+      "id": "88117a37-224a-49f4-bfc4-2575351159e2",
+      "name": "ไฟแไภ",
+      "phone": "ภ เ",
+      "instagram": "เเ",
+      "address": "เ ภเ",
+      "createdAt": "2026-11-25T16:55:15.375Z"
+    },
+    {
+      "id": "38938fd3-b593-4829-b703-e68e0b764862",
+      "name": "่วสำพเพำ",
+      "phone": "08767878",
+      "instagram": "7642867",
+      "address": "เ ภเ",
+      "createdAt": "2026-11-25T16:58:29.926Z"
+    },
+    {
+      "id": "72cb4697-d48a-4516-8c70-40d6c0128884",
+      "name": "ทดสอบ PromptPay E2E",
+      "phone": "0890009999",
+      "instagram": null,
+      "address": "123 Test Bangkok",
+      "createdAt": "2026-11-25T22:53:14.090Z"
+    },
+    {
+      "id": "6f87b8ec-ee65-4920-9409-0326327f159d",
+      "name": "ทดสอบ PromptPay E2E",
+      "phone": "0890009999",
+      "instagram": null,
+      "address": "123 Test Bangkok",
+      "createdAt": "2026-11-25T23:05:22.447Z"
+    },
+    {
+      "id": "24ada5c4-b188-4321-a375-a1272eab131d",
+      "name": "grthtrh",
+      "phone": "073671347",
+      "instagram": "7642867",
+      "address": "2",
+      "createdAt": "2026-11-26T04:44:29.386Z"
+    },
+    {
+      "id": "c020ec5e-5dd7-4cbc-b96e-93803e3033f0",
+      "name": "4t43t4",
+      "phone": "t4t 4t",
+      "instagram": "เเ",
+      "address": "2",
+      "createdAt": "2026-11-26T04:45:47.924Z"
+    },
+    {
+      "id": "00430fe4-68ac-45eb-a7a9-ae472dfbcbb7",
+      "name": "Areffeen Chetu",
+      "phone": "073671347",
+      "instagram": "7642867",
+      "address": "Areffeen Chetu",
+      "createdAt": "2026-11-26T05:01:43.663Z"
+    },
+    {
+      "id": "33a3f328-f292-453f-961a-f1ed007b1e05",
+      "name": "Areffeen Chetu",
+      "phone": "073671347",
+      "instagram": "่่fb h",
+      "address": "Areffeen Chetu",
+      "createdAt": "2026-11-26T05:32:05.888Z"
+    },
+    {
+      "id": "4a0f2f86-5819-4dda-a137-e197b8869494",
+      "name": "อาบีบี",
+      "phone": "0651153822",
+      "instagram": null,
+      "address": "ยะกัง",
+      "createdAt": "2026-11-26T23:38:34.805Z"
+    },
+    {
+      "id": "e6b0f649-1504-48f6-86d2-e911cc3423a6",
+      "name": "บีบี",
+      "phone": "0636358287",
+      "instagram": "Aridin",
+      "address": "รร.",
+      "createdAt": "2026-11-26T23:42:44.297Z"
+    },
+    {
+      "id": "ac066589-c794-404d-ae77-9a5a72aba9fe",
+      "name": "เจ๊ะตู",
+      "phone": "0862965765",
+      "instagram": "Arifin",
+      "address": "บองอ",
+      "createdAt": "2026-11-27T00:17:09.834Z"
+    },
+    {
+      "id": "555f7d7d-e5c5-4d41-9ab0-20c6dfd1aa9d",
+      "name": "E2E COD Customer",
+      "phone": "0899990001",
+      "instagram": "@e2e_cod",
+      "address": "123 Sukhumvit Rd, Bangkok 10110",
+      "createdAt": "2026-11-27T00:52:14.727Z"
+    },
+    {
+      "id": "cc0e5b99-ccc2-4f74-b81d-a7ed9c73dadf",
+      "name": "E2E Transfer Customer",
+      "phone": "0899990001",
+      "instagram": null,
+      "address": "456 Silom Rd, Bangkok 10500",
+      "createdAt": "2026-11-27T00:52:21.679Z"
+    },
+    {
+      "id": "eee718ab-7d10-4e37-85a1-b3e2c513a610",
+      "name": "Areffeen Chetu",
+      "phone": "073671347",
+      "instagram": "ฟีน",
+      "address": "Areffeen Chetu",
+      "createdAt": "2026-11-27T01:17:44.264Z"
+    },
+    {
+      "id": "175b8d45-91cf-4b21-b2fd-1187c550868e",
+      "name": "รีรี",
+      "phone": "0651153822",
+      "instagram": "Arifin",
+      "address": "บองอ",
+      "createdAt": "2026-11-27T03:08:06.493Z"
+    },
+    {
+      "id": "68e7cc56-1ccc-4194-b72e-06488e4a3dd4",
+      "name": "รีรี",
+      "phone": "0651153822",
+      "instagram": "Arifin",
+      "address": "บองอ",
+      "createdAt": "2026-11-27T03:08:20.390Z"
+    },
+    {
+      "id": "a02b50ae-ed0c-48ad-a93f-d5a34897a47c",
+      "name": "Areffeen Chetu",
+      "phone": "073671347",
+      "instagram": "Arifin",
+      "address": "Areffeen Chetu",
+      "createdAt": "2026-11-27T03:09:53.135Z"
+    },
+    {
+      "id": "a21a1d2c-0666-4b71-b624-48d55543c11f",
+      "name": "นายอารีฟีน   เจ๊ะตู",
+      "phone": "0636358287",
+      "instagram": "นายอารีฟีน   เจ๊ะตู",
+      "address": "Yaa",
+      "createdAt": "2026-11-27T03:13:41.163Z"
+    },
+    {
+      "id": "a8145c7c-d7e6-43fe-89ff-051940e4104c",
+      "name": "Areffeen Chetu",
+      "phone": "073671347",
+      "instagram": "ฟีน",
+      "address": "Areffeen Chetu",
+      "createdAt": "2026-11-27T03:36:41.597Z"
+    },
+    {
+      "id": "67041936-b469-4e80-891c-127d3607528c",
+      "name": "Test Checkout Customer",
+      "phone": "0812345678",
+      "instagram": "@test",
+      "address": "123 Test Street, Narathiwat",
+      "createdAt": "2026-11-27T03:42:07.768Z"
+    },
+    {
+      "id": "e1c0c59f-0769-43e5-947a-9f37dfb2882e",
+      "name": "Areffeen Chetu",
+      "phone": "073671347",
+      "instagram": "่่fb h",
+      "address": "Areffeen Chetu",
+      "createdAt": "2026-11-27T03:58:07.451Z"
+    }
+  ],
+  "products": [
+    {
+      "id": "cmwta5zfo0000comg85hmb9r9",
+      "name": "Dark Chocolate Fudge Layer Cake",
+      "description": "เลเยอร์เค้กดาร์กช็อกโกแลตเข้มข้น 70% ราดกานาชเนื้อเนียน สอดไส้ครีมฟัดจ์นุ่มละมุน",
+      "price": 165,
+      "stock": 30,
+      "initialStock": 83,
+      "sold": 68,
+      "category": "เค้ก & ทาร์ต",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-23T13:07:19.333Z",
+      "updatedAt": "2026-11-23T13:07:19.333Z"
+    },
+    {
+      "id": "cmwta5zft0002comgupjqz3nz",
+      "name": "Basque Burnt Cheesecake",
+      "description": "บาสก์ชีสเค้กหน้าไหม้สูตรสเปน ครีมชีสแท้เข้มข้น เนื้อสัมผัสนุ่มละลายในปาก",
+      "price": 145,
+      "stock": 30,
+      "initialStock": 94,
+      "sold": 82,
+      "category": "เค้ก & ทาร์ต",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-23T13:07:19.338Z",
+      "updatedAt": "2026-11-23T13:07:19.338Z"
+    },
+    {
+      "id": "cmwta5zfw0004comgxynnbh56",
+      "name": "Lemon Meringue Tart",
+      "description": "ทาร์ตมะนาวเลมอนเคิร์ดเปรี้ยวอมหวานสดชื่น ท็อปด้วยเมอแรงค์เบิร์นไฟหอมกรุ่น",
+      "price": 155,
+      "stock": 28,
+      "initialStock": 64,
+      "sold": 56,
+      "category": "เค้ก & ทาร์ต",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-23T13:07:19.340Z",
+      "updatedAt": "2026-11-23T13:07:19.340Z"
+    },
+    {
+      "id": "cmwta5zfz0006comgn54n0ykn",
+      "name": "Fresh Strawberry Shortcake",
+      "description": "เค้กสตรอว์เบอร์รีสดสไตล์ญี่ปุ่น สปันจ์เค้กนุ่มฟู แทรกชั้นด้วยวิปครีมสดแท้และสตรอว์เบอร์รีฉ่ำ",
+      "price": 160,
+      "stock": 29,
+      "initialStock": 99,
+      "sold": 93,
+      "category": "เค้ก & ทาร์ต",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-23T13:07:19.344Z",
+      "updatedAt": "2026-11-23T13:07:19.344Z"
+    },
+    {
+      "id": "cmwta5zg30008comgpe5elea3",
+      "name": "Blueberry Crumble Tart",
+      "description": "ทาร์ตบลูเบอร์รีสดแน่นเต็มคำ โรยครัมเบิลเนยสดกรุบกรอบ หวานซ่อนเปรี้ยวลงตัว",
+      "price": 150,
+      "stock": 29,
+      "initialStock": 61,
+      "sold": 51,
+      "category": "เค้ก & ทาร์ต",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-23T13:07:19.348Z",
+      "updatedAt": "2026-11-24T03:04:49.177Z"
+    },
+    {
+      "id": "cmwta5zg6000acomgw01eruhj",
+      "name": "Double Chocolate Walnut Soft Cookie",
+      "description": "ซอฟต์คุกกี้ดับเบิ้ลช็อกโกแลตหนึบหนับ ผสมถั่ววอลนัทอบกรอบและช็อกโกแลตชิปเยิ้มๆ",
+      "price": 75,
+      "stock": 29,
+      "initialStock": 83,
+      "sold": 65,
+      "category": "คุกกี้ & บราวนี่",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-23T13:07:19.351Z",
+      "updatedAt": "2026-11-23T13:07:19.351Z"
+    },
+    {
+      "id": "cmwta5zg9000ccomg1glstp9r",
+      "name": "Macadamia White Chocolate Cookie",
+      "description": "คุกกี้นิ่มเนยสดแท้ อัดแน่นด้วยถั่วแมคคาเดเมียเกรดพรีเมียม ตัดกับความหวานนุ่มของไวท์ช็อกโกแลต",
+      "price": 80,
+      "stock": 31,
+      "initialStock": 94,
+      "sold": 77,
+      "category": "คุกกี้ & บราวนี่",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-23T13:07:19.353Z",
+      "updatedAt": "2026-11-23T13:07:19.353Z"
+    },
+    {
+      "id": "cmwta5zgc000ecomgu1pp64cd",
+      "name": "Signature Fudge Brownie",
+      "description": "บราวนี่ฟัดจ์เนื้อหนึบเข้มข้น ดาร์กช็อกโกแลตพรีเมียม หน้าฟิล์มกรอบ เนื้อฉ่ำ",
+      "price": 65,
+      "stock": 30,
+      "initialStock": 135,
+      "sold": 110,
+      "category": "คุกกี้ & บราวนี่",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-23T13:07:19.356Z",
+      "updatedAt": "2026-11-23T13:07:19.356Z"
+    },
+    {
+      "id": "cmwta5zge000gcomgaaf7zr61",
+      "name": "Matcha White Chocolate Brookie",
+      "description": "ลูกผสมระหว่างบราวนี่มัทฉะอุจิเข้มข้นและคุกกี้ไวท์ช็อกโกแลต กรอบนอกหนึบใน",
+      "price": 75,
+      "stock": 30,
+      "initialStock": 74,
+      "sold": 58,
+      "category": "คุกกี้ & บราวนี่",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-23T13:07:19.359Z",
+      "updatedAt": "2026-11-27T00:44:45.384Z"
+    },
+    {
+      "id": "cmwta5zgh000icomgvr6bwi2e",
+      "name": "Salted Caramel Pecan Cookie",
+      "description": "คุกกี้เนยสดผสมถั่วพีแคน สอดไส้ซอลท์เต็ดคาราเมลโฮมเมดเยิ้ม หอมมันหวานเค็มกลมกล่อม",
+      "price": 80,
+      "stock": 30,
+      "initialStock": 67,
+      "sold": 54,
+      "category": "คุกกี้ & บราวนี่",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-23T13:07:19.361Z",
+      "updatedAt": "2026-11-24T03:04:49.183Z"
+    },
+    {
+      "id": "cmwta5zgk000kcomgkej6sj3k",
+      "name": "Vanilla Bean Custard Choux",
+      "description": "ชูครีมวานิลลาแท้สอดไส้คัสตาร์ดสดผสมเมล็ดฝักวานิลลามาดากัสการ์ หอมหวานละมุน นุ่มละลายในปาก",
+      "price": 65,
+      "stock": 30,
+      "initialStock": 72,
+      "sold": 53,
+      "category": "ชูครีม & พัฟ",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-23T13:07:19.364Z",
+      "updatedAt": "2026-11-23T13:07:19.364Z"
+    },
+    {
+      "id": "cmwta5zgm000mcomg9yqultqy",
+      "name": "Matcha Kyoto Cream Choux Bun",
+      "description": "ชูครีมแป้งกรอบสไตล์คราเคอลิน สอดไส้ครีมมัทฉะเกียวโตแท้ รสชาติเข้มข้นอมขมปลายลิ้น",
+      "price": 75,
+      "stock": 30,
+      "initialStock": 63,
+      "sold": 49,
+      "category": "ชูครีม & พัฟ",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-23T13:07:19.367Z",
+      "updatedAt": "2026-11-23T13:07:19.367Z"
+    },
+    {
+      "id": "cmwta5zgp000ocomgvwxppck0",
+      "name": "Chocolate Hazelnut Craquelin",
+      "description": "ชูคราเคอลินกรอบนอก สอดไส้ครีมช็อกโกแลตเฮเซลนัทพราลีนบดละเอียด หอมมันเข้มข้น",
+      "price": 80,
+      "stock": 29,
+      "initialStock": 73,
+      "sold": 64,
+      "category": "ชูครีม & พัฟ",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-23T13:07:19.369Z",
+      "updatedAt": "2026-11-23T13:07:19.369Z"
+    },
+    {
+      "id": "cmwta5zgr000qcomgecxdfrnq",
+      "name": "Raspberry Earl Grey Choux",
+      "description": "ครีมชูชาร์ปชาเอิร์ลเกรย์หอมกลิ่นเบอร์กามอต ผสานซอสราสเบอร์รีสดรสเปรี้ยวจี๊ดจ๊าด",
+      "price": 85,
+      "stock": 30,
+      "initialStock": 49,
+      "sold": 39,
+      "category": "ชูครีม & พัฟ",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-23T13:07:19.372Z",
+      "updatedAt": "2026-11-23T13:07:19.372Z"
+    },
+    {
+      "id": "cmwta5zgu000scomgjaukl01q",
+      "name": "Artisanal French Butter Croissant",
+      "description": "ครัวซองต์เนยฝรั่งเศส AOP แท้ พับชั้นแป้งพิถีพิถัน กรอบนอกนุ่มใน หอมเนยฟุ้งทุกคำ",
+      "price": 75,
+      "stock": 30,
+      "initialStock": 147,
+      "sold": 127,
+      "category": "ครัวซองต์ & ขนมปัง",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-23T13:07:19.374Z",
+      "updatedAt": "2026-11-23T13:07:19.374Z"
+    },
+    {
+      "id": "cmwta5zgw000ucomgakntugxl",
+      "name": "Pain au Chocolat",
+      "description": "ขนมปังเดนิชสอดไส้แท่งดาร์กช็อกโกแลตเบลเยียม 2 แท่ง แป้งฟูกรอบหอมละมุน",
+      "price": 85,
+      "stock": 30,
+      "initialStock": 110,
+      "sold": 95,
+      "category": "ครัวซองต์ & ขนมปัง",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-23T13:07:19.377Z",
+      "updatedAt": "2026-11-24T05:40:07.725Z"
+    },
+    {
+      "id": "cmwta5zgz000wcomgcnw8egep",
+      "name": "Almond Frangipane Croissant",
+      "description": "ครัวซองต์ไส้ครีมอัลมอนด์ฟรังจิปาน หอมหวานนุ่มนวล โรยหน้าด้วยอัลมอนด์สไลซ์อบกรอบ",
+      "price": 95,
+      "stock": 15,
+      "initialStock": 86,
+      "sold": 91,
+      "category": "ครัวซองต์ & ขนมปัง",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-23T13:07:19.380Z",
+      "updatedAt": "2026-11-23T13:07:19.380Z"
+    },
+    {
+      "id": "cmwta5zh2000ycomggnajqfxl",
+      "name": "Hokkaido Milk Brioche",
+      "description": "ขนมปังบริยอชนมสดฮอกไกโด นวดด้วยเนยสดแท้ เนื้อสัมผัสนุ่มดุจปุยเมฆ ชุ่มฉ่ำ",
+      "price": 70,
+      "stock": 30,
+      "initialStock": 106,
+      "sold": 94,
+      "category": "ครัวซองต์ & ขนมปัง",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-23T13:07:19.382Z",
+      "updatedAt": "2026-11-24T01:42:24.780Z"
+    },
+    {
+      "id": "cmwta5zh50010comgnepc618v",
+      "name": "Pastel Macaron Box (Set of 6)",
+      "description": "เซ็ตมาการองพาสเทล 6 รสชาติซิกเนเจอร์: วานิลลา, ช็อกโกแลต, ราสเบอร์รี, พิสตาชิโอ, คาราเมล, ยูซุ",
+      "price": 240,
+      "stock": 25,
+      "initialStock": 98,
+      "sold": 98,
+      "category": "มาการอง & เซ็ตของขวัญ",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-23T13:07:19.385Z",
+      "updatedAt": "2026-11-24T05:34:33.040Z"
+    },
+    {
+      "id": "cmwta5zh70012comgk2k64h0r",
+      "name": "Signature Treat Box (Holiday Gift Edition)",
+      "description": "กล่องของขวัญรวมขนมซิกเนเจอร์: บราวนี่ฟัดจ์ 2 ชิ้น, ซอฟต์คุกกี้ 2 ชิ้น และมาการองพาสเทล 4 ชิ้น บรรจุในกล่องสุดหรูพร้อมริบบิ้น",
+      "price": 420,
+      "stock": 25,
+      "initialStock": 63,
+      "sold": 67,
+      "category": "มาการอง & เซ็ตของขวัญ",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-23T13:07:19.388Z",
+      "updatedAt": "2026-11-27T00:52:31.445Z"
+    }
+  ],
+  "productImages": [
+    {
+      "id": "cmwta5zfo0001comglkid10of",
+      "productId": "cmwta5zfo0000comg85hmb9r9",
+      "imageUrl": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=800&auto=format&fit=crop",
+      "isPrimary": 1,
+      "displayOrder": 0,
+      "createdAt": "2026-11-23T13:07:19.333Z"
+    },
+    {
+      "id": "cmwta5zft0003comgban7q1z1",
+      "productId": "cmwta5zft0002comgupjqz3nz",
+      "imageUrl": "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?q=80&w=800&auto=format&fit=crop",
+      "isPrimary": 1,
+      "displayOrder": 0,
+      "createdAt": "2026-11-23T13:07:19.338Z"
+    },
+    {
+      "id": "cmwta5zfw0005comgzr3h60as",
+      "productId": "cmwta5zfw0004comgxynnbh56",
+      "imageUrl": "https://images.unsplash.com/photo-1519869325930-281384150729?q=80&w=800&auto=format&fit=crop",
+      "isPrimary": 1,
+      "displayOrder": 0,
+      "createdAt": "2026-11-23T13:07:19.340Z"
+    },
+    {
+      "id": "cmwta5zfz0007comgawj4c18q",
+      "productId": "cmwta5zfz0006comgn54n0ykn",
+      "imageUrl": "https://images.unsplash.com/photo-1565958011703-44f9829ba187?q=80&w=800&auto=format&fit=crop",
+      "isPrimary": 1,
+      "displayOrder": 0,
+      "createdAt": "2026-11-23T13:07:19.344Z"
+    },
+    {
+      "id": "cmwta5zg30009comgztcuz5a0",
+      "productId": "cmwta5zg30008comgpe5elea3",
+      "imageUrl": "https://images.unsplash.com/photo-1488477181946-6428a0291777?q=80&w=800&auto=format&fit=crop",
+      "isPrimary": 1,
+      "displayOrder": 0,
+      "createdAt": "2026-11-23T13:07:19.348Z"
+    },
+    {
+      "id": "cmwta5zg6000bcomgrzoxv06k",
+      "productId": "cmwta5zg6000acomgw01eruhj",
+      "imageUrl": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?q=80&w=800&auto=format&fit=crop",
+      "isPrimary": 1,
+      "displayOrder": 0,
+      "createdAt": "2026-11-23T13:07:19.351Z"
+    },
+    {
+      "id": "cmwta5zg9000dcomgi726kevq",
+      "productId": "cmwta5zg9000ccomg1glstp9r",
+      "imageUrl": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?q=80&w=800&auto=format&fit=crop",
+      "isPrimary": 1,
+      "displayOrder": 0,
+      "createdAt": "2026-11-23T13:07:19.353Z"
+    },
+    {
+      "id": "cmwta5zgc000fcomg6afwynma",
+      "productId": "cmwta5zgc000ecomgu1pp64cd",
+      "imageUrl": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?q=80&w=800&auto=format&fit=crop",
+      "isPrimary": 1,
+      "displayOrder": 0,
+      "createdAt": "2026-11-23T13:07:19.356Z"
+    },
+    {
+      "id": "cmwta5zge000hcomg2kdk68pw",
+      "productId": "cmwta5zge000gcomgaaf7zr61",
+      "imageUrl": "https://images.unsplash.com/photo-1621236378699-8597fee6a1ce?q=80&w=800&auto=format&fit=crop",
+      "isPrimary": 1,
+      "displayOrder": 0,
+      "createdAt": "2026-11-23T13:07:19.359Z"
+    },
+    {
+      "id": "cmwta5zgh000jcomgsiiewkeo",
+      "productId": "cmwta5zgh000icomgvr6bwi2e",
+      "imageUrl": "https://images.unsplash.com/photo-1607958996333-41aef7caefaa?q=80&w=800&auto=format&fit=crop",
+      "isPrimary": 1,
+      "displayOrder": 0,
+      "createdAt": "2026-11-23T13:07:19.361Z"
+    },
+    {
+      "id": "cmwta5zgk000lcomgndjbw2uo",
+      "productId": "cmwta5zgk000kcomgkej6sj3k",
+      "imageUrl": "https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=800&auto=format&fit=crop",
+      "isPrimary": 1,
+      "displayOrder": 0,
+      "createdAt": "2026-11-23T13:07:19.364Z"
+    },
+    {
+      "id": "cmwta5zgm000ncomg6pk8t8bl",
+      "productId": "cmwta5zgm000mcomg9yqultqy",
+      "imageUrl": "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?q=80&w=800&auto=format&fit=crop",
+      "isPrimary": 1,
+      "displayOrder": 0,
+      "createdAt": "2026-11-23T13:07:19.367Z"
+    },
+    {
+      "id": "cmwta5zgp000pcomgm5hf6r8v",
+      "productId": "cmwta5zgp000ocomgvwxppck0",
+      "imageUrl": "https://images.unsplash.com/photo-1579372786545-d24232daf58c?q=80&w=800&auto=format&fit=crop",
+      "isPrimary": 1,
+      "displayOrder": 0,
+      "createdAt": "2026-11-23T13:07:19.369Z"
+    },
+    {
+      "id": "cmwta5zgr000rcomgr59ofqzp",
+      "productId": "cmwta5zgr000qcomgecxdfrnq",
+      "imageUrl": "https://images.unsplash.com/photo-1508737027454-e6454ef45afd?q=80&w=800&auto=format&fit=crop",
+      "isPrimary": 1,
+      "displayOrder": 0,
+      "createdAt": "2026-11-23T13:07:19.372Z"
+    },
+    {
+      "id": "cmwta5zgu000tcomg22bw9eij",
+      "productId": "cmwta5zgu000scomgjaukl01q",
+      "imageUrl": "https://images.unsplash.com/photo-1555507036-ab1f4038808a?q=80&w=800&auto=format&fit=crop",
+      "isPrimary": 1,
+      "displayOrder": 0,
+      "createdAt": "2026-11-23T13:07:19.374Z"
+    },
+    {
+      "id": "cmwta5zgw000vcomgn1w2y489",
+      "productId": "cmwta5zgw000ucomgakntugxl",
+      "imageUrl": "https://images.unsplash.com/photo-1608198093002-ad4e005484ec?q=80&w=800&auto=format&fit=crop",
+      "isPrimary": 1,
+      "displayOrder": 0,
+      "createdAt": "2026-11-23T13:07:19.377Z"
+    },
+    {
+      "id": "cmwta5zgz000xcomgq4nbpux0",
+      "productId": "cmwta5zgz000wcomgcnw8egep",
+      "imageUrl": "https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=800&auto=format&fit=crop",
+      "isPrimary": 1,
+      "displayOrder": 0,
+      "createdAt": "2026-11-23T13:07:19.380Z"
+    },
+    {
+      "id": "cmwta5zh2000zcomg39tujnxc",
+      "productId": "cmwta5zh2000ycomggnajqfxl",
+      "imageUrl": "https://images.unsplash.com/photo-1586444248902-2f64eddc13df?q=80&w=800&auto=format&fit=crop",
+      "isPrimary": 1,
+      "displayOrder": 0,
+      "createdAt": "2026-11-23T13:07:19.382Z"
+    },
+    {
+      "id": "cmwta5zh50011comgmzil62zw",
+      "productId": "cmwta5zh50010comgnepc618v",
+      "imageUrl": "https://images.unsplash.com/photo-1587314168485-3236d6710814?q=80&w=800&auto=format&fit=crop",
+      "isPrimary": 1,
+      "displayOrder": 0,
+      "createdAt": "2026-11-23T13:07:19.385Z"
+    },
+    {
+      "id": "cmwta5zh70013comgf9k98u0l",
+      "productId": "cmwta5zh70012comgk2k64h0r",
+      "imageUrl": "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?q=80&w=800&auto=format&fit=crop",
+      "isPrimary": 0,
+      "displayOrder": 2,
+      "createdAt": "2026-11-23T13:07:19.388Z"
+    },
+    {
+      "id": "53cf9885-aca9-4eac-b93b-0d1a695f6a3c",
+      "productId": "cmwta5zh70012comgk2k64h0r",
+      "imageUrl": "/uploads/bibi-1795708660722-jxayn8w.webp",
+      "isPrimary": 1,
+      "displayOrder": 1,
+      "createdAt": "2026-11-26 15:57:43"
+    }
+  ],
+  "orderItems": [
+    {
+      "id": "cmwsul79w000kbqksugs8a6tu",
+      "orderId": "cmwsul79w000ibqks9v1n3yyd",
+      "productId": null,
+      "productName": "Chocolate Brownie",
+      "quantity": 2,
+      "price": 50,
+      "subtotal": 100
+    },
+    {
+      "id": "cmwsv7otc0005lh428ic4y9hh",
+      "orderId": "cmwsv7otc0003lh42g6mtnoqi",
+      "productId": null,
+      "productName": "Chocolate Brownie",
+      "quantity": 2,
+      "price": 50,
+      "subtotal": 100
+    },
+    {
+      "id": "cmwsxtynt0005pusl0yfh6uwa",
+      "orderId": "cmwsxtynt0003pusln0kdk9qa",
+      "productId": null,
+      "productName": "Signature Treat Box (Holiday Gift Edition)",
+      "quantity": 1,
+      "price": 420,
+      "subtotal": 420
+    },
+    {
+      "id": "cmwsyoukl0007c7u8s23rdhwp",
+      "orderId": "cmwsyoukl0005c7u8i4myteyb",
+      "productId": null,
+      "productName": "Chocolate Brownie",
+      "quantity": 1,
+      "price": 50,
+      "subtotal": 50
+    },
+    {
+      "id": "cmwsyoukl0008c7u8u2q4yi4k",
+      "orderId": "cmwsyoukl0005c7u8i4myteyb",
+      "productId": null,
+      "productName": "Signature Treat Box (Holiday Gift Edition)",
+      "quantity": 1,
+      "price": 420,
+      "subtotal": 420
+    },
+    {
+      "id": "cmwsyqr1f000ec7u8ap5i8hqf",
+      "orderId": "cmwsyqr1f000cc7u8d3ssfpa1",
+      "productId": null,
+      "productName": "Dark Chocolate Fudge Layer Cake",
+      "quantity": 1,
+      "price": 125,
+      "subtotal": 125
+    },
+    {
+      "id": "cmwszdt2n0005vpq9g4ky51u7",
+      "orderId": "cmwszdt2n0003vpq9azhiubzh",
+      "productId": null,
+      "productName": "Lemon Meringue Tart",
+      "quantity": 1,
+      "price": 115,
+      "subtotal": 115
+    },
+    {
+      "id": "cmwt1fss30005o37ybdex4r4z",
+      "orderId": "cmwt1fss30003o37ydme8wl2d",
+      "productId": null,
+      "productName": "Double Chocolate Walnut Soft Cookie",
+      "quantity": 1,
+      "price": 25,
+      "subtotal": 25
+    },
+    {
+      "id": "cmwt1ied800055r9iyb6zep9k",
+      "orderId": "cmwt1ied800035r9iwtka58c0",
+      "productId": null,
+      "productName": "Double Chocolate Walnut Soft Cookie",
+      "quantity": 1,
+      "price": 25,
+      "subtotal": 25
+    },
+    {
+      "id": "cmwt1igx2000e5r9if1c6lwkc",
+      "orderId": "cmwt1igx2000c5r9ifhv604c3",
+      "productId": null,
+      "productName": "Double Chocolate Walnut Soft Cookie",
+      "quantity": 2,
+      "price": 25,
+      "subtotal": 50
+    },
+    {
+      "id": "cmwt1igxz000l5r9ij5xrzkb9",
+      "orderId": "cmwt1igxz000j5r9i7uhuky0q",
+      "productId": null,
+      "productName": "Double Chocolate Walnut Soft Cookie",
+      "quantity": 1,
+      "price": 25,
+      "subtotal": 25
+    },
+    {
+      "id": "cmwt1izba000u5r9i3kxy2r1t",
+      "orderId": "cmwt1izba000s5r9ixca701fb",
+      "productId": null,
+      "productName": "Chocolate Brownie",
+      "quantity": 2,
+      "price": 50,
+      "subtotal": 100
+    },
+    {
+      "id": "cmwt1rkjq0005p7drmv5zpa60",
+      "orderId": "cmwt1rkjq0003p7drptlhgg4o",
+      "productId": null,
+      "productName": "Dark Chocolate Fudge Layer Cake",
+      "quantity": 1,
+      "price": 125,
+      "subtotal": 125
+    },
+    {
+      "id": "cmwt4ssnf0005n7z1ah70s8gm",
+      "orderId": "cmwt4ssnf0003n7z1dqaknzdb",
+      "productId": null,
+      "productName": "Signature Treat Box (Holiday Gift Edition)",
+      "quantity": 1,
+      "price": 420,
+      "subtotal": 420
+    },
+    {
+      "id": "cmwt76too000513o2kpg8y1m3",
+      "orderId": "cmwt76too000313o2p6fbwijl",
+      "productId": null,
+      "productName": "Vanilla Bean Custard Choux",
+      "quantity": 1,
+      "price": 65,
+      "subtotal": 65
+    },
+    {
+      "id": "cmwu151cp0005b1wwqvgtai7i",
+      "orderId": "cmwu151cp0003b1ww9pob3nby",
+      "productId": "cmwta5zh2000ycomggnajqfxl",
+      "productName": "Hokkaido Milk Brioche",
+      "quantity": 1,
+      "price": 70,
+      "subtotal": 70
+    },
+    {
+      "id": "cmwu1iats000bb1ww8rbtq7a1",
+      "orderId": "cmwu1iats0009b1ww0eiwoi95",
+      "productId": "cmwta5zh50010comgnepc618v",
+      "productName": "Pastel Macaron Box (Set of 6)",
+      "quantity": 1,
+      "price": 240,
+      "subtotal": 240
+    },
+    {
+      "id": "cmwu430h10005koksqok1s91t",
+      "orderId": "cmwu430h10003kokssrruvgnn",
+      "productId": "cmwta5zg30008comgpe5elea3",
+      "productName": "Blueberry Crumble Tart",
+      "quantity": 1,
+      "price": 150,
+      "subtotal": 150
+    },
+    {
+      "id": "cmwu430h10006koksac6cat4c",
+      "orderId": "cmwu430h10003kokssrruvgnn",
+      "productId": "cmwta5zgh000icomgvr6bwi2e",
+      "productName": "Salted Caramel Pecan Cookie",
+      "quantity": 1,
+      "price": 80,
+      "subtotal": 80
+    },
+    {
+      "id": "cmwu9fkgp00067lpr6s1h5hqw",
+      "orderId": "cmwu9fkgp00047lprwmmjdeuv",
+      "productId": "cmwta5zh50010comgnepc618v",
+      "productName": "Pastel Macaron Box (Set of 6)",
+      "quantity": 1,
+      "price": 240,
+      "subtotal": 240
+    },
+    {
+      "id": "ede4bd77-6cec-4fc5-9f09-6d1871b69f58",
+      "orderId": "bf0078ce-4069-4cd0-ae2e-3968d3718284",
+      "productId": "cmwta5zh70012comgk2k64h0r",
+      "productName": "Signature Treat Box (Holiday Gift Edition)",
+      "quantity": 1,
+      "price": 420,
+      "subtotal": 420
+    },
+    {
+      "id": "c128352f-0026-4b49-bf43-96300eb2e724",
+      "orderId": "bf0078ce-4069-4cd0-ae2e-3968d3718284",
+      "productId": "cmwta5zgp000ocomgvwxppck0",
+      "productName": "Chocolate Hazelnut Craquelin",
+      "quantity": 2,
+      "price": 80,
+      "subtotal": 160
+    },
+    {
+      "id": "72c276a3-a4e0-42c8-bbe4-a0c5b6ac3a69",
+      "orderId": "01bb0d94-1aed-4b73-94c4-188364351380",
+      "productId": "cmwta5zgw000ucomgakntugxl",
+      "productName": "Pain au Chocolat",
+      "quantity": 1,
+      "price": 85,
+      "subtotal": 85
+    },
+    {
+      "id": "b28f46b1-4427-48f6-8391-e3d4bb07b28a",
+      "orderId": "25d2bf00-998d-48bd-b7a1-d6b796b3683e",
+      "productId": "cmwta5zh70012comgk2k64h0r",
+      "productName": "Signature Treat Box (Holiday Gift Edition)",
+      "quantity": 5,
+      "price": 420,
+      "subtotal": 2100
+    },
+    {
+      "id": "a38ebccf-2540-475b-b2ec-fdfbfb5a0404",
+      "orderId": "25d2bf00-998d-48bd-b7a1-d6b796b3683e",
+      "productId": "cmwta5zh2000ycomggnajqfxl",
+      "productName": "Hokkaido Milk Brioche",
+      "quantity": 3,
+      "price": 70,
+      "subtotal": 210
+    },
+    {
+      "id": "52c25751-7792-4643-a667-906902abb81e",
+      "orderId": "25d2bf00-998d-48bd-b7a1-d6b796b3683e",
+      "productId": "cmwta5zh50010comgnepc618v",
+      "productName": "Pastel Macaron Box (Set of 6)",
+      "quantity": 2,
+      "price": 240,
+      "subtotal": 480
+    },
+    {
+      "id": "91028310-1c8f-4e84-bc56-4958bf9b5cef",
+      "orderId": "ad1d64c2-8d55-4f21-841f-9ce03050be42",
+      "productId": "cmwta5zh70012comgk2k64h0r",
+      "productName": "Signature Treat Box (Holiday Gift Edition)",
+      "quantity": 1,
+      "price": 420,
+      "subtotal": 420
+    },
+    {
+      "id": "4e70e986-21e5-45df-bbf7-e0dc646b9574",
+      "orderId": "0d46c8d4-6ec9-4cb4-940c-ad3187dc14b5",
+      "productId": "cmwta5zg6000acomgw01eruhj",
+      "productName": "Double Chocolate Walnut Soft Cookie",
+      "quantity": 1,
+      "price": 75,
+      "subtotal": 75
+    },
+    {
+      "id": "042b60dc-7e24-4814-b147-8d91ee98e2b0",
+      "orderId": "0d46c8d4-6ec9-4cb4-940c-ad3187dc14b5",
+      "productId": "cmwta5zgh000icomgvr6bwi2e",
+      "productName": "Salted Caramel Pecan Cookie",
+      "quantity": 1,
+      "price": 80,
+      "subtotal": 80
+    },
+    {
+      "id": "4556dbad-ad26-4b38-b9e6-1cafbffa7b8c",
+      "orderId": "e778cf70-b8c2-48bc-be77-1e39ce3697e3",
+      "productId": "cmwta5zg30008comgpe5elea3",
+      "productName": "Blueberry Crumble Tart",
+      "quantity": 2,
+      "price": 150,
+      "subtotal": 300
+    },
+    {
+      "id": "921ecf74-7de6-49a9-965d-c94235b81c0a",
+      "orderId": "4eecec04-005e-427a-905b-1b10a5f8689b",
+      "productId": "cmwta5zh50010comgnepc618v",
+      "productName": "Pastel Macaron Box (Set of 6)",
+      "quantity": 1,
+      "price": 240,
+      "subtotal": 240
+    },
+    {
+      "id": "c342640d-8ee5-4d92-86a5-400227e12b81",
+      "orderId": "4eecec04-005e-427a-905b-1b10a5f8689b",
+      "productId": "cmwta5zh70012comgk2k64h0r",
+      "productName": "Signature Treat Box (Holiday Gift Edition)",
+      "quantity": 1,
+      "price": 420,
+      "subtotal": 420
+    },
+    {
+      "id": "230d3bff-906d-4319-983f-b7bbf2043c57",
+      "orderId": "a081349d-0204-41f5-a0c1-48fd98a5a6b8",
+      "productId": "cmwta5zh50010comgnepc618v",
+      "productName": "Pastel Macaron Box (Set of 6)",
+      "quantity": 1,
+      "price": 240,
+      "subtotal": 240
+    },
+    {
+      "id": "a019453a-b1d1-479a-af57-3f47a91c3b3c",
+      "orderId": "a081349d-0204-41f5-a0c1-48fd98a5a6b8",
+      "productId": "cmwta5zh70012comgk2k64h0r",
+      "productName": "Signature Treat Box (Holiday Gift Edition)",
+      "quantity": 1,
+      "price": 420,
+      "subtotal": 420
+    },
+    {
+      "id": "0f6fab5c-7e82-4a17-b55c-29c59f7d8280",
+      "orderId": "b8799ab1-91cf-484d-8d14-9ea80434d5b1",
+      "productId": "cmwta5zh50010comgnepc618v",
+      "productName": "Pastel Macaron Box (Set of 6)",
+      "quantity": 1,
+      "price": 240,
+      "subtotal": 240
+    },
+    {
+      "id": "3afa57e4-d4a1-4b8b-9b7b-44368cb02baa",
+      "orderId": "2fc340ea-a110-4639-a309-3c0a537599fb",
+      "productId": "cmwta5zg9000ccomg1glstp9r",
+      "productName": "Macadamia White Chocolate Cookie",
+      "quantity": 1,
+      "price": 80,
+      "subtotal": 80
+    },
+    {
+      "id": "92fa462f-f971-4df3-9e8f-829fa385f0a8",
+      "orderId": "2fc340ea-a110-4639-a309-3c0a537599fb",
+      "productId": "cmwta5zh2000ycomggnajqfxl",
+      "productName": "Hokkaido Milk Brioche",
+      "quantity": 1,
+      "price": 70,
+      "subtotal": 70
+    },
+    {
+      "id": "a4a64d73-edb6-4dc1-aa31-c5f452c4b402",
+      "orderId": "2fc340ea-a110-4639-a309-3c0a537599fb",
+      "productId": "cmwta5zgz000wcomgcnw8egep",
+      "productName": "Almond Frangipane Croissant",
+      "quantity": 1,
+      "price": 95,
+      "subtotal": 95
+    },
+    {
+      "id": "a0b3b115-e308-4bfa-87dd-30c1f9f42471",
+      "orderId": "57e63e6d-b34a-452b-a161-48b830c20b3e",
+      "productId": "cmwta5zg9000ccomg1glstp9r",
+      "productName": "Macadamia White Chocolate Cookie",
+      "quantity": 1,
+      "price": 80,
+      "subtotal": 80
+    },
+    {
+      "id": "e3a69573-0e0c-4b42-9847-c052eef4bb94",
+      "orderId": "57e63e6d-b34a-452b-a161-48b830c20b3e",
+      "productId": "cmwta5zh2000ycomggnajqfxl",
+      "productName": "Hokkaido Milk Brioche",
+      "quantity": 1,
+      "price": 70,
+      "subtotal": 70
+    },
+    {
+      "id": "5614db03-6014-431c-88d7-0c8a45250bdc",
+      "orderId": "57e63e6d-b34a-452b-a161-48b830c20b3e",
+      "productId": "cmwta5zgz000wcomgcnw8egep",
+      "productName": "Almond Frangipane Croissant",
+      "quantity": 1,
+      "price": 95,
+      "subtotal": 95
+    },
+    {
+      "id": "0ce69473-11cb-401b-a896-52cb75a0c937",
+      "orderId": "fec5c4f8-080c-40a1-8c16-ec6e9718c084",
+      "productId": "cmwta5zh50010comgnepc618v",
+      "productName": "Pastel Macaron Box (Set of 6)",
+      "quantity": 1,
+      "price": 240,
+      "subtotal": 240
+    },
+    {
+      "id": "053fe132-93f8-42f8-ae21-f58d28992a98",
+      "orderId": "a29b951b-5f7a-4039-ad2e-7b28e7e46bc3",
+      "productId": "cmwta5zh50010comgnepc618v",
+      "productName": "Pastel Macaron Box (Set of 6)",
+      "quantity": 1,
+      "price": 240,
+      "subtotal": 240
+    },
+    {
+      "id": "28958a21-eb21-4acb-9872-9a4700178bf5",
+      "orderId": "84dcd2ca-6cfa-4588-b496-ab8672ab127c",
+      "productId": "cmwta5zgu000scomgjaukl01q",
+      "productName": "Artisanal French Butter Croissant",
+      "quantity": 1,
+      "price": 75,
+      "subtotal": 75
+    },
+    {
+      "id": "e78c6e89-0f39-4231-bd92-f1e3c8618181",
+      "orderId": "84dcd2ca-6cfa-4588-b496-ab8672ab127c",
+      "productId": "cmwta5zh50010comgnepc618v",
+      "productName": "Pastel Macaron Box (Set of 6)",
+      "quantity": 1,
+      "price": 240,
+      "subtotal": 240
+    },
+    {
+      "id": "285493f0-c6c0-4841-8566-e2e0a4780410",
+      "orderId": "84dcd2ca-6cfa-4588-b496-ab8672ab127c",
+      "productId": "cmwta5zgz000wcomgcnw8egep",
+      "productName": "Almond Frangipane Croissant",
+      "quantity": 1,
+      "price": 95,
+      "subtotal": 95
+    },
+    {
+      "id": "9cfe0a16-5730-4c7b-84d3-5440fe5419ff",
+      "orderId": "ff046022-7ae8-414f-ad9d-bba045e64035",
+      "productId": "cmwta5zgu000scomgjaukl01q",
+      "productName": "Artisanal French Butter Croissant",
+      "quantity": 1,
+      "price": 75,
+      "subtotal": 75
+    },
+    {
+      "id": "18635aa6-6053-4773-b820-8bd2db150f8a",
+      "orderId": "ff046022-7ae8-414f-ad9d-bba045e64035",
+      "productId": "cmwta5zh50010comgnepc618v",
+      "productName": "Pastel Macaron Box (Set of 6)",
+      "quantity": 1,
+      "price": 240,
+      "subtotal": 240
+    },
+    {
+      "id": "af571577-3eba-4095-a89b-f7b747c3b5cd",
+      "orderId": "ff046022-7ae8-414f-ad9d-bba045e64035",
+      "productId": "cmwta5zgz000wcomgcnw8egep",
+      "productName": "Almond Frangipane Croissant",
+      "quantity": 1,
+      "price": 95,
+      "subtotal": 95
+    },
+    {
+      "id": "5f8a59f3-4983-4550-894f-b36f036e20c1",
+      "orderId": "02daee80-52e2-4339-b68c-c5e73ab1c51f",
+      "productId": "cmwta5zh50010comgnepc618v",
+      "productName": "Pastel Macaron Box (Set of 6)",
+      "quantity": 1,
+      "price": 240,
+      "subtotal": 240
+    },
+    {
+      "id": "3bb6a257-f007-432b-8568-e3d5c7fb8ea6",
+      "orderId": "06b76639-0ce3-4fb8-8eec-5495ce4f59fb",
+      "productId": "cmwta5zfz0006comgn54n0ykn",
+      "productName": "Fresh Strawberry Shortcake",
+      "quantity": 1,
+      "price": 160,
+      "subtotal": 160
+    },
+    {
+      "id": "4c3e9ff2-19f8-452c-a4cb-25cd85f93bdc",
+      "orderId": "a447c883-876f-48aa-b7e9-e3e9e7800450",
+      "productId": "cmwta5zg30008comgpe5elea3",
+      "productName": "Blueberry Crumble Tart",
+      "quantity": 1,
+      "price": 150,
+      "subtotal": 150
+    },
+    {
+      "id": "6e778f90-1827-4912-9f8f-0fb36ee4b2a8",
+      "orderId": "a447c883-876f-48aa-b7e9-e3e9e7800450",
+      "productId": "cmwta5zfz0006comgn54n0ykn",
+      "productName": "Fresh Strawberry Shortcake",
+      "quantity": 1,
+      "price": 160,
+      "subtotal": 160
+    },
+    {
+      "id": "b86999b3-98fc-4553-86bb-ea09d85b9e88",
+      "orderId": "a447c883-876f-48aa-b7e9-e3e9e7800450",
+      "productId": "cmwta5zfw0004comgxynnbh56",
+      "productName": "Lemon Meringue Tart",
+      "quantity": 1,
+      "price": 155,
+      "subtotal": 155
+    },
+    {
+      "id": "59be2b71-632c-477a-ae57-230381e34257",
+      "orderId": "1b354132-a8d1-42f1-bf50-51f221151ed1",
+      "productId": "cmwta5zh70012comgk2k64h0r",
+      "productName": "Signature Treat Box (Holiday Gift Edition)",
+      "quantity": 1,
+      "price": 420,
+      "subtotal": 420
+    },
+    {
+      "id": "d343d489-1a81-461a-a45f-3366f86a6e91",
+      "orderId": "16278778-b2dc-4311-9399-1ed4b7f573ba",
+      "productId": "cmwta5zh70012comgk2k64h0r",
+      "productName": "Signature Treat Box (Holiday Gift Edition)",
+      "quantity": 1,
+      "price": 420,
+      "subtotal": 420
+    },
+    {
+      "id": "2e38dc06-88b3-4ab8-875c-6f27cfbf659d",
+      "orderId": "16278778-b2dc-4311-9399-1ed4b7f573ba",
+      "productId": "cmwta5zh50010comgnepc618v",
+      "productName": "Pastel Macaron Box (Set of 6)",
+      "quantity": 1,
+      "price": 240,
+      "subtotal": 240
+    },
+    {
+      "id": "3ca76c02-99fc-410c-a232-630481e76a2d",
+      "orderId": "16278778-b2dc-4311-9399-1ed4b7f573ba",
+      "productId": "cmwta5zgz000wcomgcnw8egep",
+      "productName": "Almond Frangipane Croissant",
+      "quantity": 1,
+      "price": 95,
+      "subtotal": 95
+    },
+    {
+      "id": "767c80ab-326f-4cf2-891d-2a4675d0a3ad",
+      "orderId": "7045ccf2-68c8-4b90-94f9-2e59ce3cb162",
+      "productId": "cmwta5zh70012comgk2k64h0r",
+      "productName": "Signature Treat Box (Holiday Gift Edition)",
+      "quantity": 1,
+      "price": 420,
+      "subtotal": 420
+    },
+    {
+      "id": "11955c9a-6e66-4072-b7da-5d71184eeb59",
+      "orderId": "d9dc3840-00c6-4475-ae11-713f3b0fd11a",
+      "productId": "cmwta5zh70012comgk2k64h0r",
+      "productName": "Signature Treat Box (Holiday Gift Edition)",
+      "quantity": 1,
+      "price": 420,
+      "subtotal": 420
+    },
+    {
+      "id": "9ef853b6-88c2-4d46-84f1-e8322b520256",
+      "orderId": "e11df509-f708-4d40-b119-4e4e8199dfab",
+      "productId": "cmwta5zh2000ycomggnajqfxl",
+      "productName": "Hokkaido Milk Brioche",
+      "quantity": 1,
+      "price": 70,
+      "subtotal": 70
+    },
+    {
+      "id": "03065597-18c3-4bfa-99e6-e1ad5972c583",
+      "orderId": "e11df509-f708-4d40-b119-4e4e8199dfab",
+      "productId": "cmwta5zh50010comgnepc618v",
+      "productName": "Pastel Macaron Box (Set of 6)",
+      "quantity": 1,
+      "price": 240,
+      "subtotal": 240
+    },
+    {
+      "id": "e8fe4173-b10e-415d-acca-2f0db1977ab9",
+      "orderId": "e11df509-f708-4d40-b119-4e4e8199dfab",
+      "productId": "cmwta5zfw0004comgxynnbh56",
+      "productName": "Lemon Meringue Tart",
+      "quantity": 1,
+      "price": 155,
+      "subtotal": 155
+    },
+    {
+      "id": "57f3e5c9-146f-4094-a14e-10602cdb86df",
+      "orderId": "e11df509-f708-4d40-b119-4e4e8199dfab",
+      "productId": "cmwta5zg6000acomgw01eruhj",
+      "productName": "Double Chocolate Walnut Soft Cookie",
+      "quantity": 1,
+      "price": 75,
+      "subtotal": 75
+    },
+    {
+      "id": "f07863c7-5080-41a3-b623-399de1af87a3",
+      "orderId": "e11df509-f708-4d40-b119-4e4e8199dfab",
+      "productId": "cmwta5zh70012comgk2k64h0r",
+      "productName": "Signature Treat Box (Holiday Gift Edition)",
+      "quantity": 1,
+      "price": 420,
+      "subtotal": 420
+    },
+    {
+      "id": "0611a455-6123-4636-a6c3-e9c7cd94f7d9",
+      "orderId": "2d1b45c2-b055-4017-b25d-2bee1a25f884",
+      "productId": "cmwta5zgz000wcomgcnw8egep",
+      "productName": "Almond Frangipane Croissant",
+      "quantity": 5,
+      "price": 95,
+      "subtotal": 475
+    },
+    {
+      "id": "030da88f-57ff-47f9-bea7-9187a0a17f09",
+      "orderId": "01882a20-bf69-4543-8181-e38f89c9f527",
+      "productId": "cmwta5zgz000wcomgcnw8egep",
+      "productName": "Almond Frangipane Croissant",
+      "quantity": 5,
+      "price": 95,
+      "subtotal": 475
+    },
+    {
+      "id": "4c535b42-94af-4d2e-bf7a-0242aadf3479",
+      "orderId": "4475ae0e-36f3-4ae3-8552-3b855cbdd744",
+      "productId": "cmwta5zgz000wcomgcnw8egep",
+      "productName": "Almond Frangipane Croissant",
+      "quantity": 5,
+      "price": 95,
+      "subtotal": 475
+    },
+    {
+      "id": "3ae3adc1-9326-4332-9849-348e3e70170e",
+      "orderId": "a1afa831-1464-4c24-9151-25c474e9b85f",
+      "productId": "cmwta5zh70012comgk2k64h0r",
+      "productName": "Signature Treat Box (Holiday Gift Edition)",
+      "quantity": 2,
+      "price": 420,
+      "subtotal": 840
+    },
+    {
+      "id": "7cf3eca6-0143-479b-af63-27882d7eb6f1",
+      "orderId": "607c870b-f1a8-41ff-937e-e6d7db6d6f98",
+      "productId": "cmwta5zh50010comgnepc618v",
+      "productName": "Pastel Macaron Box (Set of 6)",
+      "quantity": 1,
+      "price": 240,
+      "subtotal": 240
+    },
+    {
+      "id": "e61543c0-7eeb-4ad2-a454-ae6f25a7b618",
+      "orderId": "b66199dd-a823-4a0e-b26f-b22aba5a4640",
+      "productId": "cmwta5zh50010comgnepc618v",
+      "productName": "Pastel Macaron Box (Set of 6)",
+      "quantity": 1,
+      "price": 240,
+      "subtotal": 240
+    },
+    {
+      "id": "36097500-9236-4941-a66d-68156765a8ad",
+      "orderId": "11416b17-7903-4166-92da-18340dd4d424",
+      "productId": "cmwta5zgp000ocomgvwxppck0",
+      "productName": "Chocolate Hazelnut Craquelin",
+      "quantity": 1,
+      "price": 80,
+      "subtotal": 80
+    }
+  ],
+  "reviews": [
+    {
+      "id": "rev-1",
+      "customerName": "คุณพิมพ์ชนก ว.",
+      "rating": 5,
+      "comment": "แป้งชูส์กรอบเบา ไส้คัสตาร์ดหอมวานิลลาแท้จากมาดากัสการ์มาก หวานกำลังดีไม่เลี่ยนเลย ทานตอนแช่เย็นคือสดชื่นที่สุด สั่งซ้ำแน่นอนค่ะ",
+      "images": "[\"https://images.unsplash.com/photo-1612203985729-70726954388c?q=80&w=800&auto=format&fit=crop\"]",
+      "status": "VISIBLE",
+      "createdAt": "2026-11-24T10:00:00.000Z",
+      "updatedAt": "2026-11-26T08:14:27.880Z",
+      "productId": null,
+      "productName": null
+    },
+    {
+      "id": "rev-2",
+      "customerName": "คุณธนกฤต ส.",
+      "rating": 5,
+      "comment": "ชีสเค้กหน้าไหม้เนื้อเนียน ละมุนลิ้นมาก หน้าไหม้หอมคาราเมลเป็นเอกลักษณ์ แพ็กเกจจิ้งมาอย่างดีไม่มีบุบสลาย ประทับใจมากครับ",
+      "images": "[\"https://images.unsplash.com/photo-1533134242443-d4fd215305ad?q=80&w=800&auto=format&fit=crop\"]",
+      "status": "VISIBLE",
+      "createdAt": "2026-11-22T10:00:00.000Z",
+      "updatedAt": "2026-11-26T08:14:30.910Z",
+      "productId": null,
+      "productName": null
+    },
+    {
+      "id": "rev-3",
+      "customerName": "คุณวรินทร ม.",
+      "rating": 5,
+      "comment": "ครัวซองต์กรอบนอกนุ่มใน รังผึ้งด้านในสวยงามมาก กลิ่นเนยสดแท้จากฝรั่งเศสเตะจมูกตั้งแต่วินาทีที่เปิดกล่อง อบซ้ำในเตา 2 นาทีเหมือนทานที่ปารีสเลย",
+      "images": "[\"https://images.unsplash.com/photo-1555507036-ab1f4038808a?q=80&w=800&auto=format&fit=crop\"]",
+      "status": "VISIBLE",
+      "createdAt": "2026-11-20T10:00:00.000Z",
+      "updatedAt": "2026-11-26T08:14:35.243Z",
+      "productId": null,
+      "productName": null
+    },
+    {
+      "id": "rev-4",
+      "customerName": "คุณณิชานันท์ ร.",
+      "rating": 5,
+      "comment": "ช็อกโกแลตฟัดจ์เข้มข้น ไม่หวานแสบคอ ใช้วัตถุดิบพรีเมียมอย่างเห็นได้ชัด สั่งเป็นเค้กวันเกิดให้เพื่อน ทุกคนชมหมดเลยค่ะ",
+      "images": "[\"https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=800&auto=format&fit=crop\"]",
+      "status": "VISIBLE",
+      "createdAt": "2026-11-18T10:00:00.000Z",
+      "updatedAt": "2026-11-18T10:00:00.000Z",
+      "productId": null,
+      "productName": null
+    },
+    {
+      "id": "rev-5",
+      "customerName": "คุณอรอุมา ภ.",
+      "rating": 5,
+      "comment": "มาการองหวานน้อยกำลังดี เปลือกกรอบฟูนุ่ม ไส้เอิร์ลเกรย์กับยูซุคือที่สุด แพ็กเกจหรูหรา ซื้อเป็นของขวัญผู้รับชอบมาก",
+      "images": "[\"https://images.unsplash.com/photo-1569864358642-9d1684040f43?q=80&w=800&auto=format&fit=crop\"]",
+      "status": "VISIBLE",
+      "createdAt": "2026-11-16T10:00:00.000Z",
+      "updatedAt": "2026-11-16T10:00:00.000Z",
+      "productId": null,
+      "productName": null
+    },
+    {
+      "id": "rev-6",
+      "customerName": "คุณกิตติศักดิ์ ล.",
+      "rating": 5,
+      "comment": "บราวนี่ฟัดจ์หน้าฟิล์ม เนื้อแน่นฉ่ำ ช็อกโกแลตเข้มเต็มคำ สั่งทานคู่กับกาแฟตอนเช้าคือลงตัวที่สุด สั่งรอบที่ 4 แล้วครับ",
+      "images": "[\"https://images.unsplash.com/photo-1606313564200-e75d5e30476c?q=80&w=800&auto=format&fit=crop\"]",
+      "status": "VISIBLE",
+      "createdAt": "2026-11-12T10:00:00.000Z",
+      "updatedAt": "2026-11-12T10:00:00.000Z",
+      "productId": null,
+      "productName": null
+    }
+  ],
+  "storeSettings": [
+    {
+      "id": "default",
+      "shopName": "Bibi's Treats",
+      "tagline": "Sweet treats, happy hearts",
+      "logoUrl": "/uploads/bibi-1795498989551-27zh7uk.png",
+      "qrImageUrl": "/images/thai-qr-payment.jpg",
+      "promptpayNumber": "086-296-5765",
+      "promptpayName": "น.ส. ฮาบีบี บุตรแหล่",
+      "bankName": "ธนาคารกสิกรไทย (Kasikorn Bank)",
+      "bankAccountNo": "142-1-52907-4",
+      "bankAccountName": "น.ส. ฮาบีบี บุตรแหล่",
+      "defaultShippingFee": 0,
+      "isStoreOpen": 1,
+      "announcement": "อบสดใหม่ทุกวัน ส่งตรงถึงบ้านคุณด้วยความพิถีพิถัน",
+      "updatedAt": "2026-11-27 03:46:36"
+    }
+  ],
+  "admins": [
+    {
+      "id": "cmwsul78l0000bqks4wshjs53",
+      "username": "admin",
+      "passwordHash": "$2a$10$lNfS2T.s38qKOubWTBS40uvktDCXLzDfUd5vcvutmiwsv4Bk6d/i2",
+      "role": "OWNER",
+      "createdAt": "2026-11-23T05:51:15.429Z"
+    }
+  ]
+}
