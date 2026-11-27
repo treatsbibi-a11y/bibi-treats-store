@@ -28,6 +28,13 @@ const STEPS: { status: string; label: string; desc: string }[] = [
   { status: 'COMPLETED', label: '✅ เสร็จสิ้น', desc: 'จัดส่งสำเร็จเรียบร้อย' },
 ];
 
+const COD_STEPS: { status: string; label: string; desc: string }[] = [
+  { status: 'PENDING', label: '🟡 รอร้านยืนยัน', desc: 'ร้านกำลังตรวจสอบรายการ' },
+  { status: 'PREPARING', label: '🟣 เตรียมสินค้า', desc: 'ยืนยันแล้วและกำลังอบขนม' },
+  { status: 'SHIPPING', label: '🚚 กำลังจัดส่ง', desc: 'ขนส่งกำลังนำส่งพัสดุ' },
+  { status: 'COMPLETED', label: '✅ เสร็จสิ้น', desc: 'ส่งมอบและเก็บเงินสำเร็จ' },
+];
+
 const STATUS_BADGE_MAP: Record<string, { label: string; className: string }> = {
   PENDING: { label: '🟡 รอร้านยืนยัน', className: 'bg-amber-50 text-amber-800 border-amber-200' },
   CONFIRMED: { label: '🟢 ร้านยืนยันแล้ว / รอชำระเงิน', className: 'bg-emerald-50 text-emerald-800 border-emerald-200' },
@@ -120,7 +127,18 @@ export default function TrackingPage() {
     }
   };
 
+  const isCod = order?.paymentMethod === 'COD';
+  const stepsList = isCod ? COD_STEPS : STEPS;
+
   const getStepIndex = (status: string) => {
+    if (isCod) {
+      let normalized = status;
+      if (normalized === 'CONFIRMED' || normalized === 'SLIP_UPLOADED') {
+        normalized = 'PREPARING';
+      }
+      const idx = COD_STEPS.findIndex((s) => s.status === normalized);
+      return idx >= 0 ? idx : 0;
+    }
     const idx = STEPS.findIndex((s) => s.status === status);
     return idx >= 0 ? idx : 0;
   };
@@ -128,10 +146,15 @@ export default function TrackingPage() {
   const currentStep = order ? getStepIndex(order.status as string) : 0;
   const isCancelled = (order?.status as string) === 'CANCELLED';
   const statusBadge = order
-    ? STATUS_BADGE_MAP[order.status as string] || {
-        label: order.status,
-        className: 'bg-slate-100 text-slate-700 border-slate-200',
-      }
+    ? isCod && order.status === 'CONFIRMED'
+      ? {
+          label: '🟢 ร้านยืนยันแล้ว / เตรียมจัดส่ง',
+          className: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+        }
+      : STATUS_BADGE_MAP[order.status as string] || {
+          label: order.status,
+          className: 'bg-slate-100 text-slate-700 border-slate-200',
+        }
     : null;
 
   return (
@@ -279,12 +302,16 @@ export default function TrackingPage() {
                       <div
                         className="hidden sm:block absolute top-4 left-[8%] h-1 bg-brand-600 transition-all duration-500 z-0 rounded-full"
                         style={{
-                          width: `${(currentStep / (STEPS.length - 1)) * 84}%`,
+                          width: `${(currentStep / Math.max(stepsList.length - 1, 1)) * 84}%`,
                         }}
                       />
 
-                      <div className="grid grid-cols-1 sm:grid-cols-6 gap-4 sm:gap-2 relative z-10">
-                        {STEPS.map((step, idx) => {
+                      <div
+                        className={`grid grid-cols-1 ${
+                          isCod ? 'sm:grid-cols-4' : 'sm:grid-cols-6'
+                        } gap-4 sm:gap-2 relative z-10`}
+                      >
+                        {stepsList.map((step, idx) => {
                           const isDone = idx <= currentStep;
                           const isCurrent = idx === currentStep;
 

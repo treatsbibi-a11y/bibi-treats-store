@@ -203,10 +203,15 @@ export default function OrderSuccessPage() {
   }
 
   const currentStatusMeta = order
-    ? STATUS_CONFIG[order.status as string] || {
-        label: order.status,
-        badgeClass: 'bg-slate-100 text-slate-700 border border-slate-200',
-      }
+    ? order.paymentMethod === 'COD' && order.status === 'CONFIRMED'
+      ? {
+          label: '🟢 ร้านยืนยันแล้ว / เตรียมจัดส่ง',
+          badgeClass: 'text-emerald-800 bg-emerald-50 border border-emerald-200',
+        }
+      : STATUS_CONFIG[order.status as string] || {
+          label: order.status,
+          badgeClass: 'bg-slate-100 text-slate-700 border border-slate-200',
+        }
     : null;
 
   return (

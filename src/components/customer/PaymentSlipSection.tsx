@@ -316,7 +316,8 @@ export default function PaymentSlipSection({
   if (order.paymentMethod === 'COD') {
     const codStatusBadge: Record<string, string> = {
       PENDING: '🟡 รอร้านยืนยัน',
-      CONFIRMED: '🟢 ร้านยืนยันแล้ว / รอชำระเงิน',
+      CONFIRMED: '🟢 ร้านยืนยันแล้ว / เตรียมจัดส่ง',
+      SLIP_UPLOADED: '🟣 กำลังเตรียมสินค้า',
       PREPARING: '🟣 กำลังเตรียมสินค้า',
       SHIPPING: '🚚 กำลังจัดส่ง',
       COMPLETED: '✅ เสร็จสิ้น',
