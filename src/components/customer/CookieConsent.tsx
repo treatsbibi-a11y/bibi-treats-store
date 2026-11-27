@@ -116,11 +116,11 @@ export default function CookieConsent() {
             setShowPreferences(true);
             setIsOpen(true);
           }}
-          className="fixed bottom-4 left-4 z-40 bg-white/90 hover:bg-white text-amber-800 p-2.5 rounded-full shadow-lg border border-amber-200/80 backdrop-blur-md flex items-center justify-center gap-2 group transition-all"
-          title="การตั้งค่าคุกกี้และความเป็นส่วนตัว (PDPA)"
+          className="fixed bottom-4 left-4 z-40 bg-white/95 hover:bg-white text-slate-700 p-2.5 rounded-full shadow-md border border-slate-200/80 backdrop-blur-md flex items-center justify-center gap-2 group transition-all"
+          title="การตั้งค่าคุกกี้และความเป็นส่วนตัว"
           aria-label="การตั้งค่าคุกกี้"
         >
-          <FontAwesomeIcon icon={faCookieBite} className="w-4 h-4 text-amber-600 group-hover:rotate-12 transition-transform" />
+          <FontAwesomeIcon icon={faCookieBite} className="w-4 h-4 text-slate-600 group-hover:rotate-12 transition-transform" />
           <span className="text-xs font-medium text-slate-700 hidden sm:inline-block pr-1">ตั้งค่าคุกกี้</span>
         </motion.button>
       )}
@@ -133,23 +133,19 @@ export default function CookieConsent() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 30, scale: 0.95 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed bottom-4 right-4 sm:right-6 z-50 max-w-sm sm:max-w-md w-[calc(100vw-2rem)] bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-amber-100/90 p-5 overflow-hidden ring-1 ring-black/5"
+            className="fixed bottom-4 right-4 sm:right-6 z-50 max-w-sm sm:max-w-md w-[calc(100vw-2rem)] bg-white/95 backdrop-blur-md rounded-2xl shadow-xl shadow-slate-900/5 border border-slate-200/90 p-5 overflow-hidden ring-1 ring-slate-900/5"
           >
-            {/* Soft decorative background glow */}
-            <div className="absolute -top-12 -right-12 w-32 h-32 bg-amber-200/30 rounded-full blur-2xl pointer-events-none" />
-
             <div className="relative">
-              <div className="flex items-start gap-3.5 mb-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-amber-700 shrink-0 shadow-xs">
-                  <FontAwesomeIcon icon={faCookieBite} className="w-5 h-5" />
+              <div className="flex items-start gap-3 mb-3">
+                <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700 shrink-0">
+                  <FontAwesomeIcon icon={faCookieBite} className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900 text-sm sm:text-base flex items-center gap-1.5">
-                    เราใช้คุกกี้เพื่อประสบการณ์ที่ดีที่สุด 🍪
+                  <h3 className="font-semibold text-slate-900 text-sm sm:text-base">
+                    การใช้งานคุกกี้
                   </h3>
-                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                    Bibi&apos;s Treats ใช้คุกกี้เพื่อพัฒนาการทำงาน วิเคราะห์การเข้าชม และมอบโปรโมชันที่เหมาะกับคุณตามมาตรฐาน{' '}
-                    <span className="font-medium text-slate-800">พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA)</span>
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                    เราใช้คุกกี้ที่จำเป็นและคุกกี้วิเคราะห์เพื่อปรับปรุงและพัฒนาประสบการณ์การสั่งซื้อของคุณ
                   </p>
                 </div>
               </div>
@@ -159,24 +155,23 @@ export default function CookieConsent() {
                 <button
                   type="button"
                   onClick={handleAcceptAll}
-                  className="w-full sm:flex-1 py-2 px-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-xs font-semibold shadow-sm shadow-amber-500/20 transition-all flex items-center justify-center gap-1.5"
+                  className="w-full sm:flex-1 py-2 px-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium shadow-xs transition-colors flex items-center justify-center"
                 >
-                  <FontAwesomeIcon icon={faCheck} className="w-3 h-3" />
                   ยอมรับทั้งหมด
                 </button>
                 <button
                   type="button"
                   onClick={handleRejectNonEssential}
-                  className="w-full sm:w-auto py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition-colors"
+                  className="w-full sm:w-auto py-2 px-3.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-medium transition-colors"
                 >
                   ปฏิเสธ
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowPreferences(true)}
-                  className="w-full sm:w-auto py-2 px-2.5 rounded-xl text-slate-500 hover:text-slate-800 text-xs font-medium transition-colors flex items-center justify-center gap-1"
+                  className="w-full sm:w-auto py-2 px-2.5 rounded-xl text-slate-500 hover:text-slate-800 text-xs font-medium transition-colors flex items-center justify-center gap-1.5"
                 >
-                  <FontAwesomeIcon icon={faSliders} className="w-3 h-3" />
+                  <FontAwesomeIcon icon={faSliders} className="w-3 h-3 text-slate-400" />
                   <span>ตั้งค่า</span>
                 </button>
               </div>
@@ -198,12 +193,12 @@ export default function CookieConsent() {
               {/* Header */}
               <div className="p-5 sm:p-6 pb-4 border-b border-slate-100 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center">
                     <FontAwesomeIcon icon={faSliders} className="w-4 h-4" />
                   </div>
                   <div>
                     <h2 className="text-base sm:text-lg font-bold text-slate-900">
-                      ตั้งค่าความยินยอมคุกกี้ (PDPA)
+                      ตั้งค่าความยินยอมคุกกี้
                     </h2>
                     <p className="text-xs text-slate-500">เลือกประเภทคุกกี้ที่คุณอนุญาตให้เราใช้งาน</p>
                   </div>
@@ -249,19 +244,19 @@ export default function CookieConsent() {
                     type="checkbox"
                     checked={true}
                     disabled
-                    className="mt-1 w-4 h-4 rounded text-amber-600 focus:ring-amber-500 cursor-not-allowed opacity-60"
+                    className="mt-1 w-4 h-4 rounded text-slate-900 focus:ring-slate-900 cursor-not-allowed opacity-60"
                   />
                 </div>
 
                 {/* 2. Analytics */}
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/80 hover:border-amber-200 transition-colors flex items-start justify-between gap-3">
+                <div className="p-4 rounded-2xl bg-white border border-slate-200/80 hover:border-slate-300 transition-colors flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center shrink-0 mt-0.5">
+                    <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 mt-0.5">
                       <FontAwesomeIcon icon={faChartLine} className="w-4 h-4" />
                     </div>
                     <div>
                       <h4 className="font-semibold text-slate-900 text-xs sm:text-sm">
-                        คุกกี้เพื่อการวิเคราะห์ (Analytics & Performance)
+                        คุกกี้เพื่อการวิเคราะห์ (Analytics)
                       </h4>
                       <p className="text-xs text-slate-500 mt-1 leading-relaxed">
                         ช่วยให้เราเข้าใจการใช้งานเว็บไซต์ผ่าน Google Analytics เพื่อปรับปรุงประสิทธิภาพหน้าเว็บ
@@ -275,19 +270,19 @@ export default function CookieConsent() {
                       onChange={(e) => setPrefs({ ...prefs, analytics: e.target.checked })}
                       className="sr-only peer"
                     />
-                    <div className="w-9 h-5 bg-slate-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-600"></div>
+                    <div className="w-9 h-5 bg-slate-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-slate-900"></div>
                   </label>
                 </div>
 
                 {/* 3. Marketing */}
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/80 hover:border-amber-200 transition-colors flex items-start justify-between gap-3">
+                <div className="p-4 rounded-2xl bg-white border border-slate-200/80 hover:border-slate-300 transition-colors flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center shrink-0 mt-0.5">
+                    <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 mt-0.5">
                       <FontAwesomeIcon icon={faBullhorn} className="w-4 h-4" />
                     </div>
                     <div>
                       <h4 className="font-semibold text-slate-900 text-xs sm:text-sm">
-                        คุกกี้เพื่อการตลาด (Marketing & Social Media)
+                        คุกกี้เพื่อการตลาด (Marketing)
                       </h4>
                       <p className="text-xs text-slate-500 mt-1 leading-relaxed">
                         ใช้เพื่อนำเสนอโปรโมชัน ข่าวสาร และแคมเปญพิเศษที่ตรงตามความสนใจของคุณ
@@ -301,7 +296,7 @@ export default function CookieConsent() {
                       onChange={(e) => setPrefs({ ...prefs, marketing: e.target.checked })}
                       className="sr-only peer"
                     />
-                    <div className="w-9 h-5 bg-slate-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-600"></div>
+                    <div className="w-9 h-5 bg-slate-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-slate-900"></div>
                   </label>
                 </div>
               </div>
@@ -326,7 +321,7 @@ export default function CookieConsent() {
                   <button
                     type="button"
                     onClick={handleSavePreferences}
-                    className="flex-1 sm:flex-initial py-2 px-4 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shadow-xs transition-colors flex items-center justify-center gap-1.5"
+                    className="flex-1 sm:flex-initial py-2 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-colors flex items-center justify-center gap-1.5"
                   >
                     <span>บันทึกการตั้งค่า</span>
                     <FontAwesomeIcon icon={faChevronRight} className="w-2.5 h-2.5" />
