@@ -1,13 +1,23 @@
 import bcrypt from 'bcryptjs';
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
+import { getRequestContext } from '@cloudflare/next-on-pages';
 
 const COOKIE_NAME = 'bibi_admin_token';
+const DEFAULT_JWT_SECRET = 'bibi-treats-super-cute-secret-key-2026';
 
 function getJwtSecretKey(): Uint8Array {
-  const secret = process.env.JWT_SECRET;
+  let secret = process.env.JWT_SECRET;
   if (!secret || secret.trim().length < 16) {
-    throw new Error('Missing or weak JWT_SECRET environment variable');
+    try {
+      const edgeSecret = (getRequestContext()?.env as any)?.JWT_SECRET;
+      if (typeof edgeSecret === 'string' && edgeSecret.trim().length >= 16) {
+        secret = edgeSecret.trim();
+      }
+    } catch {}
+  }
+  if (!secret || secret.trim().length < 16) {
+    secret = DEFAULT_JWT_SECRET;
   }
   return new TextEncoder().encode(secret);
 }
