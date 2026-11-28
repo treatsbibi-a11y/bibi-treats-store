@@ -20,11 +20,11 @@ export default function WelcomeScreen() {
         return;
       }
 
-      // First time in session: record and stay for 1.8s, then smoothly dissolve
+      // First time in session: show for 0.5 seconds, then immediately dissolve into storefront
       sessionStorage.setItem(WELCOME_SESSION_KEY, 'true');
       const timer = setTimeout(() => {
         setIsVisible(false);
-      }, 1800);
+      }, 500);
 
       return () => clearTimeout(timer);
     } catch {
@@ -44,31 +44,31 @@ export default function WelcomeScreen() {
           initial={{ opacity: 1 }}
           exit={{
             opacity: 0,
-            scale: 1.015,
-            filter: 'blur(8px)',
-            transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] },
+            scale: 1.01,
+            filter: 'blur(4px)',
+            transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
           }}
           onClick={handleDismiss}
           className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#FAF7F2] text-stone-900 select-none cursor-pointer px-6 overflow-hidden"
         >
           <motion.div
-            initial={{ opacity: 0, y: 12, scale: 0.98 }}
+            initial={{ opacity: 0, y: 8, scale: 0.99 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col items-center text-center max-w-sm sm:max-w-md w-full"
           >
             {/* Haute Pâtisserie Brand Emblem Header */}
-            <span className="font-luxury uppercase text-[11px] sm:text-xs tracking-[0.38em] text-stone-500 font-medium mb-3 select-none">
+            <span className="font-luxury uppercase text-[11px] sm:text-xs tracking-[0.38em] text-stone-500 font-medium mb-2.5 select-none">
               B I B I &apos; S &nbsp; T R E A T S
             </span>
 
             {/* Main Thai Heading - Noto Serif Thai */}
-            <h1 className="font-thaiSerif text-2xl sm:text-3xl text-stone-900 font-normal tracking-[0.04em] leading-snug mb-3.5">
+            <h1 className="font-thaiSerif text-2xl sm:text-3xl text-stone-900 font-normal tracking-[0.04em] leading-snug mb-3">
               ยินดีต้อนรับสู่ร้าน Bibi&apos;s Treats
             </h1>
 
             {/* Artisanal Hairline Accent */}
-            <div className="w-8 h-[1px] bg-stone-300/80 mb-3.5" />
+            <div className="w-8 h-[1px] bg-stone-300/80 mb-3" />
 
             {/* Slogan - Refined Thai Serif with letter-spacing */}
             <p className="font-thaiSerif text-xs sm:text-sm text-stone-600 font-light tracking-[0.1em] leading-relaxed">

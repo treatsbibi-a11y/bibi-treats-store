@@ -1,9 +1,9 @@
 {
-  "name": "Bibi's Treats | Artisanal Bakery",
+  "name": "Bibi's Treats",
   "short_name": "Bibi's Treats",
   "description": "Artisanal Confectionery & Pastries crafted with pure butter. Fresh daily delivery.",
-  "start_url": "/?pwa=v6",
-  "id": "/?pwa=v6",
+  "start_url": "/?pwa=v7",
+  "id": "/?pwa=v7",
   "display": "standalone",
   "background_color": "#FAF7F2",
   "theme_color": "#FAF7F2",
