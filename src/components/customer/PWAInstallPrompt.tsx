@@ -73,7 +73,7 @@ export default function PWAInstallPrompt() {
         if (!checkIsInstalled() && !checkIsDismissed()) {
           setIsOpen(true);
         }
-      }, 1500);
+      }, 3500);
     };
 
     // 6. Listen for App Installed event
@@ -108,7 +108,7 @@ export default function PWAInstallPrompt() {
         if (!checkIsInstalled() && !checkIsDismissed()) {
           setIsOpen(true);
         }
-      }, 2000);
+      }, 3600);
       return () => clearTimeout(iosTimer);
     }
 

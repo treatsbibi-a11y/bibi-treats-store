@@ -38,8 +38,8 @@ export default function CookieConsent() {
     try {
       const stored = localStorage.getItem(COOKIE_STORAGE_KEY);
       if (!stored) {
-        // Show banner if not consented yet
-        const timer = setTimeout(() => setIsOpen(true), 1200);
+        // Show banner after welcome screen transition completes (3.2 seconds)
+        const timer = setTimeout(() => setIsOpen(true), 3200);
         return () => clearTimeout(timer);
       } else {
         const parsed: CookiePreferences = JSON.parse(stored);
