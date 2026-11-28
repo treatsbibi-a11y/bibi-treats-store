@@ -53,7 +53,7 @@ export default function WelcomeScreen() {
             {/* Elegant Brand Emblem */}
             <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border border-stone-200/90 shadow-sm bg-white p-1 mb-5">
               <img
-                src="/uploads/bibi-1795498989551-27zh7uk.png"
+                src="/icons/icon-512x512.png"
                 alt="Bibi's Treats"
                 className="w-full h-full object-cover rounded-xl"
               />

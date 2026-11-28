@@ -180,7 +180,7 @@ export default function PWAInstallPrompt() {
                 <div className="flex items-center gap-3">
                   <div className="w-11 h-11 rounded-xl overflow-hidden border border-stone-200 shadow-sm shrink-0 bg-stone-50 p-0.5">
                     <img
-                      src="/uploads/bibi-1795498989551-27zh7uk.png"
+                      src="/icons/icon-192x192.png"
                       alt="Bibi's Treats"
                       className="w-full h-full object-cover rounded-lg"
                     />
@@ -190,7 +190,7 @@ export default function PWAInstallPrompt() {
                       Bibi&apos;s Treats
                     </h4>
                     <p className="text-xs text-stone-500 mt-0.5 leading-snug">
-                      เพิ่มลงหน้าจอหลักเพื่อความสะดวกในการเข้าชมและสั่งซื้อ
+                      ติดตั้งแอปเพื่อความสะดวกในการเข้าชมและสั่งซื้อ
                     </p>
                   </div>
                 </div>
@@ -210,7 +210,7 @@ export default function PWAInstallPrompt() {
                 <div className="mt-3 p-3.5 rounded-xl bg-stone-50 border border-stone-200/80 text-xs text-stone-700 space-y-2">
                   <div className="font-medium text-stone-900 flex items-center gap-1.5">
                     <FontAwesomeIcon icon={faMobileScreenButton} className="w-3.5 h-3.5 text-stone-600" />
-                    วิธีเพิ่มลงหน้าจอหลัก (Safari iOS)
+                    วิธีติดตั้งแอป (Safari iOS)
                   </div>
                   <ol className="list-decimal list-inside space-y-1.5 text-stone-600 pl-1 leading-relaxed">
                     <li>
@@ -237,7 +237,7 @@ export default function PWAInstallPrompt() {
                     className="flex-1 py-2.5 px-3.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-medium transition-colors flex items-center justify-center gap-1.5 shadow-sm"
                   >
                     <FontAwesomeIcon icon={faDownload} className="w-3.5 h-3.5" />
-                    <span>เพิ่มลงหน้าจอหลัก</span>
+                    <span>ติดตั้งแอป</span>
                   </button>
                   <button
                     type="button"
