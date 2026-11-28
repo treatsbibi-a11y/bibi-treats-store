@@ -180,7 +180,7 @@ export default function PWAInstallPrompt() {
                 <div className="flex items-center gap-3">
                   <div className="w-11 h-11 rounded-xl overflow-hidden border border-stone-200 shadow-sm shrink-0 bg-stone-50 p-0.5">
                     <img
-                      src="/icons/icon-192x192.png"
+                      src="/icons/app-icon-192-v2.png"
                       alt="Bibi's Treats"
                       className="w-full h-full object-cover rounded-lg"
                     />
