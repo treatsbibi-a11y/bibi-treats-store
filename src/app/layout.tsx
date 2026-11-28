@@ -15,6 +15,7 @@ import ScrollProgressBar from '@/components/customer/ScrollProgressBar';
 import ScrollToTop from '@/components/customer/ScrollToTop';
 import CookieConsent from '@/components/customer/CookieConsent';
 import PWAInstallPrompt from '@/components/customer/PWAInstallPrompt';
+import WelcomeScreen from '@/components/customer/WelcomeScreen';
 
 export const viewport: Viewport = {
   themeColor: [
@@ -89,6 +90,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <CartDrawer />
             <CookieConsent />
             <PWAInstallPrompt />
+            <WelcomeScreen />
           </CartProvider>
         </MotionProvider>
       </body>
