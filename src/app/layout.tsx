@@ -38,8 +38,8 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   icons: {
-    icon: '/icons/app-icon-192-v2.png',
-    apple: '/icons/apple-touch-icon-v2.png',
+    icon: '/icons/bibi-fullbleed-192-v3.png',
+    apple: '/icons/apple-touch-icon-v3.png',
   },
 };
 
