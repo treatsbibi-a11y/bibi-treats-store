@@ -14,13 +14,14 @@
 }
 
 /* Native touch ergonomics across mobile & tablet */
+*,
 a,
 button,
 [role="button"],
 input,
 select,
 textarea {
-  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: transparent !important;
   touch-action: manipulation;
 }
 

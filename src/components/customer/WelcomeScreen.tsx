@@ -6,26 +6,29 @@ import { motion, AnimatePresence } from 'framer-motion';
 const WELCOME_SESSION_KEY = 'bibi_welcome_shown_session';
 
 export default function WelcomeScreen() {
-  const [isVisible, setIsVisible] = useState(false);
+  // Start visible at 0ms (pre-hydration) so there is zero pop-in jitter or flash
+  const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
     try {
       const alreadyShown = sessionStorage.getItem(WELCOME_SESSION_KEY);
-      if (!alreadyShown) {
-        setIsVisible(true);
-        sessionStorage.setItem(WELCOME_SESSION_KEY, 'true');
-
-        // Pure Haute Pâtisserie typographic welcome for 1.8 seconds, then dissolves smoothly into storefront
-        const timer = setTimeout(() => {
-          setIsVisible(false);
-        }, 1800);
-
-        return () => clearTimeout(timer);
+      if (alreadyShown) {
+        // Return visitor in same session: immediately hide without animation
+        setIsVisible(false);
+        return;
       }
+
+      // First time in session: record and stay for 1.8s, then smoothly dissolve
+      sessionStorage.setItem(WELCOME_SESSION_KEY, 'true');
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+      }, 1800);
+
+      return () => clearTimeout(timer);
     } catch {
-      // Graceful fallback
+      setIsVisible(false);
     }
   }, []);
 
@@ -42,20 +45,20 @@ export default function WelcomeScreen() {
           exit={{
             opacity: 0,
             scale: 1.015,
-            filter: 'blur(6px)',
-            transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+            filter: 'blur(8px)',
+            transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] },
           }}
           onClick={handleDismiss}
-          className="fixed inset-0 z-[999] flex flex-col items-center justify-center bg-[#FAF7F2] text-stone-900 select-none cursor-pointer px-6 overflow-hidden"
+          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#FAF7F2] text-stone-900 select-none cursor-pointer px-6 overflow-hidden"
         >
           <motion.div
-            initial={{ opacity: 0, y: 14, scale: 0.98 }}
+            initial={{ opacity: 0, y: 12, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col items-center text-center max-w-sm sm:max-w-md w-full"
           >
             {/* Haute Pâtisserie Brand Emblem Header */}
-            <span className="font-luxury uppercase text-[11px] sm:text-xs tracking-[0.36em] text-stone-500 font-medium mb-3 select-none">
+            <span className="font-luxury uppercase text-[11px] sm:text-xs tracking-[0.38em] text-stone-500 font-medium mb-3 select-none">
               B I B I &apos; S &nbsp; T R E A T S
             </span>
 
