@@ -19,8 +19,8 @@ import WelcomeScreen from '@/components/customer/WelcomeScreen';
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#FFFFFF' },
-    { media: '(prefers-color-scheme: dark)', color: '#0F172A' },
+    { media: '(prefers-color-scheme: light)', color: '#FAF7F2' },
+    { media: '(prefers-color-scheme: dark)', color: '#FAF7F2' },
   ],
 };
 
@@ -68,6 +68,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <link
           href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Rubik:wght@300;400;500;600;700&display=swap"
           rel="stylesheet"
+        />
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `html, body { background-color: #FAF7F2 !important; }`,
+          }}
         />
       </head>
       <body className="min-h-screen flex flex-col bg-surface-ground text-slate-900 antialiased selection:bg-brand-100 selection:text-brand-900">

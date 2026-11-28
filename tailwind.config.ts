@@ -36,7 +36,7 @@ const config: Config = {
           950: '#082749',
         },
         surface: {
-          ground: '#FAFCFE',
+          ground: '#FAF7F2',
           card: '#FFFFFF',
           muted: '#F8FAFC',
           border: '#E2E8F0',
