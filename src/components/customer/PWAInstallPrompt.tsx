@@ -146,12 +146,14 @@ export default function PWAInstallPrompt() {
       return;
     }
 
+    // Dismiss custom banner immediately so it doesn't linger behind the OS native prompt
+    setIsOpen(false);
+
     try {
       await deferredPrompt.prompt();
       const choice = await deferredPrompt.userChoice;
       if (choice.outcome === 'accepted') {
         setIsStandalone(true);
-        setIsOpen(false);
       }
       setDeferredPrompt(null);
     } catch (err) {
@@ -172,13 +174,13 @@ export default function PWAInstallPrompt() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.98 }}
             transition={{ type: 'spring', damping: 25, stiffness: 320 }}
-            className="bg-white/98 backdrop-blur-md rounded-2xl shadow-xl border border-stone-200/90 p-4 sm:p-5 overflow-hidden ring-1 ring-black/5"
+            className="bg-[#FAF7F2]/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-stone-200/90 p-4 sm:p-5 overflow-hidden ring-1 ring-black/5"
           >
             <div className="relative">
               {/* Header */}
               <div className="flex items-start justify-between gap-3 mb-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-xl overflow-hidden border border-stone-200 shadow-sm shrink-0 bg-stone-50 p-0.5">
+                  <div className="w-11 h-11 rounded-xl overflow-hidden border border-stone-200/80 shadow-sm shrink-0 bg-white p-0.5">
                     <img
                       src="/icons/bibi-ultra-192-v4.png"
                       alt="Bibi's Treats"
@@ -186,11 +188,11 @@ export default function PWAInstallPrompt() {
                     />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-stone-900 text-sm sm:text-base leading-tight">
+                    <h4 className="font-serif font-medium text-stone-900 text-sm sm:text-base leading-tight">
                       Bibi&apos;s Treats
                     </h4>
-                    <p className="text-xs text-stone-500 mt-0.5 leading-snug">
-                      ติดตั้งแอปเพื่อความสะดวกในการเข้าชมและสั่งซื้อ
+                    <p className="text-xs text-stone-600 mt-0.5 font-light leading-snug">
+                      ติดตั้งเพื่อการสั่งซื้อที่สะดวกรวดเร็ว
                     </p>
                   </div>
                 </div>
@@ -198,7 +200,7 @@ export default function PWAInstallPrompt() {
                 <button
                   type="button"
                   onClick={handleDismiss}
-                  className="w-7 h-7 rounded-full text-stone-400 hover:text-stone-700 hover:bg-stone-100 flex items-center justify-center transition-colors shrink-0"
+                  className="w-7 h-7 rounded-full text-stone-400 hover:text-stone-700 hover:bg-stone-200/50 flex items-center justify-center transition-colors shrink-0"
                   aria-label="ปิดการแจ้งเตือน"
                 >
                   <FontAwesomeIcon icon={faTimes} className="w-3.5 h-3.5" />
@@ -207,7 +209,7 @@ export default function PWAInstallPrompt() {
 
               {/* iOS Guide */}
               {showIOSGuide ? (
-                <div className="mt-3 p-3.5 rounded-xl bg-stone-50 border border-stone-200/80 text-xs text-stone-700 space-y-2">
+                <div className="mt-3 p-3.5 rounded-xl bg-stone-100/70 border border-stone-200 text-xs text-stone-700 space-y-2">
                   <div className="font-medium text-stone-900 flex items-center gap-1.5">
                     <FontAwesomeIcon icon={faMobileScreenButton} className="w-3.5 h-3.5 text-stone-600" />
                     วิธีติดตั้งแอป (Safari iOS)
@@ -234,7 +236,7 @@ export default function PWAInstallPrompt() {
                   <button
                     type="button"
                     onClick={handleInstallClick}
-                    className="flex-1 py-2.5 px-3.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-medium transition-colors flex items-center justify-center gap-1.5 shadow-sm"
+                    className="flex-1 py-2.5 px-3.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-[#FAF7F2] text-xs font-normal tracking-wide transition-colors flex items-center justify-center gap-1.5 shadow-sm"
                   >
                     <FontAwesomeIcon icon={faDownload} className="w-3.5 h-3.5" />
                     <span>ติดตั้งแอป</span>
@@ -242,7 +244,7 @@ export default function PWAInstallPrompt() {
                   <button
                     type="button"
                     onClick={handleDismiss}
-                    className="py-2.5 px-3 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-600 text-xs font-medium transition-colors"
+                    className="py-2.5 px-3 rounded-xl bg-stone-200/60 hover:bg-stone-200 text-stone-700 text-xs font-normal transition-colors"
                   >
                     ไว้คราวหลัง
                   </button>
